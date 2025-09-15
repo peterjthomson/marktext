@@ -15,28 +15,7 @@ import commandExists from 'command-exists'
 
 const customElectronAPI = {
   shell,
-  clipboard,
-  process: {
-    platform: process.platform,
-    env: {
-      MARKTEXT_VERSION_STRING: process.env.MARKTEXT_VERSION_STRING || '0.17.1'
-    }
-  },
-  logToConsole: (message) => {
-    console.log(message)
-    // log.info(message) // 注释掉因为 log 未定义
-  },
-  writeLogFile: async (filename, content) => {
-    try {
-      const logPath = path.join(process.cwd(), filename)
-      await fs.writeFile(logPath, content, 'utf8')
-      // log.info(`Log file written to: ${logPath}`) // 注释掉因为 log 未定义
-      return logPath
-    } catch (error) {
-      // log.error('Error writing log file:', error) // 注释掉因为 log 未定义
-      throw error
-    }
-  }
+  clipboard
 }
 
 const fileUtilsAPI = {
@@ -66,7 +45,7 @@ const commandAPI = {
       if (commandExists.sync(command)) {
         return true
       }
-      
+
       // 对于 picgo，额外检查常见安装路径
       if (command === 'picgo' && process.platform === 'darwin') {
         const commonPaths = [
@@ -76,7 +55,7 @@ const commandAPI = {
           `${process.env.HOME}/.npm/bin/picgo`,
           '/usr/local/lib/node_modules/.bin/picgo'
         ]
-        
+
         for (const picgoPath of commonPaths) {
           if (fs.pathExistsSync(picgoPath)) {
             console.log(`Found picgo at: ${picgoPath}`)
@@ -84,7 +63,7 @@ const commandAPI = {
           }
         }
       }
-      
+
       return false
     } catch (error) {
       console.error('Error checking command existence:', error)

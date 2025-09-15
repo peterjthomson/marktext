@@ -21,6 +21,8 @@ export const useMainStore = defineStore('main', {
     },
 
     SET_INITIALIZED() {
+      console.log('platform', this.platform)
+      console.log('appVersion', this.appVersion)
       this.init = true
     },
 
