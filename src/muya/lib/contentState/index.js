@@ -589,6 +589,7 @@ class ContentState {
     newBlock.parent = oldBlock.parent
     newBlock.preSibling = oldBlock.key
     if (oldNextSibling) {
+      // If the oldBlock has a next node, we should make it our next current block's next node (Linked list)
       newBlock.nextSibling = oldNextSibling.key
       oldNextSibling.preSibling = newBlock.key
     }
@@ -616,7 +617,9 @@ class ContentState {
   }
 
   findIndex(children, block) {
-    return children.findIndex((child) => child === block)
+    // We need to compare the key instead of the object itself
+    // This is because the object may sometimes be a proxy due to Vue3 reactivity
+    return children.findIndex((child) => child.key === block.key)
   }
 
   prependChild(parent, block) {

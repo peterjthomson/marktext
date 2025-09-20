@@ -203,7 +203,11 @@ class Selection {
           currentNode = currentNode.parentNode
         }
       }
-      if (currentNode !== null && currentNode.nodeName.toLowerCase() === 'a' && currentNode.parentNode) {
+      if (
+        currentNode !== null &&
+        currentNode.nodeName.toLowerCase() === 'a' &&
+        currentNode.parentNode
+      ) {
         let currentNodeIndex = null
         for (
           let i = 0;
@@ -431,8 +435,13 @@ class Selection {
 
   setCursorRange(cursorRange) {
     const { anchor, focus } = cursorRange
+
     const anchorParagraph = document.querySelector(`#${anchor.key}`)
     const focusParagraph = document.querySelector(`#${focus.key}`)
+
+    if (!anchorParagraph || !focusParagraph) {
+      return // Additional guards
+    }
     const getNodeAndOffset = (node, offset) => {
       if (node.nodeType === 3) {
         return {
