@@ -11,9 +11,10 @@
         <div
           class="drop-container"
           :class="{ active: isOver }"
-          @dragover="dragOverHandler"
+          @dragenter.prevent="dragOverHandler"
+          @dragover.prevent="dragOverHandler"
           @dragleave="dragLeaveHandler"
-          @drop="dropHandler"
+          @drop.prevent="dropHandler"
         >
           <div class="img-wrapper">
             <img :src="`${importIcon.url}`" alt="import file" />
@@ -59,14 +60,20 @@ const dragLeaveHandler = () => {
 }
 
 const dropHandler = (e) => {
+  const fileList = []
   e.preventDefault()
-  if (e.dataTransfer.files) {
-    const fileList = []
+  if (e.dataTransfer.files.length > 0) {
     for (const file of e.dataTransfer.files) {
-      fileList.push(file.path)
+      fileList.push(window.electron.webUtils.getPathForFile(file))
     }
-    window.electron.ipcRenderer.send('mt::window::drop', fileList)
+  } else {
+    for (const file of e.dataTransfer.items) {
+      if (file.kind === 'file') {
+        fileList.push(window.electron.webUtils.getPathForFile(file.getAsFile()))
+      }
+    }
   }
+  window.electron.ipcRenderer.send('mt::window::drop', fileList)
 }
 
 onMounted(() => {
@@ -83,6 +90,8 @@ onBeforeUnmount(() => {
   border-radius: 5px;
   color: var(--sideBarColor);
   border: 1px dashed var(--sideBarTextColor);
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
   & div,
   & p {
     text-align: center;

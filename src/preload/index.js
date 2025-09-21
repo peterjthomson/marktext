@@ -1,4 +1,4 @@
-import { contextBridge, shell, clipboard } from 'electron'
+import { contextBridge, shell, clipboard, webUtils } from 'electron'
 import fs from 'fs-extra'
 import { isFile, isDirectory, ensureDirSync } from 'common/filesystem'
 import { electronAPI } from '@electron-toolkit/preload'
@@ -20,7 +20,8 @@ const i18nUtils = {
 
 const customElectronAPI = {
   shell,
-  clipboard
+  clipboard,
+  webUtils
 }
 
 const fileUtilsAPI = {
@@ -86,10 +87,6 @@ if (process.contextIsolated) {
       ...electronAPI,
       ...customElectronAPI
     })
-    contextBridge.exposeInMainWorld('electronAPI', {
-      ...electronAPI,
-      ...customElectronAPI
-    })
     contextBridge.exposeInMainWorld('rgPath', rgPath)
     contextBridge.exposeInMainWorld('fileUtils', fileUtilsAPI)
     contextBridge.exposeInMainWorld('path', path)
@@ -100,7 +97,6 @@ if (process.contextIsolated) {
   }
 } else {
   window.electron = { ...electronAPI, ...customElectronAPI }
-  window.electronAPI = { ...electronAPI, ...customElectronAPI }
   window.rgPath = rgPath
   window.fileUtils = fileUtilsAPI
   window.path = path
