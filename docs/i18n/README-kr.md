@@ -1,4 +1,4 @@
-<p align="center"><img src="static/logo-small.png" alt="MarkText" width="100" height="100"></p>
+<p align="center"><img src="../../static/logo-small.png" alt="MarkText" width="100" height="100"></p>
 
 <h1 align="center">MarkText</h1>
 
@@ -68,7 +68,7 @@
 
 # 3. ✨기능 ⭐
 
-- 이제 **9개 언어**를 지원합니다 🆕 (특별히 @hubo1989께 감사드립니다)
+- 이제 **9개 언어**를 지원합니다 🆕 (특별히 [@hubo1989](https://github.com/hubo1989)께 감사드립니다)
   - `English` 🇺🇸
   - `简体中文` 🇨🇳
   - `繁體中文` 🇹🇼

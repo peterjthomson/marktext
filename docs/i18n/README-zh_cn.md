@@ -1,4 +1,4 @@
-<p align="center"><img src="static/logo-small.png" alt="MarkText" width="100" height="100"></p>
+<p align="center"><img src="../../static/logo-small.png" alt="MarkText" width="100" height="100"></p>
 
 <h1 align="center">MarkText</h1>
 
@@ -27,7 +27,7 @@
 - 遗憾的是，核心仓库大约在 3 年前起无人维护，但在我的日常使用中仍存在许多影响体验的细节问题。
 
 - 本仓库旨在让我最喜欢的 Markdown 编辑器实现现代化，是基于 [Jacob Whall 的分叉](https://github.com/jacobwhall/marktext)再次派生的版本
-  - 参见[下文我的动机](#1-soo-is-this-fork-any-different-from-the-countless-others)
+  - 我的动机[参见下文](#1-soo-is-this-fork-any-different-from-the-countless-others)
 
 - 你可以在下文阅读更多关于我动机的说明
 
@@ -37,14 +37,14 @@
 
 ## Windows
 
-- 只需查看[发布页](https://github.com/Tkaixiang/marktext/releases)!
+- 只需查看[发布页]下载(https://github.com/Tkaixiang/marktext/releases)!
 
 - 已测试：
   - `Windows 11`
 
 ## Linux
 
-- 只需查看[发布页](https://github.com/Tkaixiang/marktext/releases)
+- 只需查看[发布页]下载(https://github.com/Tkaixiang/marktext/releases)
 - 已测试：
   - `Ubuntu 24.0.2`（`AppImage` 与 `.deb` 包）
   - _非常希望有人协助测试其他 Linux 打包形式！_
@@ -57,7 +57,7 @@
 
 ## MacOS
 
-> ⚠️ 由于**缺少公证**，MacOS 版本会显示“`MarkText is damaged and can't be opened`”。
+> ⚠️ 由于**缺少证书**，MacOS 版本会显示“`MarkText is damaged and can't be opened`”。
 > 请参考[此处的修复方法](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300)（同样适用于任何缺少开发者账号签名的应用）
 
 - 可在[发布页](https://github.com/Tkaixiang/marktext/releases)获取
@@ -68,7 +68,7 @@
 
 # 3. ✨功能 ⭐
 
-- 现已支持 **9 种语言** 🆕（特别感谢 @hubo1989）
+- 现已支持 **9 种语言** 🆕（特别感谢 [@hubo1989](https://github.com/hubo1989))
   - `English` 🇺🇸
   - `简体中文` 🇨🇳
   - `繁體中文` 🇹🇼
@@ -120,7 +120,7 @@
 ## 2. 太棒了！我能如何贡献？
 
 - 任何形式的：
-  1. 缺陷测试（缺陷报告）
+  1. 问题报告
   2. Pull Request
 
   都非常欢迎！

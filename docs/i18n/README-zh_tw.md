@@ -1,4 +1,4 @@
-<p align="center"><img src="static/logo-small.png" alt="MarkText" width="100" height="100"></p>
+<p align="center"><img src="../../static/logo-small.png" alt="MarkText" width="100" height="100"></p>
 
 <h1 align="center">MarkText</h1>
 
@@ -68,7 +68,7 @@
 
 # 3. ✨功能 ⭐
 
-- 現已支援 **9 種語言** 🆕（特別感謝 @hubo1989）
+- 現已支援 **9 種語言** 🆕（特別感謝 [@hubo1989](https://github.com/hubo1989)）
   - `English` 🇺🇸
   - `簡體中文` 🇨🇳
   - `繁體中文` 🇹🇼
