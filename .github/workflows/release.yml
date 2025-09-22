@@ -32,7 +32,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y icnsutils graphicsmagick xz-utils libx11-dev libxkbfile-dev gnome-keyring libsecret-1-dev libfontconfig-dev rpm
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebuild native modules for Electron
+        run: npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

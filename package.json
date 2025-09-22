@@ -10,6 +10,7 @@
     "lint": "eslint --cache .",
     "start": "electron-vite preview",
     "minify-locales": "node scripts/minify-locales.js",
+    "rebuild-native": "npx @electron/rebuild -f",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "build:unpack": "npm run minify-locales && npm run build && electron-builder --dir",
