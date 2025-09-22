@@ -36,10 +36,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set C++20 for native builds
+        run: |
+          echo "CXXFLAGS=-std=gnu++20 -stdlib=libc++" >> $GITHUB_ENV
+
       - name: Rebuild native modules for Electron
         run: npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG: node-gyp:*,electron-rebuild
 
       - name: build-linux
         if: matrix.os == 'ubuntu-latest'
