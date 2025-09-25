@@ -504,6 +504,11 @@ const backspaceCtrl = (ContentState) => {
 
           const grandpa = this.getParent(parent)
           const greatGrandpaBlock = this.getParent(grandpa)
+          console.log('block', block)
+          console.log('parent', parent)
+          console.log('grandParent', grandpa)
+          console.log('greatGrandParent', greatGrandpaBlock)
+          console.log('newBlock', newBlock)
           if (greatGrandpaBlock && greatGrandpaBlock.type === 'ul') {
             if (block.listItemType === 'task') {
               const { checked } = parent.children[0]
@@ -527,19 +532,22 @@ const backspaceCtrl = (ContentState) => {
               // Also append all the nextSibilings of the current list item to a ul
               // under the newBlock
               const newULBlock = this.createBlock('ul')
-              this.appendChild(newBlock, newULBlock)
+
               let probe = this.getBlock(block.nextSibling)
               const addedChildKeys = []
-              while (probe) {
+              while (probe && probe.parent && probe.parent === parent.key) {
                 const nextSibilingSaved = probe.nextSibling // save it before we overwrite it by appending it
                 this.appendChild(newULBlock, probe)
                 addedChildKeys.push(probe.key)
                 probe = this.getBlock(nextSibilingSaved)
               }
-              // Remove all the added siblings from the current parent
-              parent.children = parent.children.filter(
-                (child) => !addedChildKeys.includes(child.key)
-              )
+              if (newULBlock.children.length > 0) {
+                this.appendChild(newBlock, newULBlock)
+                // Remove all the added siblings from the current parent
+                parent.children = parent.children.filter(
+                  (child) => !addedChildKeys.includes(child.key)
+                )
+              }
             }
             // Remove list item from the current parent
             this.removeBlock(block)
@@ -557,6 +565,29 @@ const backspaceCtrl = (ContentState) => {
             block.children.forEach((child) => {
               if (child.type === 'ul') this.insertAfter(child, newBlock)
             })
+            // Also append all the nextSibilings of the current list item to a ul
+            // under the newBlock
+            if (block.nextSibling) {
+              // Also append all the nextSibilings of the current list item to a ul
+              // under the newBlock
+              const newULBlock = this.createBlock('ul')
+              let probe = this.getBlock(block.nextSibling)
+              const addedChildKeys = []
+              while (probe && probe.parent && probe.parent === parent.key) {
+                const nextSibilingSaved = probe.nextSibling // save it before we overwrite it by appending it
+                this.appendChild(newULBlock, probe)
+                addedChildKeys.push(probe.key)
+                probe = this.getBlock(nextSibilingSaved)
+              }
+              if (newULBlock.children.length > 0) {
+                // Remove all the added siblings from the current parent
+                parent.children = parent.children.filter(
+                  (child) => !addedChildKeys.includes(child.key)
+                )
+                this.insertAfter(newULBlock, newBlock)
+              }
+              console.log('newULBlock backspace', newULBlock)
+            }
             this.removeBlock(block)
           }
           // If the parent list is now empty, we also need to remove it

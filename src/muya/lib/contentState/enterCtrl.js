@@ -103,6 +103,7 @@ const enterCtrl = (ContentState) => {
   ContentState.prototype.enterInEmptyParagraph = function (block) {
     if (block.type === 'span') block = this.getParent(block)
     const parent = this.getParent(block)
+    console.log('enterinEmptyParagraph')
 
     let newBlock = null
     if (parent && /ol|blockquote/.test(parent.type)) {
@@ -126,6 +127,11 @@ const enterCtrl = (ContentState) => {
 
       const grandParent = this.getParent(parent)
       const greatGrandParent = this.getParent(grandParent)
+      console.log('block', block)
+      console.log('parent', parent)
+      console.log('grandParent', grandParent)
+      console.log('greatGrandParent', greatGrandParent)
+
       if (greatGrandParent && greatGrandParent.type === 'ul') {
         if (block.listItemType === 'task') {
           const { checked } = parent.children[0]
@@ -149,20 +155,24 @@ const enterCtrl = (ContentState) => {
           // Also append all the nextSibilings of the current list item to a ul
           // under the newBlock
           const newULBlock = this.createBlock('ul')
-          this.appendChild(newBlock, newULBlock)
+
           let probe = this.getBlock(block.nextSibling)
           const addedChildKeys = []
-          while (probe) {
+          while (probe && probe.parent && probe.parent === parent.key) {
             const nextSibilingSaved = probe.nextSibling // save it before we overwrite it by appending it
             this.appendChild(newULBlock, probe)
             addedChildKeys.push(probe.key)
             probe = this.getBlock(nextSibilingSaved)
           }
-          // Remove all the added siblings from the current parent
-          parent.children = parent.children.filter((child) => !addedChildKeys.includes(child.key))
+          if (newULBlock.children.length > 0) {
+            this.appendChild(newBlock, newULBlock)
+            // Remove all the added siblings from the current parent
+            parent.children = parent.children.filter((child) => !addedChildKeys.includes(child.key))
+          }
         }
         // Remove list item from the current parent
         this.removeBlock(block)
+        console.log('newBlock', newBlock)
 
         newBlock = newBlock.listItemType === 'task' ? newBlock.children[1] : newBlock.children[0]
       } else {
@@ -173,8 +183,30 @@ const enterCtrl = (ContentState) => {
         block.children.forEach((child) => {
           if (child.type === 'ul') this.insertAfter(child, newBlock)
         })
+        // Any nextSibilings it has should be added after the new paragraph
+        if (block.nextSibling) {
+          // Also append all the nextSibilings of the current list item to a ul
+          // under the newBlock
+          const newULBlock = this.createBlock('ul')
+          let probe = this.getBlock(block.nextSibling)
+          const addedChildKeys = []
+          while (probe && probe.parent && probe.parent === parent.key) {
+            const nextSibilingSaved = probe.nextSibling // save it before we overwrite it by appending it
+            this.appendChild(newULBlock, probe)
+            addedChildKeys.push(probe.key)
+            probe = this.getBlock(nextSibilingSaved)
+          }
+          if (newULBlock.children.length > 0) {
+            // Remove all the added siblings from the current parent
+            parent.children = parent.children.filter((child) => !addedChildKeys.includes(child.key))
+            this.insertAfter(newULBlock, newBlock)
+            console.log('newULBlock', newULBlock)
+          }
+        }
+        console.log('newBlock', newBlock)
         this.removeBlock(block)
       }
+
       // If the parent list is now empty, we also need to remove it
       if (parent.children.length === 0) {
         this.removeBlock(parent)
