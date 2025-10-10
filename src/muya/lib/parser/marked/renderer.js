@@ -1,11 +1,12 @@
 import defaultOptions from './options'
 import { cleanUrl, escape } from './utils'
+import { getImageInfo } from '../../utils'
 
 /**
  * Renderer
  */
 
-function Renderer (options = {}) {
+function Renderer(options = {}) {
   this.options = options || defaultOptions
 }
 
@@ -44,12 +45,19 @@ Renderer.prototype.script = function (content, marker) {
   return `<${tagName}>${content}</${tagName}>`
 }
 
-Renderer.prototype.footnoteIdentifier = function (identifier, { footnoteId, footnoteIdentifierId, order }) {
+Renderer.prototype.footnoteIdentifier = function (
+  identifier,
+  { footnoteId, footnoteIdentifierId, order }
+) {
   return `<a href="#${footnoteId ? `fn${footnoteId}` : ''}" class="footnote-ref" id="fnref${footnoteIdentifierId}" role="doc-noteref"><sup>${order || identifier}</sup></a>`
 }
 
 Renderer.prototype.footnote = function (footnote) {
-  return '<section class="footnotes" role="doc-endnotes">\n<hr />\n<ol>\n' + footnote + '</ol>\n</section>\n'
+  return (
+    '<section class="footnotes" role="doc-endnotes">\n<hr />\n<ol>\n' +
+    footnote +
+    '</ol>\n</section>\n'
+  )
 }
 
 Renderer.prototype.footnoteItem = function (content, { footnoteId, footnoteIdentifierId }) {
@@ -69,11 +77,13 @@ Renderer.prototype.code = function (code, infostring, escaped, codeBlockStyle) {
   let className = codeBlockStyle === 'fenced' ? 'fenced-code-block' : 'indented-code-block'
   className = lang ? `${className} ${this.options.langPrefix}${escape(lang, true)}` : className
 
-  return '<pre><code class="' +
+  return (
+    '<pre><code class="' +
     className +
     '">' +
     (escaped ? code : escape(code, true)) +
     '</code></pre>\n'
+  )
 }
 
 Renderer.prototype.blockquote = function (quote) {
@@ -86,7 +96,8 @@ Renderer.prototype.html = function (html) {
 
 Renderer.prototype.heading = function (text, level, raw, slugger, headingStyle) {
   if (this.options.headerIds) {
-    return '<h' +
+    return (
+      '<h' +
       level +
       ' id="' +
       this.options.headerPrefix +
@@ -98,6 +109,7 @@ Renderer.prototype.heading = function (text, level, raw, slugger, headingStyle) 
       '</h' +
       level +
       '>\n'
+    )
   }
   // ignore IDs
   return '<h' + level + '>' + text + '</h' + level + '>\n'
@@ -109,7 +121,7 @@ Renderer.prototype.hr = function () {
 
 Renderer.prototype.list = function (body, ordered, start, taskList) {
   const type = ordered ? 'ol' : 'ul'
-  const startatt = (ordered && start !== 1) ? (' start="' + start + '"') : ''
+  const startatt = ordered && start !== 1 ? ' start="' + start + '"' : ''
   return '<' + type + startatt + '>\n' + body + '</' + type + '>\n'
 }
 
@@ -120,13 +132,15 @@ Renderer.prototype.listitem = function (text, checked) {
   }
 
   // task list
-  return '<li class="task-list-item"><input type="checkbox"' +
+  return (
+    '<li class="task-list-item"><input type="checkbox"' +
     (checked ? ' checked=""' : '') +
     ' disabled=""' +
     (this.options.xhtml ? ' /' : '') +
     '> ' +
     text +
     '</li>\n'
+  )
 }
 
 Renderer.prototype.paragraph = function (text) {
@@ -136,12 +150,7 @@ Renderer.prototype.paragraph = function (text) {
 Renderer.prototype.table = function (header, body) {
   if (body) body = '<tbody>' + body + '</tbody>'
 
-  return '<table>\n' +
-    '<thead>\n' +
-    header +
-    '</thead>\n' +
-    body +
-    '</table>\n'
+  return '<table>\n' + '<thead>\n' + header + '</thead>\n' + body + '</table>\n'
 }
 
 Renderer.prototype.tablerow = function (content) {
@@ -150,9 +159,7 @@ Renderer.prototype.tablerow = function (content) {
 
 Renderer.prototype.tablecell = function (content, flags) {
   const type = flags.header ? 'th' : 'td'
-  const tag = flags.align
-    ? '<' + type + ' align="' + flags.align + '">'
-    : '<' + type + '>'
+  const tag = flags.align ? '<' + type + ' align="' + flags.align + '">' : '<' + type + '>'
   return tag + content + '</' + type + '>\n'
 }
 
@@ -178,6 +185,7 @@ Renderer.prototype.del = function (text) {
 }
 
 Renderer.prototype.link = function (href, title, text) {
+  console.log('Renderer.prototype.link', href, title, text)
   href = cleanUrl(this.options.sanitize, this.options.baseUrl, href)
   if (href === null) {
     return text
@@ -191,20 +199,13 @@ Renderer.prototype.link = function (href, title, text) {
 }
 
 Renderer.prototype.image = function (href, title, text) {
+  console.log('Renderer.prototype.image', href, title, text)
   if (!href) {
     return text
   }
 
-  // Fix ASCII and UNC paths on Windows (#1997).
-  if (/^(?:[a-zA-Z]:\\|[a-zA-Z]:\/).+/.test(href)) {
-    href = 'file:///' + href.replace(/\\/g, '/')
-  } else if (/^\\\?\\.+/.test(href)) {
-    // NOTE: Only check for "\?\" instead of "\\?\" because URL escaping removes the first "\".
-    href = 'file:///' + href.substring(3).replace(/\\/g, '/')
-  } else if (/^\/.+/.test(href)) {
-    // Be consistent but it's not needed.
-    href = 'file://' + href
-  }
+  const result = getImageInfo(href)
+  href = result.src.replace(/\\/g, '/')
 
   href = cleanUrl(this.options.sanitize, this.options.baseUrl, href)
   if (href === null) {
@@ -220,6 +221,7 @@ Renderer.prototype.image = function (href, title, text) {
 }
 
 Renderer.prototype.text = function (text) {
+  console.log('Renderer.prototype.text', text)
   return text
 }
 

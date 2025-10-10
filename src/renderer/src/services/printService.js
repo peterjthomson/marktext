@@ -8,22 +8,13 @@ class MarkdownPrint {
    * @param {string} html HTML string
    * @param {boolean} [renderStatic] Render for static files like PDF documents
    */
-  renderMarkdown(html, renderStatic = false) {
+  renderMarkdown(html) {
     this.clearup()
     const printContainer = document.createElement('article')
     printContainer.classList.add('print-container')
     this.container = printContainer
     printContainer.innerHTML = html
 
-    // Fix images when rendering for static files like PDF (GH#678).
-    if (renderStatic) {
-      // Traverse through the DOM tree and fix all relative image sources.
-      const images = printContainer.getElementsByTagName('img')
-      for (const image of images) {
-        const rawSrc = image.getAttribute('src')
-        image.src = getImageInfo(rawSrc).src
-      }
-    }
     document.body.appendChild(printContainer)
   }
 
