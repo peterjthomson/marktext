@@ -9,7 +9,7 @@
     "format": "prettier --write .",
     "lint": "eslint --cache .",
     "start": "electron-vite preview",
-    "minify-locales": "node scripts/minify-locales.js",
+    "minify-locales": "node scripts/minify-locales.mjs",
     "rebuild-native": "npx @electron/rebuild -f",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
