@@ -261,7 +261,6 @@ const executeCommand = (commandId) => {
     executeSubcommand(commandId, command.value)
   } else {
     const { execute, subcommands, run } = command
-    console.log(command)
 
     // Allow to load static commands without reloading command palette.
     if (execute === undefined && run === undefined && subcommands) {
