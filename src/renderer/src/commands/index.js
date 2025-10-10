@@ -41,7 +41,7 @@ const commands = [
   {
     id: 'file.new-tab',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::new-untitled-tab', null)
+      bus.emit('mt::new-untitled-tab', { selected: '', markdown: '' })
     }
   },
   {
@@ -65,13 +65,13 @@ const commands = [
   {
     id: 'file.save',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::editor-ask-file-save', null)
+      bus.emit('mt::editor-ask-file-save')
     }
   },
   {
     id: 'file.save-as',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::editor-ask-file-save-as', null)
+      bus.emit('mt::editor-ask-file-save-as')
     }
   },
   {
@@ -84,7 +84,7 @@ const commands = [
   {
     id: 'file.close-tab',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::editor-close-tab', null)
+      bus.emit('mt::editor-close-tab', null)
     }
   },
   {
@@ -103,14 +103,14 @@ const commands = [
   {
     id: 'file.move-file',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::editor-move-file', null)
+      bus.emit('mt::editor-move-file', null)
     }
   },
   {
     id: 'file.rename-file',
     execute: async () => {
       await delay(50)
-      window.electron.ipcRenderer.emit('mt::editor-rename-file', null)
+      bus.emit('mt::editor-rename-file', null)
     }
   },
   {
@@ -208,7 +208,7 @@ const commands = [
     id: 'edit.find-in-folder',
     execute: async () => {
       await delay(150)
-      window.electron.ipcRenderer.emit('mt::editor-edit-action', null, 'findInFolder')
+      bus.emit('mt::editor-edit-action', 'findInFolder')
     }
   },
 
@@ -509,7 +509,7 @@ const commands = [
       }
     ],
     executeSubcommand: async (_, value) => {
-      window.electron.ipcRenderer.emit('mt::window-zoom', null, value)
+      bus.emit('mt::window-zoom', value)
     }
   },
 
@@ -646,13 +646,13 @@ const commands = [
   {
     id: 'tabs.cycleForward',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::tabs-cycle-right', null)
+      bus.emit('mt::tabs-cycle-right')
     }
   },
   {
     id: 'tabs.cycleBackward',
     execute: async () => {
-      window.electron.ipcRenderer.emit('mt::tabs-cycle-left', null)
+      bus.emit('mt::tabs-cycle-left')
     }
   }
 ]

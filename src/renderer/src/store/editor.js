@@ -260,46 +260,60 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
+    FILE_SAVE() {
+      const projectStore = useProjectStore()
+      const { id, filename, pathname, markdown } = this.currentFile
+      const options = getOptionsFromState(this.currentFile)
+      const defaultPath = getRootFolderFromState(projectStore)
+      if (id) {
+        window.electron.ipcRenderer.send(
+          'mt::response-file-save',
+          id,
+          filename,
+          pathname,
+          markdown,
+          deepClone(options),
+          defaultPath
+        )
+      }
+    },
+
     // need pass some data to main process when `save` menu item clicked
     LISTEN_FOR_SAVE() {
-      const projectStore = useProjectStore()
       window.electron.ipcRenderer.on('mt::editor-ask-file-save', () => {
-        const { id, filename, pathname, markdown } = this.currentFile
-        const options = getOptionsFromState(this.currentFile)
-        const defaultPath = getRootFolderFromState(projectStore)
-        if (id) {
-          window.electron.ipcRenderer.send(
-            'mt::response-file-save',
-            id,
-            filename,
-            pathname,
-            markdown,
-            deepClone(options),
-            defaultPath
-          )
-        }
+        this.FILE_SAVE()
       })
+      bus.on('mt::editor-ask-file-save', () => {
+        this.FILE_SAVE()
+      })
+    },
+
+    FILE_SAVE_AS() {
+      const projectStore = useProjectStore()
+      const { id, filename, pathname, markdown } = this.currentFile
+      const options = getOptionsFromState(this.currentFile)
+      const defaultPath = getRootFolderFromState(projectStore)
+
+      if (id) {
+        window.electron.ipcRenderer.send(
+          'mt::response-file-save-as',
+          id,
+          filename,
+          pathname,
+          markdown,
+          deepClone(options),
+          defaultPath
+        )
+      }
     },
 
     // need pass some data to main process when `save as` menu item clicked
     LISTEN_FOR_SAVE_AS() {
-      const projectStore = useProjectStore()
       window.electron.ipcRenderer.on('mt::editor-ask-file-save-as', () => {
-        const { id, filename, pathname, markdown } = this.currentFile
-        const options = getOptionsFromState(this.currentFile)
-        const defaultPath = getRootFolderFromState(projectStore)
-
-        if (id) {
-          window.electron.ipcRenderer.send(
-            'mt::response-file-save-as',
-            id,
-            filename,
-            pathname,
-            markdown,
-            deepClone(options),
-            defaultPath
-          )
-        }
+        this.FILE_SAVE_AS()
+      })
+      bus.on('mt::editor-ask-file-save-as', () => {
+        this.FILE_SAVE_AS()
       })
     },
 
@@ -425,33 +439,43 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    LISTEN_FOR_MOVE_TO() {
+    MOVE_FILE_TO() {
       const projectStore = useProjectStore()
+      const { id, filename, pathname, markdown } = this.currentFile
+      const options = getOptionsFromState(this.currentFile)
+      const defaultPath = getRootFolderFromState(projectStore)
+      if (!id) return
+      if (!pathname) {
+        // if current file is a newly created file, just save it!
+        window.electron.ipcRenderer.send(
+          'mt::response-file-save',
+          id,
+          filename,
+          pathname,
+          markdown,
+          deepClone(options),
+          defaultPath
+        )
+      } else {
+        // if not, move to a new(maybe) folder
+        window.electron.ipcRenderer.send('mt::response-file-move-to', { id, pathname })
+      }
+    },
+
+    LISTEN_FOR_MOVE_TO() {
       window.electron.ipcRenderer.on('mt::editor-move-file', () => {
-        const { id, filename, pathname, markdown } = this.currentFile
-        const options = getOptionsFromState(this.currentFile)
-        const defaultPath = getRootFolderFromState(projectStore)
-        if (!id) return
-        if (!pathname) {
-          // if current file is a newly created file, just save it!
-          window.electron.ipcRenderer.send(
-            'mt::response-file-save',
-            id,
-            filename,
-            pathname,
-            markdown,
-            deepClone(options),
-            defaultPath
-          )
-        } else {
-          // if not, move to a new(maybe) folder
-          window.electron.ipcRenderer.send('mt::response-file-move-to', { id, pathname })
-        }
+        this.MOVE_FILE_TO()
+      })
+      bus.on('mt::editor-move-file', () => {
+        this.MOVE_FILE_TO()
       })
     },
 
     LISTEN_FOR_RENAME() {
       window.electron.ipcRenderer.on('mt::editor-rename-file', () => {
+        this.RESPONSE_FOR_RENAME()
+      })
+      bus.on('mt::editor-rename-file', () => {
         this.RESPONSE_FOR_RENAME()
       })
     },
@@ -600,13 +624,23 @@ export const useEditorStore = defineStore('editor', {
           this.NEW_UNTITLED_TAB({ markdown, selected })
         }
       )
+      bus.on('mt::new-untitled-tab', ({ selected = true, markdown = '' }) => {
+        this.NEW_UNTITLED_TAB({ markdown, selected })
+      })
+    },
+
+    CLOSE_TAB() {
+      const file = this.currentFile
+      if (!hasKeys(file)) return
+      this.CLOSE_TAB(file)
     },
 
     LISTEN_FOR_CLOSE_TAB() {
       window.electron.ipcRenderer.on('mt::editor-close-tab', () => {
-        const file = this.currentFile
-        if (!hasKeys(file)) return
-        this.CLOSE_TAB(file)
+        this.CLOSE_TAB()
+      })
+      bus.on('mt::editor-close-tab', () => {
+        this.CLOSE_TAB()
       })
     },
 
@@ -615,6 +649,12 @@ export const useEditorStore = defineStore('editor', {
         this.CYCLE_TABS(false)
       })
       window.electron.ipcRenderer.on('mt::tabs-cycle-right', () => {
+        this.CYCLE_TABS(true)
+      })
+      bus.on('mt::tabs-cycle-left', () => {
+        this.CYCLE_TABS(false)
+      })
+      bus.on('mt::tabs-cycle-right', () => {
         this.CYCLE_TABS(true)
       })
     },
@@ -1131,20 +1171,27 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
+    SET_LINE_ENDING(lineEnding) {
+      const { lineEnding: oldLineEnding } = this.currentFile
+      if (lineEnding !== oldLineEnding) {
+        this.currentFile.lineEnding = lineEnding
+        this.currentFile.adjustLineEndingOnSave = lineEnding !== 'lf'
+        this.currentFile.isSaved = true
+        this.UPDATE_LINE_ENDING_MENU()
+      }
+    },
+
     LINTEN_FOR_SET_LINE_ENDING() {
       window.electron.ipcRenderer.on('mt::set-line-ending', (_, lineEnding) => {
-        const { lineEnding: oldLineEnding } = this.currentFile
-        if (lineEnding !== oldLineEnding) {
-          this.currentFile.lineEnding = lineEnding
-          this.currentFile.adjustLineEndingOnSave = lineEnding !== 'lf'
-          this.currentFile.isSaved = true
-          this.UPDATE_LINE_ENDING_MENU()
-        }
+        this.SET_LINE_ENDING(lineEnding)
+      })
+      bus.on('mt::set-line-ending', (lineEnding) => {
+        this.SET_LINE_ENDING(lineEnding)
       })
     },
 
     LINTEN_FOR_SET_ENCODING() {
-      window.electron.ipcRenderer.on('mt::set-file-encoding', (_, encodingName) => {
+      bus.on('mt::set-file-encoding', (encodingName) => {
         const { encoding } = this.currentFile.encoding
         if (encoding !== encodingName) {
           this.currentFile.encoding.encoding = encodingName
@@ -1155,7 +1202,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     LINTEN_FOR_SET_FINAL_NEWLINE() {
-      window.electron.ipcRenderer.on('mt::set-final-newline', (_, value) => {
+      bus.on('mt::set-final-newline', (value) => {
         const { trimTrailingNewline } = this.currentFile
         if (trimTrailingNewline !== value) {
           this.currentFile.trimTrailingNewline = value
@@ -1227,15 +1274,22 @@ export const useEditorStore = defineStore('editor', {
       return window.electron.ipcRenderer.sendSync('mt::ask-for-image-path')
     },
 
-    LISTEN_WINDOW_ZOOM() {
+    EDIT_ZOOM(zoomFactor) {
       const preferencesStore = usePreferencesStore()
+      zoomFactor = Number.parseFloat(zoomFactor.toFixed(3))
+      const { zoom } = preferencesStore
+      if (zoom !== zoomFactor) {
+        preferencesStore.SET_SINGLE_PREFERENCE({ type: 'zoom', value: zoomFactor })
+      }
+      window.electron.webFrame.setZoomFactor(zoomFactor)
+    },
+
+    LISTEN_WINDOW_ZOOM() {
       window.electron.ipcRenderer.on('mt::window-zoom', (_, zoomFactor) => {
-        zoomFactor = Number.parseFloat(zoomFactor.toFixed(3))
-        const { zoom } = preferencesStore
-        if (zoom !== zoomFactor) {
-          preferencesStore.SET_SINGLE_PREFERENCE({ type: 'zoom', value: zoomFactor })
-        }
-        window.electron.webFrame.setZoomFactor(zoomFactor)
+        this.EDIT_ZOOM(zoomFactor)
+      })
+      bus.on('mt::window-zoom', (zoomFactor) => {
+        this.EDIT_ZOOM(zoomFactor)
       })
     },
 

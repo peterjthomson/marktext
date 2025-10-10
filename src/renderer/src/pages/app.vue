@@ -110,7 +110,7 @@ watch(customCss, (value, oldValue) => {
 })
 
 watch(zoom, (zoomValue) => {
-  window.electron.ipcRenderer.emit('mt::window-zoom', null, zoomValue)
+  bus.emit('mt::window-zoom', zoomValue)
 })
 
 const setupDragDropHandler = () => {

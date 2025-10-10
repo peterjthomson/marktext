@@ -61,7 +61,7 @@ class FileEncodingCommand {
   executeSubcommand = async (id) => {
     // NOTE: We support UTF-BOM encodings but don't allow to set them.
     if (!id.endsWith('-bom')) {
-      window.electron.ipcRenderer.emit('mt::set-file-encoding', null, id)
+      bus.emit('mt::set-file-encoding', id)
     }
   }
 

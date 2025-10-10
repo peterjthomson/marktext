@@ -50,7 +50,7 @@ class LineEndingCommand {
   }
 
   executeSubcommand = async (_, value) => {
-    window.electron.ipcRenderer.emit('mt::set-line-ending', null, value)
+    bus.emit('mt::set-line-ending', value)
   }
 
   unload = () => {}

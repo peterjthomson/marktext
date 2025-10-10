@@ -52,7 +52,7 @@ class TrailingNewlineCommand {
   }
 
   executeSubcommand = async (_, value) => {
-    window.electron.ipcRenderer.emit('mt::set-final-newline', null, value)
+    bus.emit('mt::set-final-newline', value)
   }
 
   unload = () => {}
