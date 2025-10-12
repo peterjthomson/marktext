@@ -952,9 +952,9 @@ span.ag-warn.ag-emoji-marked-text {
   background: transparent;
 }
 
-.ag-inline-image a.ag-image-icon-success,
-.ag-inline-image a.ag-image-icon-fail,
-.ag-inline-image a.ag-image-icon-close {
+.ag-inline-image span.ag-image-icon-success,
+.ag-inline-image span.ag-image-icon-fail,
+.ag-inline-image span.ag-image-icon-close {
   display: none;
   width: 20px;
   height: 20px;
@@ -962,8 +962,8 @@ span.ag-warn.ag-emoji-marked-text {
   top: 15px;
 }
 
-.ag-inline-image a.ag-image-icon-success,
-.ag-inline-image a.ag-image-icon-fail {
+.ag-inline-image span.ag-image-icon-success,
+.ag-inline-image span.ag-image-icon-fail {
   left: 15px;
 }
 
@@ -1024,17 +1024,17 @@ span.ag-warn.ag-emoji-marked-text {
   content: var(--i18n-load-image-failed, 'Load image failed');
 }
 
-.ag-inline-image.ag-image-loading a.ag-image-icon-success,
-.ag-inline-image.ag-empty-image a.ag-image-icon-success {
+.ag-inline-image.ag-image-loading span.ag-image-icon-success,
+.ag-inline-image.ag-empty-image span.ag-image-icon-success {
   display: block;
 }
 
-.ag-inline-image.ag-image-fail a.ag-image-icon-fail {
+.ag-inline-image.ag-image-fail span.ag-image-icon-fail {
   display: block;
 }
 
-.ag-inline-image.ag-empty-image:hover a.ag-image-icon-close,
-.ag-inline-image.ag-image-fail:hover a.ag-image-icon-close {
+.ag-inline-image.ag-empty-image:hover span.ag-image-icon-close,
+.ag-inline-image.ag-image-fail:hover span.ag-image-icon-close {
   opacity: 0.5;
   display: block;
   align-items: center;

@@ -5,7 +5,7 @@ import ImageFailIcon from '../../../assets/pngicon/image_fail/2.png'
 import DeleteIcon from '../../../assets/pngicon/delete/2.png'
 
 const renderIcon = (h, className, icon) => {
-  const selector = `a.${className}`
+  const selector = `span.${className}`
   const iconVnode = h(
     'i.icon',
     h(
