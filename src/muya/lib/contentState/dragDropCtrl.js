@@ -1,12 +1,17 @@
 import { findNearestParagraph, findOutMostParagraph } from '../selection/dom'
-import { verticalPositionInRect, getUniqueId, getImageInfo as getImageSrc, checkImageContentType } from '../utils'
+import {
+  verticalPositionInRect,
+  getUniqueId,
+  getImageInfo as getImageSrc,
+  checkImageContentType
+} from '../utils'
 import { getImageInfo } from '../utils/getImageInfo'
 import { URL_REG, IMAGE_EXT_REG } from '../config'
 
 const GHOST_ID = 'mu-dragover-ghost'
 const GHOST_HEIGHT = 3
 
-const dragDropCtrl = ContentState => {
+const dragDropCtrl = (ContentState) => {
   ContentState.prototype.hideGhost = function () {
     this.dropAnchor = null
     const ghost = document.querySelector(`#${GHOST_ID}`)
@@ -66,9 +71,9 @@ const dragDropCtrl = ContentState => {
 
     if (event.dataTransfer.types.includes('text/uri-list')) {
       const items = Array.from(event.dataTransfer.items)
-      const hasUriItem = items.some(i => i.type === 'text/uri-list')
-      const hasTextItem = items.some(i => i.type === 'text/plain')
-      const hasHtmlItem = items.some(i => i.type === 'text/html')
+      const hasUriItem = items.some((i) => i.type === 'text/uri-list')
+      const hasTextItem = items.some((i) => i.type === 'text/plain')
+      const hasHtmlItem = items.some((i) => i.type === 'text/html')
       if (hasUriItem && hasHtmlItem && !hasTextItem) {
         this.createGhost(event)
         event.dataTransfer.dropEffect = 'copy'
@@ -76,7 +81,10 @@ const dragDropCtrl = ContentState => {
     }
 
     if (event.dataTransfer.types.indexOf('Files') >= 0) {
-      if (event.dataTransfer.items.length === 1 && event.dataTransfer.items[0].type.indexOf('image') > -1) {
+      if (
+        event.dataTransfer.items.length === 1 &&
+        event.dataTransfer.items[0].type.indexOf('image') > -1
+      ) {
         event.preventDefault()
         this.createGhost(event)
         event.dataTransfer.dropEffect = 'copy'
@@ -99,7 +107,7 @@ const dragDropCtrl = ContentState => {
     if (event.dataTransfer.items.length) {
       for (const item of event.dataTransfer.items) {
         if (item.kind === 'string' && item.type === 'text/uri-list') {
-          item.getAsString(async str => {
+          item.getAsString(async (str) => {
             if (URL_REG.test(str) && dropAnchor) {
               let isImage = false
               if (IMAGE_EXT_REG.test(str)) {
@@ -137,9 +145,10 @@ const dragDropCtrl = ContentState => {
       for (const file of event.dataTransfer.files) {
         fileList.push(file)
       }
-      const image = fileList.find(file => /image/.test(file.type))
+      const image = fileList.find((file) => /image/.test(file.type))
       if (image && dropAnchor) {
-        const { name, path } = image
+        const { name } = image
+        const path = window.electron.webUtils.getPathForFile(image)
         const id = `loading-${getUniqueId()}`
         const text = `![${id}](${path})`
         const imageBlock = this.createBlockP(text)
