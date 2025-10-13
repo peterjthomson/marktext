@@ -26,6 +26,9 @@ export default function loadImageAsync(imageInfo, attrs, className, imageClass) 
   let h
   let domsrc
 
+  src = src.replace(/ /g, '%20')
+  // Necessary to ensure that marked actually parses these as images when exporting to HTML for printing (Else, it parses ![]() as text and does not render an image)
+
   let reload = false
   if (this.loadImageMap.has(src)) {
     const imageInfo = this.loadImageMap.get(src)
