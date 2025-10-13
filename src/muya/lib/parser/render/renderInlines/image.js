@@ -48,6 +48,7 @@ export default function image(h, cursor, block, token, outerClass) {
   const title = token.attrs.title
   const width = token.attrs.width
   const height = token.attrs.height
+  src = src.replace(/ /g, '%20')
 
   if (src) {
     ;({ id, isSuccess, domsrc } = this.loadImageAsync(imageInfo, token.attrs))
