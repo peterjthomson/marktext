@@ -45,6 +45,7 @@ const copyCutCtrl = (ContentState) => {
     }
     this.checkInlineUpdate(startBlock)
     this.partialRender()
+    this.muya.dispatchChange()
   }
 
   ContentState.prototype.getClipBoardData = function () {

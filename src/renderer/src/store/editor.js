@@ -984,7 +984,16 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // Content change from realtime preview editor and source code editor
-    LISTEN_FOR_CONTENT_CHANGE({ id, markdown, wordCount, cursor, muyaIndexCursor, history, toc }) {
+    LISTEN_FOR_CONTENT_CHANGE({
+      id,
+      markdown,
+      wordCount,
+      cursor,
+      muyaIndexCursor,
+      history,
+      toc,
+      blocks
+    }) {
       const preferencesStore = usePreferencesStore()
       const { autoSave } = preferencesStore
       const {
@@ -1022,6 +1031,7 @@ export const useEditorStore = defineStore('editor', {
       if (cursor) this.currentFile.cursor = cursor
       if (muyaIndexCursor) this.currentFile.muyaIndexCursor = muyaIndexCursor
       if (history) this.currentFile.history = history
+      if (blocks) this.currentFile.blocks = blocks
       if (toc && !equal(toc, this.listToc)) {
         this.listToc = toc
         this.toc = listToTree(toc)

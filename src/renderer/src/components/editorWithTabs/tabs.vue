@@ -53,8 +53,6 @@ let drake = null
 // Methods incorporated from tabsMixins
 const selectFile = (file) => {
   if (file.id !== currentFile.value.id) {
-    // Save blocks state before changing tabs
-    currentFile.value.blocks = window.muyaEditor.contentState.getBlocks()
     editorStore.UPDATE_CURRENT_FILE(file)
   }
 }

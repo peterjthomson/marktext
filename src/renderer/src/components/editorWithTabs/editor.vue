@@ -1018,9 +1018,7 @@ onMounted(() => {
     })
   }
 
-  const muyaEditor = new Muya(ele, options)
-  window.muyaEditor = muyaEditor
-  editor.value = muyaEditor
+  editor.value = new Muya(ele, options)
 
   const { container } = editor.value
 
@@ -1075,7 +1073,9 @@ onMounted(() => {
 
   editor.value.on('change', (changes) => {
     // WORKAROUND: "id: 'muya',
-    editorStore.LISTEN_FOR_CONTENT_CHANGE(Object.assign(changes, { id: 'muya' }))
+    editorStore.LISTEN_FOR_CONTENT_CHANGE(
+      Object.assign(changes, { id: 'muya', blocks: editor.value.contentState.getBlocks() })
+    )
   })
 
   editor.value.on('scroll', (scroll) => {
