@@ -240,6 +240,21 @@ class App {
         const newIsDark = /dark/i.test(change.theme)
         isDarkMode = newIsDark
       }
+
+      // When followSystemTheme is enabled, immediately switch to match system
+      if (change.followSystemTheme === true) {
+        const systemIsDark = nativeTheme.shouldUseDarkColors
+        const currentTheme = preferences.getItem('theme')
+        const currentIsDark = /dark/i.test(currentTheme)
+
+        if (systemIsDark !== currentIsDark) {
+          const newTheme = systemIsDark ? 'dark' : 'light'
+          log.info(`followSystemTheme enabled, switching to match system: ${newTheme}`)
+          selectTheme(newTheme)
+          preferences.setItem('theme', newTheme)
+          isDarkMode = systemIsDark
+        }
+      }
     })
 
     // Listen for system theme changes and auto-switch if enabled
@@ -284,10 +299,37 @@ class App {
       ])
     }
 
-    if (_openFilesCache.length) {
-      this._openFilesToOpen()
+    // If followSystemTheme=true, wait for nativeTheme to settle before creating windows.
+    // On some systems (especially Linux), shouldUseDarkColors may not immediately
+    // reflect the OS theme when themeSource is first set to 'system'.
+    // Waiting for the 'updated' event ensures windows are created with the
+    // correct background color, preventing a white flash on startup.
+    if (followSystemTheme) {
+      let windowCreated = false
+
+      const createWindow = () => {
+        if (windowCreated) return
+        windowCreated = true
+
+        if (_openFilesCache.length) {
+          this._openFilesToOpen()
+        } else {
+          this._createEditorWindow()
+        }
+      }
+
+      // Wait for 'updated' event (fires if theme changes)
+      nativeTheme.once('updated', createWindow)
+
+      // Fallback timeout in case 'updated' never fires (no theme change)
+      setTimeout(createWindow, 150)
     } else {
-      this._createEditorWindow()
+      // Not following system theme - create windows immediately
+      if (_openFilesCache.length) {
+        this._openFilesToOpen()
+      } else {
+        this._createEditorWindow()
+      }
     }
 
     // this.shortcutCapture = new ShortcutCapture()
