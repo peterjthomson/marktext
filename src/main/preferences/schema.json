@@ -320,14 +320,20 @@
     "type": "string",
     "default": "light"
   },
-  "autoSwitchTheme": {
-    "description": "Theme--Automatically adjust application theme according system.",
-    "default": 2,
-    "enum": [
-      0,
-      1,
-      2
-    ]
+  "followSystemTheme": {
+    "description": "Theme--Use separate theme in dark mode.",
+    "type": "boolean",
+    "default": false
+  },
+  "lightModeTheme": {
+    "description": "Theme--Theme to use when system is in light mode.",
+    "type": "string",
+    "default": "light"
+  },
+  "darkModeTheme": {
+    "description": "Theme--Theme to use when system is in dark mode.",
+    "type": "string",
+    "default": "dark"
   },
   "customCss": {
     "description": "Custom CSS--Custom CSS to apply to the current theme.",

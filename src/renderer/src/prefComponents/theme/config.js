@@ -21,16 +21,5 @@ export const themes = [
   }
 ]
 
-export const getAutoSwitchThemeOptions = () => [
-  {
-    label: t('preferences.theme.autoSwitchOptions.startup'),
-    value: 0
-  },
-  /* {
-  label: 'Only at runtime',
-  value: 1
-}, */ {
-    label: t('preferences.theme.autoSwitchOptions.never'),
-    value: 2
-  }
-]
+// getAutoSwitchThemeOptions removed - no longer needed
+// We now use a boolean toggle for followSystemTheme instead of a dropdown

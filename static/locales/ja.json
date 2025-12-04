@@ -423,7 +423,9 @@
         "isGitlabCompatibilityEnabled": "GitLab互換モードを有効にする",
         "sequenceTheme": "シーケンス図のテーマ",
         "theme": "MarkTextで使用するテーマを選択",
-        "autoSwitchTheme": "システムに応じてアプリケーションテーマを自動調整",
+        "followSystemTheme": "システムのテーマに従う",
+        "lightModeTheme": "システムがライトモードの時に使用するテーマ",
+        "darkModeTheme": "システムがダークモードの時に使用するテーマ",
         "customCss": "現在のテーマに適用するカスタムCSS",
         "spellcheckerEnabled": "スペルチェックが有効かどうか",
         "spellcheckerNoUnderline": "スペルミスに下線を引かない",
@@ -797,27 +799,15 @@
     "theme": {
       "title": "テーマ",
       "theme": "テーマ",
-      "autoSwitchTheme": {
-        "title": "自動テーマ切り替え",
-        "description": "システムに従ってテーマを自動切り替え",
-        "followSystem": "システムに従う",
-        "light": "ライト",
-        "dark": "ダーク"
-      },
-      "realTime": {
-        "title": "リアルタイム",
-        "description": "リアルタイムテーマ切り替え"
-      },
+      "followSystemTheme": "システムのテーマに従う",
+      "modeThemes": "テーマの選択",
+      "lightModeTheme": "ライトモードのテーマ",
+      "darkModeTheme": "ダークモードのテーマ",
+      "customCss": "カスタムCSS",
       "codeBlockTheme": {
         "title": "コードブロックテーマ",
         "description": "コードブロックのテーマ"
       },
-      "customCss": "カスタムCSS",
-      "autoSwitchOptions": {
-        "startup": "起動時",
-        "never": "なし"
-      },
-      "autoSwitch": "自動テーマ切り替え",
       "importCustomThemes": "カスタムテーマをインポート",
       "importTheme": "テーマをインポート",
       "openFolder": "フォルダを開く",

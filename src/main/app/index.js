@@ -36,6 +36,8 @@ class App {
     // Initialize main process language
     this._initializeLanguage()
     this._listenForIpcMain()
+    // Initialize theme listener
+    this._themeListenerRegistered = false
   }
 
   /**
@@ -209,7 +211,7 @@ class App {
       }
     }
 
-    const { startUpAction, defaultDirectoryToOpen, autoSwitchTheme, theme } = preferences.getAll()
+    const { startUpAction, defaultDirectoryToOpen, followSystemTheme, lightModeTheme, darkModeTheme, theme } = preferences.getAll()
 
     if (startUpAction === 'folder' && defaultDirectoryToOpen) {
       const info = normalizeMarkdownPath(defaultDirectoryToOpen)
@@ -218,29 +220,79 @@ class App {
       }
     }
 
-    // Set initial native theme for theme in preferences.
+    // Configure native theme to follow system preferences
+    // Setting themeSource to 'system' allows Electron to track system theme changes
+    nativeTheme.themeSource = 'system'
+
+    // Apply theme at startup if "Follow system theme" is enabled
     const isDarkTheme = /dark/i.test(theme)
-    if (autoSwitchTheme === 0 && isDarkTheme !== nativeTheme.shouldUseDarkColors) {
-      selectTheme(nativeTheme.shouldUseDarkColors ? 'dark' : 'light')
-      nativeTheme.themeSource = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
-    } else {
-      nativeTheme.themeSource = isDarkTheme ? 'dark' : 'light'
+    const systemIsDark = nativeTheme.shouldUseDarkColors
+
+    if (followSystemTheme && isDarkTheme !== systemIsDark) {
+      const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
+      log.info(`Following system theme at startup: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+      selectTheme(newTheme)
     }
 
-    let isDarkMode = nativeTheme.shouldUseDarkColors
     ipcMain.on('broadcast-preferences-changed', (change) => {
-      // Set Chromium's color for native elements after theme change.
+      // Update dark mode tracking when theme preference changes
       if (change.theme) {
-        const isDarkTheme = /dark/i.test(change.theme)
-        if (isDarkMode !== isDarkTheme) {
-          isDarkMode = isDarkTheme
-          nativeTheme.themeSource = isDarkTheme ? 'dark' : 'light'
-        } else if (nativeTheme.themeSource === 'system') {
-          // Need to set dark or light theme because we set `system` to get the current system theme.
-          nativeTheme.themeSource = isDarkMode ? 'dark' : 'light'
+        const newIsDark = /dark/i.test(change.theme)
+      }
+
+      // When followSystemTheme is enabled, immediately switch to match system
+      if (change.followSystemTheme === true) {
+        const systemIsDark = nativeTheme.shouldUseDarkColors
+        const { lightModeTheme, darkModeTheme } = preferences.getAll()
+        const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
+
+        log.info(`followSystemTheme enabled, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+        selectTheme(newTheme)
+        preferences.setItem('theme', newTheme)
+      }
+      // When light/dark mode theme preferences change, apply immediately if following system
+      if (preferences.getItem('followSystemTheme') && (change.lightModeTheme || change.darkModeTheme)) {
+        const systemIsDark = nativeTheme.shouldUseDarkColors
+
+        // Get current values, but prefer the NEW values from the change event
+        let { lightModeTheme, darkModeTheme } = preferences.getAll()
+
+        // If these preferences were just changed, use the new values from the change object
+        if (change.lightModeTheme !== undefined) {
+          lightModeTheme = change.lightModeTheme
         }
+        if (change.darkModeTheme !== undefined) {
+          darkModeTheme = change.darkModeTheme
+        }
+
+        const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
+
+        log.info(`Theme preference changed, applying: ${newTheme}`)
+        selectTheme(newTheme)
+        preferences.setItem('theme', newTheme)
       }
     })
+
+    // Listen for system theme changes and auto-switch if enabled
+    if (!this._themeListenerRegistered) {
+      nativeTheme.on('updated', () => {
+        const { followSystemTheme, lightModeTheme, darkModeTheme } = preferences.getAll()
+
+        if (followSystemTheme) {
+          const systemIsDark = nativeTheme.shouldUseDarkColors
+          const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
+          const currentTheme = preferences.getItem('theme')
+
+          // Only switch if the theme actually needs to change
+          if (newTheme !== currentTheme) {
+            log.info(`System theme changed, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+            selectTheme(newTheme)
+            preferences.setItem('theme', newTheme)
+          }
+        }
+      })
+      this._themeListenerRegistered = true
+    }
 
     if (isOsx) {
       app.dock.setMenu(dockMenu)
@@ -266,10 +318,30 @@ class App {
       ])
     }
 
-    if (_openFilesCache.length) {
-      this._openFilesToOpen()
+    const createWindow = () => {
+      if (_openFilesCache.length) {
+        this._openFilesToOpen()
+      } else {
+        this._createEditorWindow()
+      }
+    }
+
+    if (isLinux) {
+      let windowCreated = false
+
+      const createWindowOnce = () => {
+        if (windowCreated) return
+        windowCreated = true
+        createWindow()
+      }
+
+      // Wait for theme to settle (Linux-specific issue?)
+      nativeTheme.once('updated', createWindowOnce)
+      // Fallback timeout in case 'updated' never fires (no theme change)
+      setTimeout(createWindowOnce, 150)
     } else {
-      this._createEditorWindow()
+      // Create immediately on Windows/macOS
+      createWindow()
     }
 
     // this.shortcutCapture = new ShortcutCapture()

@@ -422,7 +422,9 @@
         "isGitlabCompatibilityEnabled": "GitLab-Kompatibilitätsmodus aktivieren",
         "sequenceTheme": "Sequenzdiagramm-Theme",
         "theme": "Das in MarkText verwendete Theme auswählen",
-        "autoSwitchTheme": "Anwendungs-Theme automatisch an das System anpassen",
+        "followSystemTheme": "Systemdesign folgen",
+        "lightModeTheme": "Design, das verwendet werden soll, wenn sich das System im hellen Modus befindet",
+        "darkModeTheme": "Design, das verwendet werden soll, wenn sich das System im dunklen Modus befindet",
         "customCss": "Benutzerdefiniertes CSS für das aktuelle Theme",
         "spellcheckerEnabled": "Ob Rechtschreibprüfung aktiviert ist",
         "spellcheckerNoUnderline": "Rechtschreibfehler nicht unterstreichen",
@@ -795,27 +797,15 @@
     "theme": {
       "title": "Design",
       "theme": "Design",
-      "autoSwitchTheme": {
-        "title": "Automatischer Design-Wechsel",
-        "description": "Design automatisch entsprechend dem System wechseln",
-        "followSystem": "System folgen",
-        "light": "Hell",
-        "dark": "Dunkel"
-      },
-      "realTime": {
-        "title": "Echtzeit",
-        "description": "Design-Wechsel in Echtzeit"
-      },
+      "followSystemTheme": "Systemdesign folgen",
+      "modeThemes": "Design-Auswahl",
+      "lightModeTheme": "Helles Modus-Design",
+      "darkModeTheme": "Dunkles Modus-Design",
+      "customCss": "Benutzerdefiniertes CSS",
       "codeBlockTheme": {
         "title": "Code-Block-Design",
         "description": "Design für Code-Blöcke"
       },
-      "customCss": "Benutzerdefiniertes CSS",
-      "autoSwitchOptions": {
-        "startup": "Beim Start",
-        "never": "Niemals"
-      },
-      "autoSwitch": "Automatischer Design-Wechsel",
       "importCustomThemes": "Benutzerdefinierte Designs importieren",
       "importTheme": "Design importieren",
       "openFolder": "Ordner öffnen",

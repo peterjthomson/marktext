@@ -423,7 +423,9 @@
         "isGitlabCompatibilityEnabled": "GitLab 호환 모드 활성화",
         "sequenceTheme": "시퀀스 다이어그램 테마",
         "theme": "MarkText에서 사용할 테마 선택",
-        "autoSwitchTheme": "시스템에 따라 애플리케이션 테마 자동 조정",
+        "followSystemTheme": "시스템 테마 따르기",
+        "lightModeTheme": "시스템이 라이트 모드일 때 사용할 테마",
+        "darkModeTheme": "시스템이 다크 모드일 때 사용할 테마",
         "customCss": "현재 테마에 적용할 사용자 정의 CSS",
         "spellcheckerEnabled": "맞춤법 검사가 활성화되어 있는지 여부",
         "spellcheckerNoUnderline": "맞춤법 오류에 밑줄을 그지 않음",
@@ -797,27 +799,15 @@
     "theme": {
       "title": "테마",
       "theme": "테마",
-      "autoSwitchTheme": {
-        "title": "테마 자동 전환",
-        "description": "시스템에 따라 테마 자동 전환",
-        "followSystem": "시스템 따르기",
-        "light": "밝게",
-        "dark": "어둡게"
-      },
-      "realTime": {
-        "title": "실시간",
-        "description": "실시간 테마 전환"
-      },
+      "followSystemTheme": "시스템 테마 따르기",
+      "modeThemes": "테마 선택",
+      "lightModeTheme": "라이트 모드 테마",
+      "darkModeTheme": "다크 모드 테마",
+      "customCss": "사용자 정의 CSS",
       "codeBlockTheme": {
         "title": "코드 블록 테마",
         "description": "코드 블록용 테마"
       },
-      "customCss": "사용자 정의 CSS",
-      "autoSwitchOptions": {
-        "startup": "시작 시",
-        "never": "안 함"
-      },
-      "autoSwitch": "테마 자동 전환",
       "importCustomThemes": "사용자 정의 테마 가져오기",
       "importTheme": "테마 가져오기",
       "openFolder": "폴더 열기",

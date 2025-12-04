@@ -423,7 +423,9 @@
         "isGitlabCompatibilityEnabled": "Habilitar modo de compatibilidade GitLab",
         "sequenceTheme": "Tema do diagrama de sequência",
         "theme": "Selecionar o tema usado no MarkText",
-        "autoSwitchTheme": "Ajustar automaticamente o tema da aplicação de acordo com o sistema",
+        "followSystemTheme": "Seguir tema do sistema",
+        "lightModeTheme": "Tema a ser usado quando o sistema está no modo claro",
+        "darkModeTheme": "Tema a ser usado quando o sistema está no modo escuro",
         "customCss": "CSS personalizado para aplicar ao tema atual",
         "spellcheckerEnabled": "Se a verificação ortográfica está habilitada",
         "spellcheckerNoUnderline": "Não sublinhar erros ortográficos",
@@ -797,27 +799,15 @@
     "theme": {
       "title": "Tema",
       "theme": "Tema",
-      "autoSwitchTheme": {
-        "title": "Alternar tema automaticamente",
-        "description": "Alternar tema automaticamente baseado no sistema",
-        "followSystem": "Seguir sistema",
-        "light": "Claro",
-        "dark": "Escuro"
-      },
-      "realTime": {
-        "title": "Tempo real",
-        "description": "Alternância de tema em tempo real"
-      },
+      "followSystemTheme": "Seguir tema do sistema",
+      "modeThemes": "Seleção de Tema",
+      "lightModeTheme": "Tema do modo claro",
+      "darkModeTheme": "Tema do modo escuro",
+      "customCss": "CSS Personalizado",
       "codeBlockTheme": {
         "title": "Tema do bloco de código",
         "description": "Tema para blocos de código"
       },
-      "customCss": "CSS Personalizado",
-      "autoSwitchOptions": {
-        "startup": "Na inicialização",
-        "never": "Nunca"
-      },
-      "autoSwitch": "Alternar tema automaticamente",
       "importCustomThemes": "Importar temas personalizados",
       "importTheme": "Importar Tema",
       "openFolder": "Abrir Pasta",
