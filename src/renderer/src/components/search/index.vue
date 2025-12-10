@@ -136,7 +136,7 @@ const searchMatches = computed(() => currentFile.value?.searchMatches)
 watch(searchMatches, (newValue, oldValue) => {
   if (!newValue || !oldValue) return
   const { value } = newValue
-  if (value && value !== oldValue.value) {
+  if (value !== oldValue.value) {
     searchValue.value = value
   }
 })

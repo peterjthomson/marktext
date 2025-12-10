@@ -235,7 +235,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     SEARCH(value) {
-      this.currentFile.searchMatches = value
+      this.currentFile.searchMatches = JSON.parse(JSON.stringify(value)) // deep clone to trigger state changes
     },
 
     SHOW_IMAGE_DELETION_URL(deletionUrl) {
