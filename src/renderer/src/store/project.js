@@ -59,7 +59,6 @@ export const useProjectStore = defineStore('project', {
     },
 
     LISTEN_FOR_UPDATE_PROJECT() {
-      const editorStore = useEditorStore()
       window.electron.ipcRenderer.on('mt::update-object-tree', (e, { type, change }) => {
         // Buffer events if projectTree is not initialized yet
         if (!this.projectTree) {
