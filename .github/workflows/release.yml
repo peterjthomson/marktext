@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Electron seems to require C++20 support for native modules now
+      # Electron seems to require C++20 support for native modules now after Electron 33
       - name: Set C++20 for MacOS
         if: matrix.os == 'macos-latest'
         run: |
@@ -50,9 +50,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Enforce using gcc/g++ on Linux for electron-rebuild instead of clang (.npmrc covers some settings too)
       - name: Rebuild native modules for Electron (Ubuntu)
         if: matrix.os == 'ubuntu-22.04'
-        run: USE_ELECTRON_CLANG=0 npm_config_clang=0 npx @electron/rebuild -f
+        run: USE_ELECTRON_CLANG=0 npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
