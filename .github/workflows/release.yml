@@ -52,7 +52,7 @@ jobs:
 
       - name: Rebuild native modules for Electron (Ubuntu)
         if: matrix.os == 'ubuntu-22.04'
-        run: CC=gcc-13 CXX=g++-13 CXXFLAGS='-std=gnu++20' USE_ELECTRON_CLANG=0 npm_config_clang=0 npx @electron/rebuild -f
+        run: USE_ELECTRON_CLANG=0 npm_config_clang=0 npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
