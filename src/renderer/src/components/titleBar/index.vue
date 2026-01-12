@@ -42,27 +42,27 @@
             class="save-dot"
             :class="{ show: !isSaved }"
           />
-          <span
-            class="save-spinner"
-            :class="{ show: isSaving }"
+        </span>
+        <span
+          class="save-spinner"
+          :class="{ show: isSaving }"
+        >
+          <svg
+            class="spinner-icon"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <svg
-              class="spinner-icon"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="2"
-                fill="none"
-                stroke-linecap="round"
-                stroke-dasharray="31.4 31.4"
-              />
-            </svg>
-          </span>
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-dasharray="31.4 31.4"
+            />
+          </svg>
         </span>
       </div>
       <div :class="showCustomTitleBar ? 'left-toolbar title-no-drag' : 'right-toolbar'">
@@ -345,6 +345,7 @@ img {
   vertical-align: top;
 }
 .title {
+  position: relative;
   padding: 0 142px;
   height: 100%;
   line-height: var(--titleBarHeight);
@@ -392,18 +393,22 @@ div.title > span {
 }
 
 .save-spinner {
-  margin-left: 8px;
-  width: 14px;
-  height: 14px;
+  position: absolute;
+  right: 140px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
   display: none;
-  vertical-align: middle;
 }
 .save-spinner.show {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .save-spinner .spinner-icon {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   color: var(--themeColor, #409eff);
   opacity: 0.7;
   animation: spin 0.7s linear infinite;
