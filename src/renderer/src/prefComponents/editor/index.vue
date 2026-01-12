@@ -155,6 +155,15 @@
           :bool="hideQuickInsertHint"
           :on-change="(value) => onSelectChange('hideQuickInsertHint', value)"
         ></bool>
+        <range
+          :description="t('preferences.editor.misc.metaTransparency')"
+          :value="metaTransparency"
+          :min="0"
+          :max="100"
+          unit="%"
+          :step="5"
+          :on-change="(value) => onSelectChange('metaTransparency', value)"
+        ></range>
         <bool
           :description="t('preferences.editor.misc.hideLinkPopup')"
           :bool="hideLinkPopup"
@@ -214,6 +223,7 @@ const {
   codeBlockLineNumbers,
   trimUnnecessaryCodeBlockEmptyLines,
   hideQuickInsertHint,
+  metaTransparency,
   hideLinkPopup,
   autoCheck,
   wrapCodeBlocks,

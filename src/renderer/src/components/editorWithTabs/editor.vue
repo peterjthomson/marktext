@@ -93,7 +93,7 @@ import { isOsx, animatedScrollTo } from '@/util'
 import { moveImageToFolder, moveToRelativeFolder, uploadImage } from '@/util/fileSystem'
 import { guessClipboardFilePath } from '@/util/clipboard'
 import { getCssForOptions, getHtmlToc } from '@/util/pdf'
-import { addCommonStyle, setEditorWidth, setWrapCodeBlocks } from '@/util/theme'
+import { addCommonStyle, setEditorWidth, setWrapCodeBlocks, setMetaTransparency } from '@/util/theme'
 import { usePreferencesStore } from '@/store/preferences'
 import { useEditorStore } from '@/store/editor'
 import { useProjectStore } from '@/store/project'
@@ -149,6 +149,7 @@ const {
   trimUnnecessaryCodeBlockEmptyLines,
   editorFontFamily,
   hideQuickInsertHint,
+  metaTransparency,
   hideLinkPopup,
   autoCheck,
   editorLineWidth,
@@ -306,6 +307,12 @@ watch(isGitlabCompatibilityEnabled, (value, oldValue) => {
 watch(hideQuickInsertHint, (value, oldValue) => {
   if (value !== oldValue && editor.value) {
     editor.value.setOptions({ hideQuickInsertHint: value })
+  }
+})
+
+watch(metaTransparency, (value, oldValue) => {
+  if (value !== oldValue) {
+    setMetaTransparency(value)
   }
 })
 
@@ -1158,6 +1165,7 @@ onMounted(() => {
 
   setWrapCodeBlocks(wrapCodeBlocks.value)
   setEditorWidth(editorLineWidth.value)
+  setMetaTransparency(metaTransparency.value)
 })
 
 onBeforeUnmount(() => {

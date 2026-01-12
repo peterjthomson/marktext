@@ -150,6 +150,39 @@ export const setEditorWidth = (value) => {
   styleEle.innerHTML = result
 }
 
+export const setMetaTransparency = (value) => {
+  const META_TRANSPARENCY_STYLE_ID = 'meta-transparency'
+  let result = ''
+
+  // value is 0-100, where 0 = completely hidden, 100 = fully visible
+  if (value > 0) {
+    const opacity = value / 100
+    // Override the .ag-hide class to show meta symbols with the specified opacity
+    // The default .ag-hide uses width:0, height:0, overflow:hidden to hide
+    // We need to make them visible again with the specified opacity
+    result = `
+.ag-hide:not(.ag-math):not(.ag-ruby),
+.ag-hide:not(.ag-math):not(.ag-ruby) .ag-highlight,
+.ag-hide:not(.ag-math):not(.ag-ruby) .ag-selection {
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  opacity: ${opacity};
+  color: var(--editorColor50);
+}
+`
+  }
+
+  let styleEle = document.querySelector(`#${META_TRANSPARENCY_STYLE_ID}`)
+  if (!styleEle) {
+    styleEle = document.createElement('style')
+    styleEle.setAttribute('id', META_TRANSPARENCY_STYLE_ID)
+    document.head.appendChild(styleEle)
+  }
+
+  styleEle.innerHTML = result
+}
+
 export const addCommonStyle = (options) => {
   const { codeFontFamily, codeFontSize, hideScrollbar } = options
   let sheet = document.querySelector(`#${COMMON_STYLE_ID}`)

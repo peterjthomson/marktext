@@ -413,6 +413,7 @@
         "trimTrailingNewline": "The trim trailing newline option",
         "textDirection": "The writing text direction",
         "hideQuickInsertHint": "Hide hint for quickly creating paragraphs",
+        "metaTransparency": "Controls visibility of formatting symbols like #, *, ** when editing",
         "hideLinkPopup": "Hide link popup when the cursor is hover on the link",
         "autoCheck": "Whether to automatically check related task",
         "preferLooseListItem": "The preferred list type",
@@ -564,6 +565,8 @@
           "rtl": "Right to Left"
         },
         "hideQuickInsertHint": "Hide quick insert hint",
+        "metaTransparency": "Meta symbol transparency",
+        "metaTransparencyNotes": "Controls the visibility of formatting symbols (e.g., #, *, **, ~~) when editing",
         "hideLinkPopup": "Hide link popup",
         "autoCheck": "Auto check",
         "wrapCodeBlocks": "Wrap code blocks"
