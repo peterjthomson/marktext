@@ -8,7 +8,7 @@ import './index.css'
 class QuickInsert extends BaseScrollFloat {
   static pluginName = 'quickInsert'
 
-  constructor (muya) {
+  constructor(muya) {
     const name = 'ag-quick-insert'
     super(muya, name)
     this.reference = null
@@ -24,11 +24,11 @@ class QuickInsert extends BaseScrollFloat {
     this.listen()
   }
 
-  get renderObj () {
+  get renderObj() {
     return this._renderObj
   }
 
-  set renderObj (obj) {
+  set renderObj(obj) {
     this._renderObj = obj
     const renderArray = []
     Object.keys(obj).forEach(key => {
@@ -42,7 +42,7 @@ class QuickInsert extends BaseScrollFloat {
     }
   }
 
-  render () {
+  render() {
     const { scrollElement, activeItem, _renderObj } = this
     let children = Object.keys(_renderObj).filter(key => {
       return _renderObj[key].length !== 0
@@ -93,7 +93,7 @@ class QuickInsert extends BaseScrollFloat {
     this.oldVnode = vnode
   }
 
-  listen () {
+  listen() {
     super.listen()
     const { eventCenter } = this.muya
     eventCenter.subscribe('muya-quick-insert', (reference, block, status) => {
@@ -107,7 +107,7 @@ class QuickInsert extends BaseScrollFloat {
     })
   }
 
-  search (text) {
+  search(text) {
     const { contentState } = this.muya
     const canInserFrontMatter = contentState.canInserFrontMatter(this.block)
     const obj = deepCopy(this.renderObj)
@@ -136,7 +136,7 @@ class QuickInsert extends BaseScrollFloat {
     this.render()
   }
 
-  selectItem (item) {
+  selectItem(item) {
     const { contentState } = this.muya
     // 检查 block 是否存在，避免 null 引用错误
     if (!this.block) {
@@ -163,7 +163,7 @@ class QuickInsert extends BaseScrollFloat {
     setTimeout(this.hide.bind(this))
   }
 
-  getItemElement (item) {
+  getItemElement(item) {
     const { label } = item
     return this.scrollElement.querySelector(`[data-label="${label}"]`)
   }

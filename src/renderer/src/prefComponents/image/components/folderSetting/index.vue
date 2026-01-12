@@ -7,10 +7,20 @@
       :regex-validator="/^(?:$|([a-zA-Z]:)?[\/\\].*$)/"
       :default-value="folderPathPlaceholder"
       :on-change="(value) => modifyImageFolderPath(value)"
-    ></text-box>
+    />
     <div>
-      <el-button size="mini" @click="modifyImageFolderPath(undefined)">{{ t('preferences.image.folderSetting.open') }}</el-button>
-      <el-button size="mini" @click="openImageFolder">{{ t('preferences.image.folderSetting.showInFolder') }}</el-button>
+      <el-button
+        size="mini"
+        @click="modifyImageFolderPath(undefined)"
+      >
+        {{ t('preferences.image.folderSetting.open') }}
+      </el-button>
+      <el-button
+        size="mini"
+        @click="openImageFolder"
+      >
+        {{ t('preferences.image.folderSetting.showInFolder') }}
+      </el-button>
     </div>
     <compound>
       <template #head>
@@ -19,7 +29,7 @@
           more="https://github.com/marktext/marktext/blob/develop/docs/IMAGES.md"
           :bool="imagePreferRelativeDirectory"
           :on-change="(value) => onSelectChange('imagePreferRelativeDirectory', value)"
-        ></bool>
+        />
       </template>
       <template #children>
         <text-box
@@ -28,7 +38,7 @@
           :regex-validator="/^(?:$|(?![a-zA-Z]:)[^\/\\].*$)/"
           :default-value="relativeDirectoryNamePlaceholder"
           :on-change="(value) => onSelectChange('imageRelativeDirectoryName', value)"
-        ></text-box>
+        />
         <div class="footnote">
           {{ t('preferences.image.folderSetting.filenameNote') }}
         </div>

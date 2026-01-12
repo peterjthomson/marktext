@@ -5,51 +5,100 @@
       <div v-if="isValidUploaderService(currentUploader)">
         {{ t('preferences.image.uploader.currentUploader', { name: getServiceNameById(currentUploader) }) }}
       </div>
-      <span v-else
-        >{{ t('preferences.image.uploader.noUploaderSelected') }}</span
-      >
+      <span v-else>{{ t('preferences.image.uploader.noUploaderSelected') }}</span>
     </section>
     <section class="configration">
       <cur-select
         :value="currentUploader"
         :options="uploaderOptions"
         :on-change="(value) => setCurrentUploader(value)"
-      ></cur-select>
-      <div v-if="currentUploader === 'picgo'" class="picgo">
+      />
+      <div
+        v-if="currentUploader === 'picgo'"
+        class="picgo"
+      >
         <div class="detection-status">
           <div class="detection-header">
             <h6>{{ t('preferences.image.uploader.picgoDetection') }}</h6>
             <div class="detection-controls">
               <!-- 独立的刷新按钮 -->
-              <button v-if="showStandaloneRefreshButton" class="standalone-refresh-button" @click="manualDetection" :disabled="isDetecting" :title="t('preferences.image.uploader.retestPicgo')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="23 4 23 10 17 10"></polyline>
-                  <polyline points="1 20 1 14 7 14"></polyline>
-                  <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              <button
+                v-if="showStandaloneRefreshButton"
+                class="standalone-refresh-button"
+                :disabled="isDetecting"
+                :title="t('preferences.image.uploader.retestPicgo')"
+                @click="manualDetection"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="23 4 23 10 17 10" />
+                  <polyline points="1 20 1 14 7 14" />
+                  <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                 </svg>
               </button>
               <div class="detection-status-indicator">
                 <!-- 加载动画和状态指示器 -->
                 <div class="detection-animation-container">
                   <!-- 初始按钮（0.5秒后变为动画） -->
-                  <button v-if="showInitialButton" class="initial-button">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="m9 12 2 2 4-4"></path>
+                  <button
+                    v-if="showInitialButton"
+                    class="initial-button"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                      />
+                      <path d="m9 12 2 2 4-4" />
                     </svg>
                   </button>
                   <!-- 加载动画 -->
-                  <div v-if="showLoadingAnimation" class="loading-dot" :class="{ 'animate': animationActive }"></div>
+                  <div
+                    v-if="showLoadingAnimation"
+                    class="loading-dot"
+                    :class="{ 'animate': animationActive }"
+                  />
                   <!-- 状态指示器按钮（移除图标） -->
-                  <button v-if="showStatusIndicator" class="status-indicator" :class="getStatusIndicatorClass()" @click="manualDetection">
+                  <button
+                    v-if="showStatusIndicator"
+                    class="status-indicator"
+                    :class="getStatusIndicatorClass()"
+                    @click="manualDetection"
+                  >
                     <!-- 移除所有SVG图标 -->
                   </button>
                   <!-- 刷新按钮 -->
-                  <button v-if="showRefreshButton" class="refresh-button" @click="manualDetection" :disabled="isDetecting">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="23 4 23 10 17 10"></polyline>
-                      <polyline points="1 20 1 14 7 14"></polyline>
-                      <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                  <button
+                    v-if="showRefreshButton"
+                    class="refresh-button"
+                    :disabled="isDetecting"
+                    @click="manualDetection"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="23 4 23 10 17 10" />
+                      <polyline points="1 20 1 14 7 14" />
+                      <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                     </svg>
                   </button>
                 </div>
@@ -60,15 +109,26 @@
             <div class="status-text">
               {{ picgoDetectionStatus || t('preferences.image.uploader.picgoNotInstalled') }}
             </div>
-            <div v-if="lastDetectionTime" class="detection-time">
+            <div
+              v-if="lastDetectionTime"
+              class="detection-time"
+            >
               {{ t('preferences.image.uploader.lastDetectionTime') }}: {{ formatDetectionTime(lastDetectionTime) }}
             </div>
-            <div v-if="lastSuccessTime" class="success-time">
+            <div
+              v-if="lastSuccessTime"
+              class="success-time"
+            >
               {{ t('preferences.image.uploader.lastSuccessTime') }}: {{ getLastSuccessTime() }}
             </div>
           </div>
-          <div v-if="!picgoExists" class="install-commands">
-            <div class="install-title">{{ t('preferences.image.uploader.chooseInstallMethod') }}</div>
+          <div
+            v-if="!picgoExists"
+            class="install-commands"
+          >
+            <div class="install-title">
+              {{ t('preferences.image.uploader.chooseInstallMethod') }}
+            </div>
             <div class="install-options">
               <div class="install-option">
                 <strong>npm:</strong>
@@ -84,44 +144,66 @@
               </div>
             </div>
             <div class="install-link">
-              <span class="link" @click="open('https://github.com/PicGo/PicGo-Core')">picgo</span>
+              <span
+                class="link"
+                @click="open('https://github.com/PicGo/PicGo-Core')"
+              >picgo</span>
               {{ t('preferences.image.uploader.pleaseInstall') }}
             </div>
           </div>
-          
+
           <!-- PicGo 基本使用说明 -->
           <div class="usage-guide">
-            <div class="usage-title">{{ t('preferences.image.uploader.usageGuide.title') }}</div>
+            <div class="usage-title">
+              {{ t('preferences.image.uploader.usageGuide.title') }}
+            </div>
             <div class="usage-content">
               <div class="usage-step">
                 <strong>1. {{ t('preferences.image.uploader.usageGuide.step1') }}</strong>
-                <div class="usage-description">{{ t('preferences.image.uploader.usageGuide.step1Description') }}</div>
+                <div class="usage-description">
+                  {{ t('preferences.image.uploader.usageGuide.step1Description') }}
+                </div>
                 <code class="usage-command">picgo set uploader</code>
               </div>
               <div class="usage-step">
                 <strong>2. {{ t('preferences.image.uploader.usageGuide.step2') }}</strong>
-                <div class="usage-description">{{ t('preferences.image.uploader.usageGuide.step2Description') }}</div>
+                <div class="usage-description">
+                  {{ t('preferences.image.uploader.usageGuide.step2Description') }}
+                </div>
                 <code class="usage-command">picgo upload /path/to/image.png</code>
               </div>
               <div class="usage-step">
                 <strong>3. {{ t('preferences.image.uploader.usageGuide.step3') }}</strong>
-                <div class="usage-description">{{ t('preferences.image.uploader.usageGuide.step3Description') }}</div>
+                <div class="usage-description">
+                  {{ t('preferences.image.uploader.usageGuide.step3Description') }}
+                </div>
                 <code class="usage-command">picgo config</code>
               </div>
             </div>
             <div class="usage-link">
-              <span class="link" @click="open('https://picgo.github.io/PicGo-Core-Doc/')">{{ t('preferences.image.uploader.usageGuide.documentation') }}</span>
+              <span
+                class="link"
+                @click="open('https://picgo.github.io/PicGo-Core-Doc/')"
+              >{{ t('preferences.image.uploader.usageGuide.documentation') }}</span>
             </div>
           </div>
-          
-          <details v-if="picgoDetectionFailed && picgoDebugInfo" class="debug-info">
+
+          <details
+            v-if="picgoDetectionFailed && picgoDebugInfo"
+            class="debug-info"
+          >
             <summary>{{ t('preferences.image.uploader.debugInfo') }}</summary>
             <pre>{{ picgoDebugInfo || '暂无调试信息' }}</pre>
           </details>
         </div>
       </div>
-      <div v-if="currentUploader === 'github'" class="github">
-        <div class="warning">{{ t('preferences.image.uploader.githubDeprecated') }}</div>
+      <div
+        v-if="currentUploader === 'github'"
+        class="github"
+      >
+        <div class="warning">
+          {{ t('preferences.image.uploader.githubDeprecated') }}
+        </div>
         <div class="form-group">
           <div class="label">
             {{ t('preferences.image.uploader.githubToken') }}:
@@ -131,43 +213,87 @@
               :content="t('preferences.image.uploader.tokenTooltip')"
               placement="top-start"
             >
-              <InfoFilled width="16" height="16" />
+              <InfoFilled
+                width="16"
+                height="16"
+              />
             </el-tooltip>
           </div>
-          <el-input v-model="githubToken" :placeholder="t('preferences.image.uploader.inputToken')" size="mini"></el-input>
+          <el-input
+            v-model="githubToken"
+            :placeholder="t('preferences.image.uploader.inputToken')"
+            size="mini"
+          />
         </div>
         <div class="form-group">
-          <div class="label">{{ t('preferences.image.uploader.ownerName') }}:</div>
-          <el-input v-model="github.owner" :placeholder="t('preferences.image.uploader.owner')" size="mini"></el-input>
+          <div class="label">
+            {{ t('preferences.image.uploader.ownerName') }}:
+          </div>
+          <el-input
+            v-model="github.owner"
+            :placeholder="t('preferences.image.uploader.owner')"
+            size="mini"
+          />
         </div>
         <div class="form-group">
-          <div class="label">{{ t('preferences.image.uploader.repoName') }}:</div>
-          <el-input v-model="github.repo" :placeholder="t('preferences.image.uploader.repo')" size="mini"></el-input>
+          <div class="label">
+            {{ t('preferences.image.uploader.repoName') }}:
+          </div>
+          <el-input
+            v-model="github.repo"
+            :placeholder="t('preferences.image.uploader.repo')"
+            size="mini"
+          />
         </div>
         <div class="form-group">
-          <div class="label">{{ t('preferences.image.uploader.branchName') }}:</div>
-          <el-input v-model="github.branch" :placeholder="t('preferences.image.uploader.branch')" size="mini"></el-input>
+          <div class="label">
+            {{ t('preferences.image.uploader.branchName') }}:
+          </div>
+          <el-input
+            v-model="github.branch"
+            :placeholder="t('preferences.image.uploader.branch')"
+            size="mini"
+          />
         </div>
         <legal-notices-checkbox
           class="github"
           :class="[{ error: legalNoticesErrorStates.github }]"
           :uploader-service="uploadServices.github"
-        ></legal-notices-checkbox>
+        />
         <div class="form-group">
-          <el-button size="mini" :disabled="githubDisable" @click="save('github')">{{ t('preferences.image.uploader.save') }}</el-button>
+          <el-button
+            size="mini"
+            :disabled="githubDisable"
+            @click="save('github')"
+          >
+            {{ t('preferences.image.uploader.save') }}
+          </el-button>
         </div>
       </div>
-      <div v-else-if="currentUploader === 'cliScript'" class="script">
+      <div
+        v-else-if="currentUploader === 'cliScript'"
+        class="script"
+      >
         <div class="description">
           {{ t('preferences.image.uploader.scriptDescription') }}
         </div>
         <div class="form-group">
-          <div class="label">{{ t('preferences.image.uploader.scriptLocation') }}:</div>
-          <el-input v-model="cliScript" :placeholder="t('preferences.image.uploader.scriptPath')" size="mini"></el-input>
+          <div class="label">
+            {{ t('preferences.image.uploader.scriptLocation') }}:
+          </div>
+          <el-input
+            v-model="cliScript"
+            :placeholder="t('preferences.image.uploader.scriptPath')"
+            size="mini"
+          />
         </div>
         <div class="form-group">
-          <el-button size="mini" :disabled="cliScriptDisable" @click="save('cliScript')"
-            >{{ t('preferences.image.uploader.save') }}
+          <el-button
+            size="mini"
+            :disabled="cliScriptDisable"
+            @click="save('cliScript')"
+          >
+            {{ t('preferences.image.uploader.save') }}
           </el-button>
         </div>
       </div>
@@ -194,7 +320,7 @@ const preferenceStore = usePreferencesStore()
 
 // data
 const uploaderOptions = Object.keys(getServices()).map((name) => {
-    const { name: label } = getServices()[name]
+  const { name: label } = getServices()[name]
   return {
     label,
     value: name
@@ -253,7 +379,7 @@ watch(imageBed, (value, oldValue) => {
 // 监听上传器切换，当切换到picgo时立即启动检测
 watch(currentUploader, (newValue, oldValue) => {
   console.log('=== watch currentUploader 触发 ===', oldValue, '->', newValue)
-  
+
   if (newValue === 'picgo') {
     // 切换到picgo时，立即启动检测流程
     console.log('切换到picgo，启动检测流程')
@@ -277,21 +403,21 @@ watch(currentUploader, (newValue, oldValue) => {
 // 启动实时检测
 const startRealtimeDetection = () => {
   console.log('=== startRealtimeDetection 被调用 ===', '当前上传器:', currentUploader.value)
-  
+
   // 确保只有picgo上传器才启动检测
   if (currentUploader.value !== 'picgo') {
     console.log('当前不是picgo上传器，跳过检测')
     return
   }
-  
+
   // 清除现有定时器
   if (detectionTimer.value) {
     clearTimeout(detectionTimer.value) // 使用clearTimeout
     detectionTimer.value = null
   }
-  
+
   console.log('开始启动PicGo检测流程...')
-  
+
   // 检查是否有之前的检测结果，如果有则先显示状态指示器
   if (picgoDetectionStatus.value && (picgoExists.value || picgoDetectionFailed.value)) {
     console.log('发现之前的检测结果，立即显示状态指示器')
@@ -300,12 +426,12 @@ const startRealtimeDetection = () => {
     showLoadingAnimation.value = false
     showRefreshButton.value = false
     animationActive.value = false
-    
+
     // 1秒后启动新的检测流程
     detectionTimer.value = setTimeout(() => {
       console.log('开始新的检测流程...')
       startLoadingAnimation()
-      
+
       // 3秒后执行检测
       detectionTimer.value = setTimeout(() => {
         console.log('执行PicGo检测...')
@@ -320,7 +446,7 @@ const startRealtimeDetection = () => {
   } else {
     // 没有之前的检测结果，立即启动加载动画和计时器
     startLoadingAnimation()
-    
+
     // 3秒后执行第一次检测
     detectionTimer.value = setTimeout(() => {
       console.log('执行PicGo检测...')
@@ -332,25 +458,25 @@ const startRealtimeDetection = () => {
       })
     }, 3000)
   }
-  
+
   // 设置动态间隔检测
   const scheduleNextDetection = () => {
     if (detectionTimer.value) {
       clearTimeout(detectionTimer.value)
     }
-    
+
     // 根据连续失败次数和页面可见性调整检测间隔
     const baseInterval = 30000 // 30秒基础间隔
     const maxInterval = 300000 // 最大5分钟间隔
     let interval = Math.min(baseInterval * Math.pow(2, consecutiveFailures.value), maxInterval)
-    
+
     // 如果页面不可见，使用更长的检测间隔
     if (!isPageVisible.value) {
       interval = Math.max(interval * 2, 60000) // 页面不可见时至少1分钟检测一次
     }
-    
+
     console.log(`下次检测将在 ${interval / 1000} 秒后进行，连续失败次数: ${consecutiveFailures.value}`)
-    
+
     detectionTimer.value = setTimeout(() => {
       if (!isDetecting.value && isPageVisible.value) {
         testPicgo().then(() => {
@@ -379,7 +505,7 @@ const stopRealtimeDetection = () => {
 // 页面可见性变化处理
 const handleVisibilityChange = () => {
   isPageVisible.value = !document.hidden
-  
+
   if (isPageVisible.value) {
     // 页面变为可见时，只有当前选择picgo才重新启动检测
     if (currentUploader.value === 'picgo') {
@@ -396,7 +522,7 @@ const handleVisibilityChange = () => {
 const handleComponentActivated = () => {
   console.log('=== handleComponentActivated 触发 ===', 'currentUploader:', currentUploader.value)
   isPageVisible.value = true
-  
+
   // 只有当前选择的是picgo时才启动检测
   if (currentUploader.value === 'picgo') {
     console.log('当前选择picgo，重新启动检测')
@@ -428,7 +554,7 @@ onMounted(() => {
     }
     githubToken.value = prefGithubToken.value
     cliScript.value = prefCliScript.value
-    
+
     // 核心检测启动逻辑 - 确保在onMounted时就能启动
     if (currentUploader.value === 'picgo') {
       console.log('onMounted: 检测到picgo，强制启动检测流程')
@@ -447,7 +573,7 @@ onMounted(() => {
     if (Object.prototype.hasOwnProperty.call(getServices(), currentUploader.value)) {
       getServices()[currentUploader.value].agreedToLegalNotices = true
     }
-    
+
     // 额外的保障机制：再次检查是否需要启动检测
     nextTick(() => {
       setTimeout(() => {
@@ -458,7 +584,7 @@ onMounted(() => {
       }, 500)
     })
   })
-  
+
   // 监听页面可见性变化
   document.addEventListener('visibilitychange', handleVisibilityChange)
 })
@@ -467,7 +593,7 @@ onMounted(() => {
 onActivated(() => {
   console.log('=== onActivated 触发 ===')
   handleComponentActivated()
-  
+
   // 额外的保障机制：确保检测状态正确显示
   setTimeout(() => {
     if (currentUploader.value === 'picgo' && !showLoadingAnimation.value && !showStatusIndicator.value && !showRefreshButton.value && !showInitialButton.value) {
@@ -485,10 +611,10 @@ onDeactivated(() => {
 // 组件卸载时清理定时器
 onUnmounted(() => {
   stopRealtimeDetection()
-  
+
   // 停止动画并清理定时器
   stopAnimationAndButton()
-  
+
   // 移除页面可见性监听器
   document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
@@ -551,20 +677,20 @@ const setCurrentUploader = (value) => {
 }
 
 // 手动触发检测（保留用于调试）
-const manualDetection = async () => {
+const manualDetection = async() => {
   if (isDetecting.value) return
-  
+
   // 隐藏独立刷新按钮0.5秒
   showStandaloneRefreshButton.value = false
-  
+
   // 0.5秒后重新显示按钮并开始检测
   setTimeout(() => {
     showStandaloneRefreshButton.value = true
-    
+
     isDetecting.value = true
     // 启动加载动画
     startLoadingAnimation()
-    
+
     testPicgo().finally(() => {
       isDetecting.value = false
     })
@@ -602,7 +728,7 @@ const getStatusIndicatorClass = () => {
 // 启动加载动画
 const startLoadingAnimation = () => {
   console.log('=== startLoadingAnimation 被调用 ===')
-  
+
   // 清除之前的定时器
   if (animationTimer.value) {
     clearInterval(animationTimer.value)
@@ -613,14 +739,14 @@ const startLoadingAnimation = () => {
   if (initialButtonTimer.value) {
     clearTimeout(initialButtonTimer.value)
   }
-  
+
   // 重置所有状态，然后立即显示加载动画而不是初始按钮
   showStatusIndicator.value = false
   showInitialButton.value = false
   showRefreshButton.value = false
   animationActive.value = false
   showLoadingAnimation.value = true
-  
+
   console.log('startLoadingAnimation: 初始状态设置完成:', {
     showInitialButton: showInitialButton.value,
     showLoadingAnimation: showLoadingAnimation.value,
@@ -628,13 +754,13 @@ const startLoadingAnimation = () => {
     showStatusIndicator: showStatusIndicator.value,
     animationActive: animationActive.value
   })
-  
+
   // 立即启动动画定时器，无需延迟
   animationTimer.value = setInterval(() => {
     animationActive.value = !animationActive.value
     console.log('startLoadingAnimation: 动画闪烁:', animationActive.value)
   }, 1000)
-  
+
   // 6秒后显示刷新按钮（3秒检测时间 + 3秒额外等待）
   buttonTimer.value = setTimeout(() => {
     console.log('startLoadingAnimation: 显示刷新按钮')
@@ -655,7 +781,7 @@ const stopAnimationAndButton = () => {
   showRefreshButton.value = false
   showStatusIndicator.value = true
   animationActive.value = false
-  
+
   console.log('停止后状态:', {
     showInitialButton: showInitialButton.value,
     showLoadingAnimation: showLoadingAnimation.value,
@@ -663,7 +789,7 @@ const stopAnimationAndButton = () => {
     showStatusIndicator: showStatusIndicator.value,
     animationActive: animationActive.value
   })
-  
+
   // 清除所有定时器
   if (animationTimer.value) {
     clearInterval(animationTimer.value)
@@ -682,19 +808,19 @@ const stopAnimationAndButton = () => {
 const testPicgo = () => {
   return new Promise((resolve) => {
     console.log('=== PicGo 检测开始 ===')
-    
+
     console.log('window.commandExists:', window.commandExists)
-    
+
     // 记录检测开始时间
     lastDetectionTime.value = new Date().toISOString()
-    
+
     let debugMessages = []
     debugMessages.push(`检测时间: ${new Date().toLocaleString()}`)
-    
+
     // 添加环境信息
     debugMessages.push(`平台: ${window.electron?.process?.platform || 'unknown'}`)
-    debugMessages.push(`进程类型: renderer`)
-    
+    debugMessages.push('进程类型: renderer')
+
     if (typeof window.commandExists === 'undefined') {
       const errorMsg = 'commandExists 未暴露到 window 对象'
       console.error('✗', errorMsg)
@@ -707,9 +833,9 @@ const testPicgo = () => {
       resolve()
       return
     }
-    
+
     debugMessages.push('✓ commandExists 已暴露到 window 对象')
-    
+
     if (typeof window.commandExists.exists !== 'function') {
       const errorMsg = 'commandExists.exists 方法不可用'
       const availableKeys = Object.keys(window.commandExists).join(', ')
@@ -724,25 +850,25 @@ const testPicgo = () => {
       resolve()
       return
     }
-    
+
     debugMessages.push('✓ commandExists.exists 方法可用')
-    
+
     try {
       console.log('正在检测 PicGo...')
       debugMessages.push('正在检测 PicGo 命令...')
-      
+
       // 先测试一些基本命令
       const nodeExists = window.commandExists.exists('node')
       const npmExists = window.commandExists.exists('npm')
       debugMessages.push(`Node.js 检测: ${nodeExists ? '✓' : '✗'}`)
       debugMessages.push(`npm 检测: ${npmExists ? '✓' : '✗'}`)
-      
+
       const result = window.commandExists.exists('picgo')
       console.log('PicGo 检测结果:', result)
       debugMessages.push(`PicGo 检测结果: ${result}`)
-      
+
       picgoExists.value = result
-      
+
       if (result) {
         debugMessages.push('✓ PicGo 命令检测成功')
         picgoDetectionFailed.value = false
@@ -768,14 +894,14 @@ const testPicgo = () => {
       picgoDetectionStatus.value = t('preferences.image.uploader.picgoDetectionFailed')
       consecutiveFailures.value++ // 增加失败计数
     }
-    
+
     picgoDebugInfo.value = debugMessages.join('\n')
     console.log('=== PicGo 检测结束 ===')
     console.log('调试信息:', debugMessages.join('\n'))
-    
+
     // 检测完成后停止动画
     stopAnimationAndButton()
-    
+
     resolve()
   })
 }

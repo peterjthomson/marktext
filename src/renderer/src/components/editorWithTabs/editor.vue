@@ -11,12 +11,21 @@
     }"
     :dir="textDirection"
   >
-    <div ref="editorRef" class="editor-component"></div>
-    <div v-show="imageViewerVisible" class="image-viewer">
-      <span class="icon-close" @click="setImageViewerVisible(false)">
+    <div
+      ref="editorRef"
+      class="editor-component"
+    />
+    <div
+      v-show="imageViewerVisible"
+      class="image-viewer"
+    >
+      <span
+        class="icon-close"
+        @click="setImageViewerVisible(false)"
+      >
         <CloseIcon />
       </span>
-      <div ref="imageViewerRef"></div>
+      <div ref="imageViewerRef" />
     </div>
     <el-dialog
       v-model="dialogTableVisible"
@@ -28,9 +37,14 @@
       dir="ltr"
     >
       <template #title>
-        <div class="dialog-title">{{ t('editor.insertTable.title') }}</div>
+        <div class="dialog-title">
+          {{ t('editor.insertTable.title') }}
+        </div>
       </template>
-      <el-form :model="tableChecker" :inline="true">
+      <el-form
+        :model="tableChecker"
+        :inline="true"
+      >
         <el-form-item :label="t('editor.insertTable.rows')">
           <el-input-number
             ref="rowInput"
@@ -39,7 +53,7 @@
             controls-position="right"
             :min="1"
             :max="30"
-          ></el-input-number>
+          />
         </el-form-item>
         <el-form-item :label="t('editor.insertTable.columns')">
           <el-input-number
@@ -48,19 +62,26 @@
             controls-position="right"
             :min="1"
             :max="20"
-          ></el-input-number>
+          />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogTableVisible = false">{{ t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleDialogTableConfirm">{{
-            t('common.ok')
-          }}</el-button>
+          <el-button @click="dialogTableVisible = false">
+            {{ t('common.cancel') }}
+          </el-button>
+          <el-button
+            type="primary"
+            @click="handleDialogTableConfirm"
+          >
+            {{
+              t('common.ok')
+            }}
+          </el-button>
         </div>
       </template>
     </el-dialog>
-    <editor-search v-if="!sourceCode"></editor-search>
+    <editor-search v-if="!sourceCode" />
   </div>
 </template>
 
@@ -126,7 +147,6 @@ const projectStore = useProjectStore()
 // Use storeToRefs to extract reactive properties from the stores
 const {
   // Preferences
-  preferences,
   preferLooseListItem,
   autoPairBracket,
   autoPairMarkdownSyntax,
@@ -466,7 +486,7 @@ const jumpClick = (linkInfo) => {
   editorStore.FORMAT_LINK_CLICK({ data: { href }, dirname: window.DIRNAME })
 }
 
-const imagePathAutoComplete = async (src) => {
+const imagePathAutoComplete = async(src) => {
   const files = await editorStore.ASK_FOR_IMAGE_AUTO_PATH(src)
   return files.map((f) => {
     const iconClass = f.type === 'directory' ? 'icon-folder' : 'icon-image'
@@ -474,7 +494,7 @@ const imagePathAutoComplete = async (src) => {
   })
 }
 
-const imageAction = async (image, id, alt = '') => {
+const imageAction = async(image, id, alt = '') => {
   // TODO(Refactor): Refactor this method.
   const { filename, pathname: currentPathname } = currentFile.value
 
@@ -496,9 +516,9 @@ const imageAction = async (image, id, alt = '') => {
   }
 
   const getResolvedImagePath = (imagePath) => {
+    // Filename w/o extension
     const replacement = isTabSavedOnDisk
-      ? // Filename w/o extension
-        filename.replace(/\.[^/.]+$/, '')
+      ? filename.replace(/\.[^/.]+$/, '')
       : ''
     return imagePath.replace(/\${filename}/g, replacement)
   }
@@ -742,7 +762,7 @@ const handleFindAction = (action) => {
   scrollToHighlight()
 }
 
-const handleExport = async (options) => {
+const handleExport = async(options) => {
   const { type, header, footer, headerFooterStyled, htmlTitle } = options
 
   if (!/^pdf|print|styledHtml$/.test(type)) {

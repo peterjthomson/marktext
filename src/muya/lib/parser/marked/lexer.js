@@ -25,7 +25,7 @@ function Lexer(opts) {
  * Preprocessing
  */
 
-Lexer.prototype.lex = function (src) {
+Lexer.prototype.lex = function(src) {
   src = src.replace(/\r\n|\r/g, '\n').replace(/\t/g, '    ')
   this.checkFrontmatter = true
   this.footnoteOrder = 0
@@ -62,7 +62,7 @@ Lexer.prototype.lex = function (src) {
  * prevListIsOrdered: null (default) | true | false (if set to non-null value, it means we are in a list)
  */
 
-Lexer.prototype.token = function (src, top, prevListIsOrdered = null) {
+Lexer.prototype.token = function(src, top, prevListIsOrdered = null) {
   const { footnote, frontMatter, isGitlabCompatibilityEnabled, math } = this.options
   src = src.replace(/^ +$/gm, '')
 
@@ -366,7 +366,7 @@ Lexer.prototype.token = function (src, top, prevListIsOrdered = null) {
         // Remove the list item's bullet so it is seen as the next token.
         space = item.length
         let newBull
-        item = item.replace(/^ *([*+-]|\d+(?:\.|\))) {0,4}/, function (m, p1) {
+        item = item.replace(/^ *([*+-]|\d+(?:\.|\))) {0,4}/, function(m, p1) {
           // Get and remove list item bullet
           newBull = p1 || bull
           return ''

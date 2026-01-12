@@ -4,7 +4,7 @@ import { downcode } from './urlify'
  * Slugger generates header id
  */
 
-function Slugger () {
+function Slugger() {
   this.seen = {}
   this.downcodeUnicode = true
 }
@@ -13,7 +13,7 @@ function Slugger () {
  * Convert string to unique id
  */
 
-Slugger.prototype.slug = function (value) {
+Slugger.prototype.slug = function(value) {
   let slug = this.downcodeUnicode ? downcode(value) : value
   slug = slug
     .toLowerCase()

@@ -4,13 +4,13 @@ import { CLASS_OR_ID } from '../config'
 import selection from '../selection'
 
 class ClickEvent {
-  constructor (muya) {
+  constructor(muya) {
     this.muya = muya
     this.clickBinding()
     this.contextClickBingding()
   }
 
-  contextClickBingding () {
+  contextClickBingding() {
     const { container, eventCenter, contentState } = this.muya
     const handler = event => {
       // Allow native context menu in MarkText.
@@ -62,7 +62,7 @@ class ClickEvent {
     eventCenter.attachDOMEvent(container, 'contextmenu', handler)
   }
 
-  clickBinding () {
+  clickBinding() {
     const { container, eventCenter, contentState } = this.muya
     const handler = event => {
       const { target } = event
@@ -85,7 +85,7 @@ class ClickEvent {
         event.stopPropagation()
         const rect = target.getBoundingClientRect()
         const reference = {
-          getBoundingClientRect () {
+          getBoundingClientRect() {
             return rect
           },
           width: rect.offsetWidth,
@@ -158,7 +158,7 @@ class ClickEvent {
         // Handle show image toolbar
         const rect = imageWrapper.querySelector('.ag-image-container').getBoundingClientRect()
         const reference = {
-          getBoundingClientRect () {
+          getBoundingClientRect() {
             return rect
           },
           width: imageWrapper.offsetWidth,
@@ -193,7 +193,7 @@ class ClickEvent {
       ) {
         const rect = imageWrapper.getBoundingClientRect()
         const reference = {
-          getBoundingClientRect () {
+          getBoundingClientRect() {
             return rect
           }
         }
@@ -237,11 +237,11 @@ class ClickEvent {
   }
 }
 
-function getToolItem (target) {
+function getToolItem(target) {
   return target.closest('[data-label]')
 }
 
-function selectionText (node) {
+function selectionText(node) {
   const textLen = node.textContent.length
   operateClassName(node, 'remove', CLASS_OR_ID.AG_HIDE)
   operateClassName(node, 'add', CLASS_OR_ID.AG_GRAY)

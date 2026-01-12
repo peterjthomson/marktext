@@ -3,22 +3,22 @@
     class="editor-with-tabs"
     :style="{ 'max-width': showSideBar ? `calc(100vw - ${sideBarWidth}px` : '100vw' }"
   >
-    <tabs v-show="showTabBar"></tabs>
+    <tabs v-show="showTabBar" />
     <div class="container">
       <editor
         :markdown="markdown"
         :cursor="cursor"
         :text-direction="textDirection"
         :platform="platform"
-      ></editor>
+      />
       <source-code
         v-if="sourceCode"
         :markdown="markdown"
-        :muyaIndexCursor="muyaIndexCursor"
+        :muya-index-cursor="muyaIndexCursor"
         :text-direction="textDirection"
-      ></source-code>
+      />
     </div>
-    <tab-notifications></tab-notifications>
+    <tab-notifications />
   </div>
 </template>
 

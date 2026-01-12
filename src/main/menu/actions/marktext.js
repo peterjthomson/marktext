@@ -1,8 +1,7 @@
 import { autoUpdater } from 'electron-updater'
-import { BrowserWindow, Menu } from 'electron'
+import { BrowserWindow, Menu, ipcMain } from 'electron'
 import { COMMANDS } from '../../commands'
 import { isOsx } from '../../config'
-import { ipcMain } from 'electron'
 
 let runningUpdate = false
 let win = null

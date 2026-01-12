@@ -47,14 +47,14 @@ function validateTranslationFile(filePath, language) {
 
     // 读取文件内容
     const content = fs.readFileSync(filePath, 'utf8')
-    
+
     // 尝试解析 JSON
     try {
       const parsedContent = JSON.parse(content)
       result.validJson = true
       result.content = parsedContent
       result.keyCount = Object.keys(parsedContent).length
-      
+
       log.info(`[i18n] Successfully validated ${language}: ${result.keyCount} keys`)
     } catch (parseError) {
       result.parseError = {
@@ -64,7 +64,6 @@ function validateTranslationFile(filePath, language) {
       }
       log.error(`[i18n] JSON parse error in ${language}:`, parseError)
     }
-
   } catch (error) {
     log.error(`[i18n] Unexpected error validating ${language}:`, error)
     result.parseError = {
@@ -112,7 +111,7 @@ function validateAllTranslationFiles() {
   for (const language of SUPPORTED_LANGUAGES) {
     const possiblePaths = getPossibleTranslationPaths(language)
     let validationResult = null
-    
+
     // 尝试每个可能的路径
     for (const filePath of possiblePaths) {
       const result = validateTranslationFile(filePath, language)
@@ -121,7 +120,7 @@ function validateAllTranslationFiles() {
         break
       }
     }
-    
+
     // 如果没有找到任何文件
     if (!validationResult) {
       validationResult = {
@@ -140,12 +139,13 @@ function validateAllTranslationFiles() {
     } else {
       report.invalidFiles++
     }
-    
+
     report.details[language] = validationResult
-    
+
     // 添加到摘要
-    const status = validationResult.validJson ? '✅ VALID' : 
-                  validationResult.exists ? '❌ INVALID' : '❓ MISSING'
+    const status = validationResult.validJson
+      ? '✅ VALID'
+      : validationResult.exists ? '❌ INVALID' : '❓ MISSING'
     report.summary.push(`${language}: ${status} (${validationResult.keyCount} keys)`)
   }
 
@@ -154,9 +154,9 @@ function validateAllTranslationFiles() {
   log.info(`[i18n] Valid files: ${report.validFiles}/${report.totalLanguages}`)
   log.info(`[i18n] Invalid files: ${report.invalidFiles}`)
   log.info(`[i18n] Missing files: ${report.missingFiles}`)
-  
+
   report.summary.forEach(line => log.info(`[i18n] ${line}`))
-  
+
   // 如果有错误，输出详细错误信息
   if (report.invalidFiles > 0 || report.missingFiles > 0) {
     log.error('[i18n] Found issues with translation files:')
@@ -191,7 +191,7 @@ function testTranslationKey(key, language = 'en') {
   try {
     const possiblePaths = getPossibleTranslationPaths(language)
     let translationData = null
-    
+
     for (const filePath of possiblePaths) {
       if (fs.existsSync(filePath)) {
         const content = fs.readFileSync(filePath, 'utf8')
@@ -199,16 +199,16 @@ function testTranslationKey(key, language = 'en') {
         break
       }
     }
-    
+
     if (!translationData) {
       result.error = `Translation file not found for language: ${language}`
       return result
     }
-    
+
     // 支持嵌套键（如 'menu.file.open'）
     const keys = key.split('.')
     let value = translationData
-    
+
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
@@ -217,12 +217,11 @@ function testTranslationKey(key, language = 'en') {
         break
       }
     }
-    
+
     if (value !== null) {
       result.found = true
       result.value = value
     }
-    
   } catch (error) {
     result.error = error.message
   }
@@ -235,48 +234,48 @@ function testTranslationKey(key, language = 'en') {
  */
 function setupI18nErrorHandling() {
   log.info('[i18n] Setting up i18n error handling...')
-  
+
   // 在应用启动时验证所有翻译文件
   const validationReport = validateAllTranslationFiles()
-  
+
   // 如果有严重错误，记录并可能需要降级处理
   if (validationReport.invalidFiles > 0) {
     log.error('[i18n] Critical: Some translation files have parsing errors!')
     log.error('[i18n] This may cause application crashes when accessing translations.')
   }
-  
+
   if (validationReport.missingFiles > 0) {
     log.warn('[i18n] Warning: Some translation files are missing!')
     log.warn('[i18n] Affected languages may fall back to English.')
   }
-  
+
   // 监听进程中的 i18n 相关错误
   const originalConsoleError = console.error
   console.error = function(...args) {
     const message = args.join(' ')
-    
+
     // 检测 i18n 相关错误
-    if (message.includes('SyntaxError: 11') || 
+    if (message.includes('SyntaxError: 11') ||
         message.includes('parsePlural') ||
         message.includes('i18n') ||
         message.includes('translation')) {
       log.error('[i18n] Detected i18n-related error:', ...args)
-      
+
       // 尝试提供更多调试信息
       if (message.includes('SyntaxError: 11')) {
         log.error('[i18n] This appears to be a Vue i18n plural syntax error.')
         log.error('[i18n] Check for "|" characters in translation strings that may be interpreted as plural syntax.')
-        
+
         // 重新验证翻译文件
         log.info('[i18n] Re-validating translation files due to syntax error...')
         validateAllTranslationFiles()
       }
     }
-    
+
     // 调用原始的 console.error
     originalConsoleError.apply(console, args)
   }
-  
+
   log.info('[i18n] i18n error handling setup completed.')
   return validationReport
 }

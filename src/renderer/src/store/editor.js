@@ -266,7 +266,7 @@ export const useEditorStore = defineStore('editor', {
       const MIN_SPINNER_TIME = 1000 // Minimum time to show spinner (1 second)
       const elapsed = Date.now() - (this._saveStartTime || 0)
       const remaining = Math.max(0, MIN_SPINNER_TIME - elapsed)
-      
+
       setTimeout(() => {
         this.isSaving = false
       }, remaining)

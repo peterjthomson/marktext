@@ -144,7 +144,7 @@ const checkTokenIsInlineFormat = token => {
 }
 
 const formatCtrl = ContentState => {
-  ContentState.prototype.selectionFormats = function ({ start, end } = selection.getCursorRange()) {
+  ContentState.prototype.selectionFormats = function({ start, end } = selection.getCursorRange()) {
     if (!start || !end) {
       return { formats: [], tokens: [], neighbors: [] }
     }
@@ -158,7 +158,7 @@ const formatCtrl = ContentState => {
       tokens = tokenizer(text, {
         options: this.muya.options
       })
-      ;(function iterator (tks) {
+      ;(function iterator(tks) {
         for (const token of tks) {
           if (
             checkTokenIsInlineFormat(token) &&
@@ -185,7 +185,7 @@ const formatCtrl = ContentState => {
     return { formats, tokens, neighbors }
   }
 
-  ContentState.prototype.clearBlockFormat = function (block, { start, end } = selection.getCursorRange(), type) {
+  ContentState.prototype.clearBlockFormat = function(block, { start, end } = selection.getCursorRange(), type) {
     if (!start || !end) {
       return
     }
@@ -233,7 +233,7 @@ const formatCtrl = ContentState => {
     block.text = generator(tokens)
   }
 
-  ContentState.prototype.format = function (type) {
+  ContentState.prototype.format = function(type) {
     const { start, end } = selection.getCursorRange()
     if (!start || !end) {
       return

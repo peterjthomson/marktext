@@ -126,52 +126,52 @@ class App {
   async _initializeLanguage() {
     try {
       let currentLanguage = this._accessor.preferences.getItem('language')
-      
+
       // 如果没有设置语言，则根据系统语言自动设置
       if (!currentLanguage) {
         const systemLanguage = app.getLocale()
         console.log(`System language detected: ${systemLanguage}`)
-        
+
         // 支持的语言列表（根据项目实际支持的语言）
         const supportedLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'pt', 'ru']
-        
+
         // 语言映射：系统语言代码 -> 应用语言代码
         const languageMap = {
           'zh-CN': 'zh-CN',
-          'zh-TW': 'zh-TW', 
+          'zh-TW': 'zh-TW',
           'zh-HK': 'zh-TW',
-          'zh': 'zh-CN',
-          'en': 'en',
+          zh: 'zh-CN',
+          en: 'en',
           'en-US': 'en',
           'en-GB': 'en',
-          'ja': 'ja',
+          ja: 'ja',
           'ja-JP': 'ja',
-          'ko': 'ko',
+          ko: 'ko',
           'ko-KR': 'ko',
-          'fr': 'fr',
+          fr: 'fr',
           'fr-FR': 'fr',
-          'de': 'de',
+          de: 'de',
           'de-DE': 'de',
-          'es': 'es',
+          es: 'es',
           'es-ES': 'es',
-          'pt': 'pt',
+          pt: 'pt',
           'pt-BR': 'pt',
-          'ru': 'ru',
+          ru: 'ru',
           'ru-RU': 'ru'
         }
-        
+
         currentLanguage = languageMap[systemLanguage] || 'en'
-        
+
         // 如果检测到的语言不在支持列表中，使用英语
         if (!supportedLanguages.includes(currentLanguage)) {
           currentLanguage = 'en'
         }
-        
+
         // 保存检测到的语言设置
         this._accessor.preferences.setItem('language', currentLanguage)
         console.log(`Auto-detected and set language to: ${currentLanguage}`)
       }
-      
+
       setLanguage(currentLanguage)
       console.log(`Main process language initialized to: ${currentLanguage}`)
     } catch (error) {
@@ -235,11 +235,6 @@ class App {
     }
 
     ipcMain.on('broadcast-preferences-changed', (change) => {
-      // Update dark mode tracking when theme preference changes
-      if (change.theme) {
-        const newIsDark = /dark/i.test(change.theme)
-      }
-
       // When followSystemTheme is enabled, immediately switch to match system
       if (change.followSystemTheme === true) {
         const systemIsDark = nativeTheme.shouldUseDarkColors
@@ -581,11 +576,11 @@ class App {
       this._createEditorWindow()
     })
 
-    ipcMain.on('screen-capture', async (win) => {
+    ipcMain.on('screen-capture', async(win) => {
       if (isOsx) {
         // Use macOs `screencapture` command line when in macOs system.
         const screenshotFileName = await this.getScreenshotFileName()
-        exec('screencapture -i -c', async (err) => {
+        exec('screencapture -i -c', async(err) => {
           if (err) {
             log.error(err)
             return
@@ -684,7 +679,7 @@ class App {
       }
     })
 
-    ipcMain.on('mt::select-default-directory-to-open', async (e) => {
+    ipcMain.on('mt::select-default-directory-to-open', async(e) => {
       const { preferences } = this._accessor
       const { defaultDirectoryToOpen } = preferences.getAll()
       const win = BrowserWindow.fromWebContents(e.sender)
@@ -726,12 +721,12 @@ class App {
       return { defaultKeybindings, userKeybindings }
     })
 
-    ipcMain.handle('mt::keybinding-save-user-keybindings', async (event, userKeybindings) => {
+    ipcMain.handle('mt::keybinding-save-user-keybindings', async(event, userKeybindings) => {
       const { keybindings } = this._accessor
       return keybindings.setUserKeybindings(userKeybindings)
     })
 
-    ipcMain.handle('mt::fs-trash-item', async (event, fullPath) => {
+    ipcMain.handle('mt::fs-trash-item', async(event, fullPath) => {
       return shell.trashItem(fullPath)
     })
   }

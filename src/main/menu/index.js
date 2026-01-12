@@ -34,7 +34,7 @@ class AppMenu {
     this.isOsxOrWindows = isOsx || isWindows
     this.activeWindowId = -1
     this.windowMenus = new Map()
-    
+
     // Initialize main process language from preferences
     this._initializeLanguage()
 
@@ -433,7 +433,7 @@ class AppMenu {
       this.clearRecentlyUsedDocuments()
     })
 
-    ipcMain.on('broadcast-preferences-changed', async (prefs) => {
+    ipcMain.on('broadcast-preferences-changed', async(prefs) => {
       if (prefs.theme !== undefined) {
         this.updateThemeMenu(prefs.theme)
       }

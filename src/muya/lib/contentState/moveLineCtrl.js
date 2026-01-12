@@ -10,7 +10,7 @@ const moveLineCtrl = ContentState => {
    *
    * @returns {Object|null} The block to move, or null if not movable
    */
-  ContentState.prototype.getMovableBlock = function () {
+  ContentState.prototype.getMovableBlock = function() {
     const { start } = this.cursor
     if (!start) return null
 
@@ -68,7 +68,7 @@ const moveLineCtrl = ContentState => {
    * @param {Object} block1 First block
    * @param {Object} block2 Second block (should be adjacent sibling)
    */
-  ContentState.prototype.swapBlocks = function (block1, block2) {
+  ContentState.prototype.swapBlocks = function(block1, block2) {
     if (!block1 || !block2) return false
 
     const parent = this.getParent(block1)
@@ -118,7 +118,7 @@ const moveLineCtrl = ContentState => {
    *
    * @returns {boolean} True if the move was successful
    */
-  ContentState.prototype.moveLineUp = function () {
+  ContentState.prototype.moveLineUp = function() {
     const movableBlock = this.getMovableBlock()
     if (!movableBlock) return false
 
@@ -145,7 +145,7 @@ const moveLineCtrl = ContentState => {
    *
    * @returns {boolean} True if the move was successful
    */
-  ContentState.prototype.moveLineDown = function () {
+  ContentState.prototype.moveLineDown = function() {
     const movableBlock = this.getMovableBlock()
     if (!movableBlock) return false
 
@@ -174,7 +174,7 @@ const moveLineCtrl = ContentState => {
    * @param {KeyboardEvent} event The keyboard event
    * @returns {boolean} True if the event was handled
    */
-  ContentState.prototype.handleMoveLineKeydown = function (event) {
+  ContentState.prototype.handleMoveLineKeydown = function(event) {
     // Check for Alt/Option + Arrow Up/Down
     if (!event.altKey) return false
     if (event.ctrlKey || event.metaKey || event.shiftKey) return false

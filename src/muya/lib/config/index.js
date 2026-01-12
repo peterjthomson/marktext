@@ -1,5 +1,4 @@
-import htmlTags from 'html-tags'
-import { voidHtmlTags } from 'html-tags'
+import htmlTags, { voidHtmlTags } from 'html-tags'
 import { generateKeyHash, genUpper2LowerKeyHash } from '../utils/hash'
 import { getLongUniqueId } from '../utils/random'
 

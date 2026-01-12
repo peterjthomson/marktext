@@ -1,8 +1,7 @@
-import { Menu } from 'electron'
+import { Menu, ipcMain } from 'electron'
 import { isOsx } from '../../config'
 import { COMMANDS } from '../../commands'
 import { zoomIn, zoomOut } from '../../windows/utils'
-import { ipcMain } from 'electron'
 
 export const minimizeWindow = (win) => {
   if (win) {

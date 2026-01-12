@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import * as contextMenu from './actions'
 import { t } from '../../i18n'
 
@@ -11,7 +12,7 @@ export const SEPARATOR = {
 export const getNEW_FILE = () => ({
   label: t('contextMenu.sideBar.newFile'),
   id: 'newFileMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.newFile()
   }
 })
@@ -19,7 +20,7 @@ export const getNEW_FILE = () => ({
 export const getNEW_DIRECTORY = () => ({
   label: t('contextMenu.sideBar.newDirectory'),
   id: 'newDirectoryMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.newDirectory()
   }
 })
@@ -27,7 +28,7 @@ export const getNEW_DIRECTORY = () => ({
 export const getCOPY = () => ({
   label: t('contextMenu.sideBar.copy'),
   id: 'copyMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.copy()
   }
 })
@@ -35,7 +36,7 @@ export const getCOPY = () => ({
 export const getCUT = () => ({
   label: t('contextMenu.sideBar.cut'),
   id: 'cutMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.cut()
   }
 })
@@ -43,7 +44,7 @@ export const getCUT = () => ({
 export const getPASTE = () => ({
   label: t('contextMenu.sideBar.paste'),
   id: 'pasteMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.paste()
   }
 })
@@ -51,7 +52,7 @@ export const getPASTE = () => ({
 export const getRENAME = () => ({
   label: t('contextMenu.sideBar.rename'),
   id: 'renameMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.rename()
   }
 })
@@ -59,7 +60,7 @@ export const getRENAME = () => ({
 export const getDELETE = () => ({
   label: t('contextMenu.sideBar.moveToTrash'),
   id: 'deleteMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.remove()
   }
 })
@@ -67,7 +68,7 @@ export const getDELETE = () => ({
 export const getSHOW_IN_FOLDER = () => ({
   label: t('contextMenu.sideBar.showInFolder'),
   id: 'showInFolderMenuItem',
-  click (menuItem, browserWindow) {
+  click(menuItem, browserWindow) {
     contextMenu.showInFolder()
   }
 })

@@ -1,7 +1,7 @@
 import { CLASS_OR_ID } from '../../../config'
 import { htmlToVNode } from '../snabbdom'
 
-export default function htmlRuby (h, cursor, block, token, outerClass) {
+export default function htmlRuby(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor)
   const { children } = token
   const { start, end } = token.range
@@ -21,7 +21,7 @@ export default function htmlRuby (h, cursor, block, token, outerClass) {
           }
         }, vNode)
       ])
-  // if children is empty string, no need to render ruby charactors...
+        // if children is empty string, no need to render ruby charactors...
     ]
     : [
       h(`span.${className}.${CLASS_OR_ID.AG_RUBY}`, [

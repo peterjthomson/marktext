@@ -134,7 +134,7 @@ class EditorWindow extends BaseWindow {
       )
     })
 
-    win.webContents.once('render-process-gone', async (event, { reason }) => {
+    win.webContents.once('render-process-gone', async(event, { reason }) => {
       if (reason === 'clean-exit') {
         return
       }

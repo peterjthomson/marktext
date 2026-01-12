@@ -10,7 +10,7 @@ const coreApi = ContentState => {
    * @param {string} replacement The replacement.
    * @param {boolean} setCursor Whether the editor cursor should be updated.
    */
-  ContentState.prototype.replaceWordInline = function (line, wordCursor, replacement, setCursor = false) {
+  ContentState.prototype.replaceWordInline = function(line, wordCursor, replacement, setCursor = false) {
     const { start: lineStart, end: lineEnd } = line
     const { start: wordStart, end: wordEnd } = wordCursor
 

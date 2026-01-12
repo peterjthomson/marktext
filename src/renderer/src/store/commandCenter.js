@@ -17,28 +17,28 @@ export const useCommandCenterStore = defineStore('commandCenter', {
     async LISTEN_COMMAND_CENTER_BUS() {
       // Wait for initial language setup before initializing commands
       let isInitialized = false
-      
-      const initializeCommands = async () => {
+
+      const initializeCommands = async() => {
         if (!isInitialized) {
           this.rootCommand.subcommands = await getCommandsWithDescriptions()
           this.SORT_COMMANDS()
           isInitialized = true
         }
       }
-      
+
       // Listen for language changes and initialize/update command descriptions
-      bus.on('language-changed', async () => {
+      bus.on('language-changed', async() => {
         // Update all command descriptions when language changes
         this.rootCommand.subcommands = await getCommandsWithDescriptions()
         this.SORT_COMMANDS()
         isInitialized = true
       })
-      
+
       // Delay initial setup to allow language initialization
-      setTimeout(async () => {
+      setTimeout(async() => {
         await initializeCommands()
       }, 100)
-      
+
       // Init stuff
       bus.on('cmd::sort-commands', () => {
         this.SORT_COMMANDS()
@@ -65,8 +65,6 @@ export const useCommandCenterStore = defineStore('commandCenter', {
       window.electron.ipcRenderer.on('mt::execute-command-by-id', (e, commandId) => {
         executeCommand(this, commandId)
       })
-
-
     }
   }
 })

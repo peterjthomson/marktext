@@ -173,7 +173,7 @@ class ImageSelector extends BaseFloat {
     return this.replaceImageAsync(this.state)
   }
 
-  replaceImageAsync = async ({ alt, src, title }) => {
+  replaceImageAsync = async({ alt, src, title }) => {
     if (!this.muya.options.imageAction || URL_REG.test(src)) {
       const { alt: oldAlt, src: oldSrc, title: oldTitle } = this.imageInfo.token.attrs
       if (alt !== oldAlt || src !== oldSrc || title !== oldTitle) {
@@ -233,7 +233,7 @@ class ImageSelector extends BaseFloat {
   }
 
   renderHeader() {
-    const t = this.muya?.options?.t || ((k)=>k)
+    const t = this.muya?.options?.t || ((k) => k)
     const tabs = [
       {
         label: t('editor.image.selector.tab.select'),
@@ -268,7 +268,7 @@ class ImageSelector extends BaseFloat {
 
   renderBody = () => {
     const { tab, state, isFullMode } = this
-    const t = this.muya?.options?.t || ((k)=>k)
+    const t = this.muya?.options?.t || ((k) => k)
     const { alt, title, src } = state
     let bodyContent = null
     if (tab === 'select') {

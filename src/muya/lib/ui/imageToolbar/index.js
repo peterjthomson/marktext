@@ -17,7 +17,7 @@ const defaultOptions = {
 class ImageToolbar extends BaseFloat {
   static pluginName = 'imageToolbar'
 
-  constructor (muya, options = {}) {
+  constructor(muya, options = {}) {
     const name = 'ag-image-toolbar'
     const opts = Object.assign({}, defaultOptions, options)
     super(muya, name, opts)
@@ -32,7 +32,7 @@ class ImageToolbar extends BaseFloat {
     this.listen()
   }
 
-  listen () {
+  listen() {
     const { eventCenter } = this.muya
     super.listen()
     eventCenter.subscribe('muya-image-toolbar', ({ reference, imageInfo }) => {
@@ -49,7 +49,7 @@ class ImageToolbar extends BaseFloat {
     })
   }
 
-  render () {
+  render() {
     const { muya, oldVnode, toolbarContainer, imageInfo } = this
     const icons = getIcons(muya?.options?.t)
     const { attrs } = imageInfo.token
@@ -95,7 +95,7 @@ class ImageToolbar extends BaseFloat {
     this.oldVnode = vnode
   }
 
-  selectItem (event, item) {
+  selectItem(event, item) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -113,7 +113,7 @@ class ImageToolbar extends BaseFloat {
       case 'edit': {
         const rect = this.reference.getBoundingClientRect()
         const reference = {
-          getBoundingClientRect () {
+          getBoundingClientRect() {
             rect.height = 0
             return rect
           }

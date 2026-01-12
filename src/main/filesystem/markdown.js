@@ -76,7 +76,7 @@ export const writeMarkdownFile = (pathname, content, options) => {
  * @param {*} trimTrailingNewline The trim trailing newline option.
  * @returns {IMarkdownDocumentRaw} Returns a raw markdown document.
  */
-export const loadMarkdownFile = async (
+export const loadMarkdownFile = async(
   pathname,
   preferredEol,
   autoGuessEncoding = true,
