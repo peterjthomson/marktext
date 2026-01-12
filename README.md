@@ -52,7 +52,6 @@
 - Simply check out the [Releases Page](https://github.com/peterjthomson/marktext/releases)
 - Tested on:
   - `Ubuntu 24.0.2` (`AppImage` and `.deb` packages)
-  - _Would love some help in testing the other Linux packages!_
 
 ### Linux Package Managers
 
@@ -64,7 +63,7 @@
 
 - Available on the [Releases Page](https://github.com/peterjthomson/marktext/releases)
 - Both Apple Silicon (arm64) and Intel (x64) builds available
-- Signed with Developer ID for Gatekeeper compatibility
+- Signed and **notarized** for macOS Gatekeeper compatibility
 
 # 2. Screenshots
 
