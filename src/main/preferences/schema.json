@@ -1,0 +1,432 @@
+{
+  "autoSave": {
+    "description": "General--Automatically save the content being edited.",
+    "type": "boolean",
+    "default": false
+  },
+  "autoSaveDelay": {
+    "description": "General--The time in ms after a change that the file is saved.",
+    "type": "number",
+    "minimum": 1000,
+    "default": 5000
+  },
+  "titleBarStyle": {
+    "description": "General--The title bar style (Windows and Linux system only).",
+    "enum": [
+      "custom",
+      "native"
+    ],
+    "default": "custom"
+  },
+  "openFilesInNewWindow": {
+    "description": "General--Open files in a new window.",
+    "type": "boolean",
+    "default": false
+  },
+  "openFolderInNewWindow": {
+    "description": "General--Open folder via menu in a new window.",
+    "type": "boolean",
+    "default": false
+  },
+  "zoom": {
+    "description": "General--The zoom level. Between 0.5 and 2.0 inclusive.",
+    "type": "number",
+    "minimum": 0.5,
+    "maximum": 2.0,
+    "default": 1.0
+  },
+  "hideScrollbar": {
+    "description": "General--Whether to hide scrollbars.",
+    "type": "boolean",
+    "default": false
+  },
+  "wordWrapInToc": {
+    "description": "General--Whether to enable word wrap in TOC.",
+    "type": "boolean",
+    "default": false
+  },
+  "fileSortBy": {
+    "description": "General--Sort files in opened folder by created time, modified time and title.",
+    "enum": [
+      "modified",
+      "created",
+      "title"
+    ],
+    "default": "modified"
+  },
+  "startUpAction": {
+    "description": "General--The action after MarkText startup, open the last edited content, open the specified folder or blank page",
+    "enum": [
+      "folder",
+      "lastState",
+      "blank"
+    ],
+    "default": "blank"
+  },
+  "defaultDirectoryToOpen": {
+    "description": "General--The default directory that should be opened on startup when startUp=folder.",
+    "type": "string"
+  },
+  "language": {
+    "description": "General--The language MarkText use.",
+    "type": "string",
+    "default": "en"
+  },
+  "editorFontFamily": {
+    "description": "Editor--editor font family",
+    "type": "string",
+    "pattern": "^[^\\s]+((-|\\s)*[^\\s])*$",
+    "default": "Open Sans"
+  },
+  "fontSize": {
+    "description": "Editor--Font size in pixels",
+    "type": "number",
+    "maximum": 32,
+    "minimum": 12,
+    "default": 16
+  },
+  "lineHeight": {
+    "description": "Editor--Line Height",
+    "type": "number",
+    "maximum": 2,
+    "minimum": 1.2,
+    "default": 1.6
+  },
+  "wrapCodeBlocks": {
+    "description": "Editor--Wrap text inside code blocks",
+    "type": "boolean",
+    "default": true
+  },
+  "editorLineWidth": {
+    "description": "Editor--Defines the maximum editor area width. An empty string or suffixes of ch (characters), px (pixels) or % (percentage) are allowed.",
+    "type": "string",
+    "pattern": "^(?:$|[0-9]+(?:ch|px|%)$)",
+    "default": ""
+  },
+  "codeFontSize": {
+    "description": "Editor--Font size in code Block, the range is 12 ~ 18",
+    "type": "number",
+    "maximum": 28,
+    "minimum": 12,
+    "default": 14
+  },
+  "codeFontFamily": {
+    "description": "Editor--Font family used in code block",
+    "type": "string",
+    "pattern": "^[^\\s]+((-|\\s)*[^\\s])*$",
+    "default": "DejaVu Sans Mono"
+  },
+  "codeBlockLineNumbers": {
+    "description": "Editor--Whether to show the line numbers",
+    "type": "boolean",
+    "default": true
+  },
+  "trimUnnecessaryCodeBlockEmptyLines": {
+    "description": "Editor--Trim the beginning and ending empty lines in code block",
+    "type": "boolean",
+    "default": true
+  },
+  "autoPairBracket": {
+    "description": "Editor--Automatically brackets when editing",
+    "type": "boolean",
+    "default": true
+  },
+  "autoPairMarkdownSyntax": {
+    "description": "Editor--Autocomplete markdown syntax",
+    "type": "boolean",
+    "default": true
+  },
+  "autoPairQuote": {
+    "description": "Editor--Automatic completion of quotes",
+    "type": "boolean",
+    "default": true
+  },
+  "surroundSelection": {
+    "description": "Editor--Wrap selected text with brackets, quotes, or markdown syntax when typing",
+    "type": "boolean",
+    "default": true
+  },
+  "endOfLine": {
+    "description": "Editor--The newline character used at the end of each line. The default value is default, which selects your operating system's default newline character.",
+    "enum": [
+      "default",
+      "lf",
+      "crlf"
+    ],
+    "default": "default"
+  },
+  "defaultEncoding": {
+    "description": "Editor--The default file encoding.",
+    "default": "utf8",
+    "enum": [
+      "ascii",
+      "utf8",
+      "utf16be",
+      "utf16le",
+      "utf32be",
+      "utf32le",
+      "latin3",
+      "iso885915",
+      "cp1252",
+      "arabic",
+      "cp1256",
+      "latin4",
+      "cp1257",
+      "iso88592",
+      "windows1250",
+      "cp866",
+      "iso88595",
+      "koi8r",
+      "koi8u",
+      "cp1251",
+      "iso885913",
+      "greek",
+      "cp1253",
+      "hebrew",
+      "cp1255",
+      "latin5",
+      "cp1254",
+      "gb2312",
+      "gb18030",
+      "gbk",
+      "big5",
+      "big5hkscs",
+      "shiftjis",
+      "eucjp",
+      "euckr",
+      "latin6"
+    ]
+  },
+  "autoGuessEncoding": {
+    "description": "Editor--Try to automatically guess the file encoding when opening files.",
+    "type": "boolean",
+    "default": true
+  },
+  "trimTrailingNewline": {
+    "description": "Editor--The trim trailing newline option.",
+    "default": 2,
+    "enum": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "textDirection": {
+    "description": "Editor--The writing text direction",
+    "enum": [
+      "ltr",
+      "rtl"
+    ],
+    "default": "ltr"
+  },
+  "hideQuickInsertHint": {
+    "description": "Editor--Hide hint for quickly creating paragraphs",
+    "type": "boolean",
+    "default": false
+  },
+  "hideLinkPopup": {
+    "description": "Editor--Hide link popup when the cursor is hover on the link",
+    "type": "boolean",
+    "default": false
+  },
+  "autoCheck": {
+    "description": "Editor--Whether to automatically check related task.",
+    "type": "boolean",
+    "default": false
+  },
+  "preferLooseListItem": {
+    "description": "Markdown--The preferred list type",
+    "type": "boolean",
+    "default": true
+  },
+  "bulletListMarker": {
+    "description": "Markdown--The marker used in bullet list",
+    "enum": [
+      "-",
+      "*",
+      "+"
+    ],
+    "default": "-"
+  },
+  "orderListDelimiter": {
+    "description": "Markdown--The dilimiter used in order list",
+    "enum": [
+      ".",
+      ")"
+    ],
+    "default": "."
+  },
+  "preferHeadingStyle": {
+    "description": "Markdown--The preferred heading style in MarkText",
+    "enum": [
+      "atx",
+      "setext"
+    ],
+    "default": "atx"
+  },
+  "tabSize": {
+    "description": "Markdown--Replace the tab with x spaces",
+    "type": "number",
+    "default": 4
+  },
+  "listIndentation": {
+    "description": "Markdown--Select the indent of list",
+    "enum": [
+      "dfm",
+      "tab",
+      1,
+      2,
+      3,
+      4
+    ],
+    "default": 1
+  },
+  "frontmatterType": {
+    "description": "Markdown--The frontmatter type",
+    "enum": [
+      "-",
+      "+",
+      ";",
+      "{"
+    ],
+    "default": "-"
+  },
+  "superSubScript": {
+    "description": "Markdown-Enable pandoc's markdown extension superscript and subscript.",
+    "type": "boolean",
+    "default": false
+  },
+  "footnote": {
+    "description": "Markdown-Enable pandoc's markdown extension footnote.",
+    "type": "boolean",
+    "default": false
+  },
+  "isHtmlEnabled": {
+    "description": "Markdown-Enable HTML rendering",
+    "type": "boolean",
+    "default": true
+  },
+  "isGitlabCompatibilityEnabled": {
+    "description": "Markdown-Enable GitLab compatibility mode.",
+    "type": "boolean",
+    "default": false
+  },
+  "sequenceTheme": {
+    "description": "Markdown--Sequence diagram theme",
+    "enum": [
+      "hand",
+      "simple"
+    ],
+    "default": "hand"
+  },
+  "theme": {
+    "description": "Theme--Select the theme used in MarkText",
+    "type": "string",
+    "default": "light"
+  },
+  "followSystemTheme": {
+    "description": "Theme--Use separate theme in dark mode.",
+    "type": "boolean",
+    "default": false
+  },
+  "lightModeTheme": {
+    "description": "Theme--Theme to use when system is in light mode.",
+    "type": "string",
+    "default": "light"
+  },
+  "darkModeTheme": {
+    "description": "Theme--Theme to use when system is in dark mode.",
+    "type": "string",
+    "default": "dark"
+  },
+  "customCss": {
+    "description": "Custom CSS--Custom CSS to apply to the current theme.",
+    "type": "string",
+    "default": ""
+  },
+  "spellcheckerEnabled": {
+    "description": "Spelling--Whether spell checking is enabled.",
+    "type": "boolean",
+    "default": false
+  },
+  "spellcheckerNoUnderline": {
+    "description": "Spelling--Don't underline spelling mistakes.",
+    "type": "boolean",
+    "default": false
+  },
+  "spellcheckerLanguage": {
+    "description": "Spelling--The spell checker language",
+    "type": "string",
+    "pattern": "^[a-z]{2,3}(?:[-](?:[0-9]|[a-zA-Z]){2,}){0,2}$",
+    "default": "en-US"
+  },
+  "imageInsertAction": {
+    "description": "Image--The default behavior after insert image from local folder",
+    "enum": [
+      "upload",
+      "folder",
+      "path"
+    ],
+    "default": "path"
+  },
+  "imagePreferRelativeDirectory": {
+    "description": "Image--Whether to prefer the relative image directory.",
+    "type": "boolean",
+    "default": false
+  },
+  "imageRelativeDirectoryName": {
+    "description": "Image--The relative image folder name.",
+    "type": "string",
+    "default": "assets"
+  },
+  "sideBarVisibility": {
+    "description": "View--Whether the side bar is visible.",
+    "type": "boolean",
+    "default": false
+  },
+  "tabBarVisibility": {
+    "description": "View--Whether the tabs are shown.",
+    "type": "boolean",
+    "default": false
+  },
+  "sourceCodeModeEnabled": {
+    "description": "View--Whether the source-code mode is enabled by default.",
+    "type": "boolean",
+    "default": false
+  },
+  "searchExclusions": {
+    "description": "Searcher--List of glob patterns to exclude from search.",
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "searchMaxFileSize": {
+    "description": "Searcher--The maximal file size (<maxFileSize><suffix>). Suffixes of K, M or G are allowed if not suffix is given the number is treated as bytes.",
+    "type": "string",
+    "pattern": "^(?:$|[0-9]+(?:K|M|G)?$)",
+    "default": ""
+  },
+  "searchIncludeHidden": {
+    "description": "Searcher--Whether to search in hidden files and directories.",
+    "type": "boolean",
+    "default": false
+  },
+  "searchNoIgnore": {
+    "description": "Searcher--Whether to ignore ignore files like .gitignore.",
+    "type": "boolean",
+    "default": false
+  },
+  "searchFollowSymlinks": {
+    "description": "Searcher--Whether symlinks should be followed.",
+    "type": "boolean",
+    "default": true
+  },
+  "watcherUsePolling": {
+    "description": "Watcher--Whether to use polling. Polling may leads to high CPU utilization but is necessary to watch files over a network.",
+    "type": "boolean",
+    "default": false
+  }
+}

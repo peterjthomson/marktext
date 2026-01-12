@@ -1,0 +1,14 @@
+node_modules
+dist
+out
+.DS_Store
+.prettierignore
+.eslintcache
+*.log*
+.trae/
+.cursor/
+doc/
+# Ignore temp artifacts
+temp/
+logs/
+*.min.json

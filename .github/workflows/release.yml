@@ -1,0 +1,101 @@
+name: Build/release Marktext
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.21.1
+
+      - name: Install Linux Build Dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: sudo apt-get update && sudo apt-get install -y icnsutils graphicsmagick xz-utils libx11-dev libxkbfile-dev gnome-keyring libsecret-1-dev libfontconfig-dev rpm
+
+        # --ignore-scripts first to prevent postinstall scripts from running (we will run electron-rebuild manually later)
+        # --no-audit and --no-fund to reduce noise
+      - name: Install Dependencies
+        run: npm ci --no-audit --no-fund --ignore-scripts --loglevel verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Electron seems to require C++20 support for native modules now after Electron 33
+      - name: Set C++20 for MacOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "CXXFLAGS=-std=gnu++20 -stdlib=libc++" >> $GITHUB_ENV
+
+      - name: Rebuild native modules for Electron (MacOS + Windows)
+        if: matrix.os != 'ubuntu-22.04'
+        run: npx @electron/rebuild -f
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Enforce using gcc/g++ on Linux for electron-rebuild instead of clang (.npmrc covers some settings too)
+      - name: Rebuild native modules for Electron (Ubuntu)
+        if: matrix.os == 'ubuntu-22.04'
+        run: USE_ELECTRON_CLANG=0 npx @electron/rebuild -f
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build-linux
+        if: matrix.os == 'ubuntu-22.04'
+        run: npm run build:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Mac builds have been disabled due to a lack of a Developer ID to sign it
+      # All builds by default will give a "this app is damaged and can't be opened" error
+      - name: build-mac
+        if: matrix.os == 'macos-latest'
+        run: npm run build:mac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build-win
+        if: matrix.os == 'windows-latest'
+        run: npm run build:win
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          name: 'Release ${{ github.ref_name }}'
+          body: |
+            ## ⚠️ Note for MacOS Users
+            - MacOS releases will show a "`MarkText is damaged and can't be opened`" due to a **lack of notorisation**. 
+            - Please see [this fix here](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300) (which also applies to any other app that lacks a Developer Account signing) 
+
+            ## Changes
+          files: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.dmg
+            dist/*.AppImage
+            dist/*.snap
+            dist/*.deb
+            dist/*.rpm
+            dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

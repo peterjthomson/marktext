@@ -1,0 +1,341 @@
+/*
+ * Tufte Theme for MarkText
+ * Inspired by Edward Tufte's handout style and Tufte CSS
+ * https://edwardtufte.github.io/tufte-css/
+ *
+ * Interpreted for macOS with:
+ * - Warm sandy/cream background
+ * - Centered headings with italic subheadings
+ * - Classic, elegant typography feel
+ * - Clean, minimal aesthetics with focus on readability
+ */
+
+:root {
+  /* Theme color - warm ochre/tan for a classic feel */
+  --themeColor: rgb(156, 118, 72);
+  --themeColor90: rgba(156, 118, 72, 0.9);
+  --themeColor80: rgba(156, 118, 72, 0.8);
+  --themeColor70: rgba(156, 118, 72, 0.7);
+  --themeColor60: rgba(156, 118, 72, 0.6);
+  --themeColor50: rgba(156, 118, 72, 0.5);
+  --themeColor40: rgba(156, 118, 72, 0.4);
+  --themeColor30: rgba(156, 118, 72, 0.3);
+  --themeColor20: rgba(156, 118, 72, 0.2);
+  --themeColor10: rgba(156, 118, 72, 0.1);
+
+  /* Editor colors - warm dark gray on cream */
+  --highlightColor: rgba(156, 118, 72, 0.25);
+  --selectionColor: rgba(156, 118, 72, 0.15);
+  --editorColor: rgba(51, 47, 43, 0.87);
+  --editorColor80: rgba(51, 47, 43, 0.8);
+  --editorColor60: rgba(51, 47, 43, 0.6);
+  --editorColor50: rgba(51, 47, 43, 0.5);
+  --editorColor40: rgba(51, 47, 43, 0.4);
+  --editorColor30: rgba(51, 47, 43, 0.3);
+  --editorColor10: rgba(51, 47, 43, 0.1);
+  --editorColor04: rgba(51, 47, 43, 0.04);
+
+  /* Warm sandy/cream background - like aged paper */
+  --editorBgColor: #f8f6f1;
+  --deleteColor: #bf4040;
+  --iconColor: rgba(51, 47, 43, 0.45);
+  --codeBgColor: rgba(51, 47, 43, 0.06);
+  --codeBlockBgColor: rgba(51, 47, 43, 0.04);
+  --footnoteBgColor: rgba(156, 118, 72, 0.06);
+  --inputBgColor: rgba(51, 47, 43, 0.05);
+  --focusColor: var(--themeColor);
+
+  /* Button styles */
+  --buttonFontColor: var(--editorColor);
+  --buttonBgColor: #faf8f3;
+  --buttonBorder: 1px solid rgba(51, 47, 43, 0.12);
+  --buttonShadow: none;
+  --buttonFontColorHover: var(--buttonFontColor);
+  --buttonBgColorHover: linear-gradient(#fcfaf5, #f5f3ee);
+  --buttonBorderHover: var(--buttonBorder);
+  --buttonFontColorActive: var(--buttonFontColor);
+  --buttonBgColorActive: #f5f3ee;
+  --buttonBorderActive: var(--buttonBorder);
+  --buttonFocusBorder: 1px solid var(--themeColor);
+
+  --buttonPrimaryFontColor: #faf8f3;
+  --buttonPrimaryBgColor: var(--themeColor);
+  --buttonPrimaryBorder: none;
+  --buttonPrimaryShadow: 0 0 8px 0 rgba(0, 0, 0, 0.08);
+  --buttonPrimaryFontColorHover: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorHover: var(--themeColor90);
+  --buttonPrimaryBorderHover: var(--buttonPrimaryBorder);
+  --buttonPrimaryFontColorActive: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorActive: var(--themeColor80);
+  --buttonPrimaryBorderActive: var(--buttonPrimaryBorder);
+  --buttonPrimaryFocusBorder: none;
+  --buttonPrimaryFocusShadow: inset 0 0 0 1px rgba(100, 75, 46, 0.5), 0 0 0 1px var(--themeColor);
+  --tableBorderColor: rgba(51, 47, 43, 0.12);
+
+  /* Sidebar - warm gray tones */
+  --sideBarColor: rgba(51, 47, 43, 0.6);
+  --sideBarIconColor: rgba(51, 47, 43, 0.4);
+  --sideBarTitleColor: rgba(51, 47, 43, 0.87);
+  --sideBarTextColor: rgba(51, 47, 43, 0.4);
+  --sideBarBgColor: #f0ede6;
+  --sideBarItemHoverBgColor: rgba(156, 118, 72, 0.1);
+  --itemBgColor: rgba(51, 47, 43, 0.04);
+
+  /* Float/popup elements */
+  --floatFontColor: rgba(51, 47, 43, 0.8);
+  --floatBgColor: #faf8f3;
+  --floatHoverColor: rgba(156, 118, 72, 0.1);
+  --floatBorderColor: rgba(51, 47, 43, 0.08);
+  --maskColor: rgba(240, 237, 230, 0.92);
+
+  /* Comfortable reading width */
+  --editorAreaWidth: 780px;
+}
+
+/* Tab bar styling */
+.editor-tabs {
+  background: #edeae3 !important;
+  box-shadow: none !important;
+}
+.editor-tabs:after {
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid rgba(51, 47, 43, 0.08);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.editor-tabs ul.tabs-container:after {
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid rgba(51, 47, 43, 0.08);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+.title-bar-editor-bg.tabs-visible {
+  background: #edeae3 !important;
+}
+
+.tabs-container > li {
+  background: none !important;
+}
+.tabs-container > li.active {
+  border: 1px solid rgba(51, 47, 43, 0.08);
+  border-top: none;
+  border-bottom: none;
+  background: var(--editorBgColor) !important;
+}
+.tabs-container > li.active:after {
+  top: 0 !important;
+  bottom: auto !important;
+  background: var(--themeColor) !important;
+}
+
+/* ------------------------------------ */
+/* Typography - Tufte style for macOS */
+/* ------------------------------------ */
+
+/* Serif font stack - ET Book style fallbacks for macOS */
+#ag-editor-id,
+.ag-contents,
+.editor-wrapper {
+  font-family: "ET Book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif !important;
+}
+
+/* Slight size bump for body text only */
+p.ag-paragraph {
+  font-size: 103% !important;
+}
+
+/* All headings - base styles, serif */
+h1, h2, h3, h4, h5, h6 {
+  color: rgba(51, 47, 43, 0.9);
+  font-family: "ET Book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif !important;
+}
+
+/* H1 - Main title, centered, larger and commanding */
+h1 {
+  text-align: center;
+  font-size: 2.4em;
+  font-weight: 400;
+  margin-top: 0.8em;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.01em;
+}
+
+/* H2 - Section headings, centered, italic style (Tufte signature) */
+h2 {
+  text-align: center;
+  font-size: 1.5em;
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 2em;
+  margin-bottom: 0.8em;
+}
+
+/* H3 - Left aligned, bold italic */
+h3 {
+  text-align: left;
+  font-size: 1.25em;
+  font-weight: 600;
+  font-style: italic;
+  margin-top: 1.6em;
+}
+
+/* H4 and below - left aligned */
+h4 {
+  text-align: left;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 1.4em;
+}
+
+h5, h6 {
+  text-align: left;
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 1.2em;
+}
+
+/* Blockquotes - clean left border, subtle */
+blockquote.ag-paragraph {
+  border-left: 3px solid var(--themeColor50);
+  padding-left: 1.2em;
+  margin-left: 0;
+  background: transparent;
+  font-style: italic;
+  color: var(--editorColor80);
+}
+blockquote.ag-paragraph::before {
+  content: none;
+}
+
+/* List items */
+li.ag-paragraph {
+  color: var(--editorColor);
+}
+
+/* Task list styling */
+li.ag-task-list-item {
+  list-style-type: none;
+  position: relative;
+}
+li.ag-task-list-item > input[type=checkbox] {
+  position: absolute;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  top: 0.15em;
+  margin: 0;
+  left: -24px;
+  transition: all 0.15s ease;
+}
+li.ag-task-list-item > input.ag-checkbox-checked {
+  opacity: 0.5;
+}
+li.ag-task-list-item > input[type=checkbox]::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  display: inline-block;
+  border: 1.5px solid var(--editorColor40);
+  border-radius: 3px;
+  background-color: var(--editorBgColor);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.15s ease;
+}
+li.ag-task-list-item > input.ag-checkbox-checked::before {
+  border-color: var(--themeColor);
+  background-color: var(--themeColor);
+}
+li.ag-task-list-item > input::after {
+  content: '';
+  transform: rotate(-45deg) scale(0);
+  width: 9px;
+  height: 5px;
+  border: 2px solid #faf8f3;
+  border-top: none;
+  border-right: none;
+  position: absolute;
+  display: inline-block;
+  top: 1px;
+  left: 5px;
+  transition: all 0.15s ease;
+}
+li.ag-task-list-item > input.ag-checkbox-checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+/* Horizontal rule - centered, elegant short line with warm color */
+p:not(.ag-active)[data-role="hr"]::before {
+  content: '';
+  position: absolute;
+  width: 20%;
+  min-width: 80px;
+  max-width: 150px;
+  display: block;
+  left: 50%;
+  top: 50%;
+  height: 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid var(--themeColor50);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+/* Links - warm color, subtle underline */
+a {
+  color: var(--themeColor);
+  text-decoration: underline;
+  text-decoration-color: var(--themeColor40);
+  text-underline-offset: 2px;
+}
+a:hover {
+  text-decoration-color: var(--themeColor);
+}
+
+/* Code blocks - warm, minimal styling */
+pre.ag-paragraph {
+  background: var(--codeBlockBgColor);
+  border: 1px solid rgba(51, 47, 43, 0.06);
+  border-radius: 3px;
+}
+
+/* Inline code */
+code {
+  background: var(--codeBgColor);
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Tables - clean lines inspired by Tufte's booktabs */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+table th {
+  border-bottom: 2px solid var(--editorColor25, rgba(51, 47, 43, 0.25));
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5em 0.8em;
+}
+table td {
+  border-bottom: 1px solid var(--editorColor10);
+  padding: 0.5em 0.8em;
+}
+table tr:last-child td {
+  border-bottom: 2px solid var(--editorColor25, rgba(51, 47, 43, 0.25));
+}
+
+/* Strong/bold text - slightly darker */
+strong {
+  font-weight: 600;
+  color: rgba(51, 47, 43, 0.95);
+}

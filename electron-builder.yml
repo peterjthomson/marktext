@@ -1,0 +1,135 @@
+appId: com.electron.app
+productName: marktext
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!scripts/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  # ================================
+  # Do not bundle these files
+  # ================================
+  - '!node_modules/dragula/resources'
+  - '!node_modules/**/*.js.map'
+  - '!node_modules/**/*.cjs.map'
+  - '!node_modules/**/*.mjs.map'
+  - '!node_modules/**/*.ts.map'
+  - '!node_modules/@vscode/ripgrep/{jsconfig.json,*.md,LICENSE}'
+  - '!node_modules/@vscode/ripgrep/lib/download.js'
+  - '!node_modules/@vscode/ripgrep/lib/postinstall.js'
+  - '!node_modules/ced/vendor'
+  # Large source files
+  - '!node_modules/mermaid/dist/mermaid.js'
+  - '!node_modules/mermaid/dist/mermaid.min.js'
+  - '!node_modules/mermaid/dist/mermaid.esm.min.mjs'
+  - '!node_modules/katex/dist/katex.min.js'
+  - '!node_modules/katex/dist/katex.mjs'
+  # Don't bundle Linux build files
+  - '!node_modules/ced/build/Release/compact_enc_det.a'
+  - '!node_modules/**/{*.vcxproj,*.vcxproj.filters}'
+  - '!node_modules/**/build/Release/{*.lib,*.exp,*.ilk,*.pdb,*.iobj,*.ipdb}'
+  - '!node_modules/**/build/Release/obj'
+  # Do not bundle development related files
+  - '!eslint.config.js'
+  - '!jsconfig.json'
+  - '!docs/*'
+extraResources:
+  - from: build/icons
+    to: icons # ends up at resources/icons/
+    filter:
+      - '*.ico'
+  - from: static
+    to: static
+    filter:
+      - '**/*'
+      - '!locales/**/!(*.min).json'
+npmRebuild: false
+electronLanguages: # Avoid packaging all chromium locales since our app has in-built locales
+  - en-US
+
+asarUnpack:
+  - resources/**
+win:
+  executableName: marktext
+  artifactName: 'marktext-win-${arch}-${version}.${ext}'
+  target:
+    - target: 'nsis'
+      arch: [x64]
+    - target: 'zip'
+      arch: [x64]
+  icon: static/icon.ico
+nsis:
+  artifactName: 'marktext-win-${arch}-${version}-setup.${ext}'
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  include: windows/installer.nsh
+mac:
+  artifactName: 'marktext-mac-${arch}-${version}.${ext}'
+  entitlementsInherit: build/mac/entitlements.mac.plist
+  extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  icon: static/icon.icns
+  notarize: false
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
+dmg:
+  artifactName: 'marktext-mac-${arch}-${version}.${ext}'
+  contents:
+    - x: 410
+      y: 240
+      type: 'link'
+      path: '/Applications'
+    - x: 130
+      y: 240
+      type: 'file'
+linux:
+  artifactName: 'marktext-linux-${version}.${ext}'
+  executableName: 'marktext'
+  description: 'A simple and elegant open-source markdown editor that focused on speed and usability.'
+  maintainer: 'MarkText Contributors'
+  category: 'Office;TextEditor;Utility'
+  mimeTypes:
+    - 'text/markdown'
+  icon: 'static/icon.png'
+  desktop:
+    entry:
+      StartupWMClass: 'marktext'
+      Keywords: 'marktext;'
+  target:
+    - AppImage
+    - snap
+    - deb
+    - rpm
+    - tar.gz
+  fileAssociations:
+    - ext: 'md'
+      name: 'Markdown'
+      description: 'Markdown document'
+    - ext: 'markdown'
+      name: 'Markdown'
+      description: 'Markdown document'
+    - ext: 'mmd'
+      name: 'Markdown'
+      description: 'Markdown document'
+    - ext: 'mdown'
+      name: 'Markdown'
+      description: 'Markdown document'
+    - ext: 'mdtxt'
+      name: 'Markdown'
+      description: 'Markdown document'
+    - ext: 'mdtext'
+      name: 'Markdown'
+      description: 'Markdown document'

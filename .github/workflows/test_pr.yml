@@ -1,0 +1,118 @@
+name: Manual PR Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'PR number to test'
+        required: true
+
+jobs:
+  run-on-pr-head:
+    permissions:
+      pull-requests: read
+      actions: read
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch PR head
+        run: |
+          git fetch origin +refs/pull/${{ inputs.pr }}/head:refs/remotes/origin/pr/${{ inputs.pr }}
+          git checkout -qf refs/remotes/origin/pr/${{ inputs.pr }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.21.1
+
+      - name: Install Linux Build Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y icnsutils graphicsmagick xz-utils libx11-dev libxkbfile-dev gnome-keyring libsecret-1-dev libfontconfig-dev rpm
+
+      - name: Install Dependencies
+        run: npm install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build-linux
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run build:linux
+
+      - name: build-mac
+        if: matrix.os == 'macos-latest'
+        run: npm run build:mac
+
+      - name: build-win
+        if: matrix.os == 'windows-latest'
+        run: npm run build:win
+
+      # Adjust the path to your build outputs per OS
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: marktext-${{ matrix.os }}
+          # Replace with your actual dist paths or globs
+          path: |
+            dist/**
+          if-no-files-found: error
+
+  comment-on-pr:
+    name: Comment artifact links on PR
+    needs: run-on-pr-head
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Build comment body from artifacts
+        id: build
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const run_id = context.runId;
+            // List all artifacts for this workflow run
+            const { data } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id,
+              per_page: 100
+            });
+
+            if (!data.artifacts.length) {
+              core.setOutput('body', 'No artifacts were uploaded.');
+            } else {
+              const rows = data.artifacts.map(a => {
+                const artifactPage = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${run_id}/artifacts/${a.id}`;
+                return `| ${a.name} | ${a.size_in_bytes} bytes | [Download](${artifactPage}) |`;
+              }).join('\n');
+
+              const body = [
+                `Build artifacts for PR #${{ inputs.pr }}:`,
+                '',
+                `Run: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${run_id}`,
+                '',
+                '| Artifact | Size | Link |',
+                '|---|---:|---|',
+                rows
+              ].join('\n');
+
+              core.setOutput('body', body);
+            }
+
+      # Create or update a sticky comment so you do not spam the PR
+      - name: Post or update PR comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ inputs.pr }}
+          body: ${{ steps.build.outputs.body }}
+          edit-mode: replace
+          comment-tag: artifact-links
