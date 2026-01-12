@@ -68,7 +68,7 @@ export const getTranslatedSearchContent = () => {
   } catch (e) {
     console.warn('⚠️ 无法获取当前语言设置:', e)
   }
-  
+
   const result = Object.keys(preferences)
     .map((k) => {
       const { description, enum: emums } = preferences[k]
@@ -95,7 +95,7 @@ export const getTranslatedSearchContent = () => {
       let routeCategory = mappedCategory
       const validRoutes = ['general', 'editor', 'markdown', 'spelling', 'theme', 'image', 'keybindings']
       if (!validRoutes.includes(routeCategory)) routeCategory = 'general'
-      
+
       // 尝试翻译分类和项目
       const categoryKey = `preferences.search.categories.${mappedCategory}`
       const itemKey = `preferences.search.items.${k}`
@@ -116,7 +116,7 @@ export const getTranslatedSearchContent = () => {
           translatedCategory = category
         }
       }
-      
+
       // 翻译项目描述
       let translatedPreference = description.split('--')[1] || description
       const englishPreference = description.split('--')[1] || description
@@ -133,7 +133,7 @@ export const getTranslatedSearchContent = () => {
           translatedPreference = description.split('--')[1] || description
         }
       }
-      
+
       return {
         key: k,
         category: translatedCategory,
@@ -141,7 +141,7 @@ export const getTranslatedSearchContent = () => {
         preference: translatedPreference,
         preferenceEn: englishPreference,
         routeCategory,
-        description: description,
+        description,
         enum: emums
       }
     })
@@ -174,7 +174,7 @@ export const setupLanguageChangeListener = () => {
       }
     }
   }
-  
+
   // 监听i18n实例的语言变化
   if (window.__VUE_I18N__) {
     try {
@@ -188,7 +188,7 @@ export const setupLanguageChangeListener = () => {
       console.warn('⚠️ 设置语言变化监听器失败:', e)
     }
   }
-  
+
   // 添加定时检查机制作为备选方案
   setInterval(() => {
     try {
@@ -206,7 +206,7 @@ export const setupLanguageChangeListener = () => {
       // 忽略错误，继续检查
     }
   }, 1000) // 每秒检查一次
-  
+
   // 记录初始语言
   try {
     if (window.__VUE_I18N__) {
@@ -241,14 +241,14 @@ export const refreshSearchContent = () => {
 // 创建调试弹窗（确保关闭按钮显示）
 function createDebugPopup() {
   // 移除可能存在的旧弹窗
-  const existingPopup = document.getElementById('debugPopup');
+  const existingPopup = document.getElementById('debugPopup')
   if (existingPopup) {
-    document.body.removeChild(existingPopup);
+    document.body.removeChild(existingPopup)
   }
 
   // 创建新弹窗
-  const popup = document.createElement('div');
-  popup.id = 'debugPopup';
+  const popup = document.createElement('div')
+  popup.id = 'debugPopup'
   popup.style.cssText = `
     position: fixed;
     top: 50px;
@@ -261,10 +261,10 @@ function createDebugPopup() {
     overflow: auto;
     z-index: 10000;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  `;
-  
+  `
+
   // 创建标题栏和关闭按钮
-  const titleBar = document.createElement('div');
+  const titleBar = document.createElement('div')
   titleBar.style.cssText = `
     display: flex;
     justify-content: space-between;
@@ -272,14 +272,14 @@ function createDebugPopup() {
     margin-bottom: 10px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
-  `;
-  
-  const title = document.createElement('h3');
-  title.textContent = '🛠️ 调试信息';
-  title.style.cssText = 'margin: 0; color: #333;';
-  
-  const closeButton = document.createElement('button');
-  closeButton.textContent = '✕ 关闭';
+  `
+
+  const title = document.createElement('h3')
+  title.textContent = '🛠️ 调试信息'
+  title.style.cssText = 'margin: 0; color: #333;'
+
+  const closeButton = document.createElement('button')
+  closeButton.textContent = '✕ 关闭'
   closeButton.style.cssText = `
     background: #ff4444;
     color: white;
@@ -288,141 +288,141 @@ function createDebugPopup() {
     border-radius: 3px;
     cursor: pointer;
     font-size: 12px;
-  `;
-  
+  `
+
   // 添加关闭事件
   closeButton.onclick = () => {
     if (popup && popup.parentNode) {
-      popup.parentNode.removeChild(popup);
+      popup.parentNode.removeChild(popup)
     }
-  };
-  
+  }
+
   // 组装标题栏
-  titleBar.appendChild(title);
-  titleBar.appendChild(closeButton);
-  
+  titleBar.appendChild(title)
+  titleBar.appendChild(closeButton)
+
   // 创建内容区域
-  const content = document.createElement('div');
-  content.id = 'debugContent';
-  
+  const content = document.createElement('div')
+  content.id = 'debugContent'
+
   // 组装弹窗
-  popup.appendChild(titleBar);
-  popup.appendChild(content);
-  
-  document.body.appendChild(popup);
-  return popup;
+  popup.appendChild(titleBar)
+  popup.appendChild(content)
+
+  document.body.appendChild(popup)
+  return popup
 }
 
 // 获取i18n实例的通用方法（修复API访问问题）
 function getI18nInstance() {
   if (!window.__VUE_I18N__) {
-    return null;
+    return null
   }
 
-  const i18n = window.__VUE_I18N__;
+  const i18n = window.__VUE_I18N__
 
   // 尝试不同的访问方式
   if (typeof i18n.global === 'function') {
-    return i18n.global();
+    return i18n.global()
   } else if (i18n.global && typeof i18n.global.t === 'function') {
-    return i18n.global;
+    return i18n.global
   } else if (typeof i18n.t === 'function') {
-    return i18n;
+    return i18n
   } else if (i18n.$i18n && typeof i18n.$i18n.t === 'function') {
-    return i18n.$i18n;
+    return i18n.$i18n
   }
 
-  return null;
+  return null
 }
 
 // 强化调试函数（修复API访问问题）
 export const debugLanguageState = () => {
   // 确保弹窗存在并可见
-  let popup = document.getElementById('debugPopup');
+  let popup = document.getElementById('debugPopup')
   if (!popup) {
-    popup = createDebugPopup();
-    popup.style.zIndex = '10000';
+    popup = createDebugPopup()
+    popup.style.zIndex = '10000'
   }
 
   // 确保内容区域存在
-  const debugContent = popup.querySelector('#debugContent');
+  const debugContent = popup.querySelector('#debugContent')
   if (!debugContent) {
-    const newContent = document.createElement('div');
-    newContent.id = 'debugContent';
-    popup.appendChild(newContent);
+    const newContent = document.createElement('div')
+    newContent.id = 'debugContent'
+    popup.appendChild(newContent)
   }
 
   // 清空并添加调试信息
-  debugContent.innerHTML = '<div id="debugDetails">正在加载调试信息...</div>';
+  debugContent.innerHTML = '<div id="debugDetails">正在加载调试信息...</div>'
 
   // 填充调试详情
-  const details = debugContent.querySelector('#debugDetails');
-  
+  const details = debugContent.querySelector('#debugDetails')
+
   // 模拟延迟加载
   setTimeout(() => {
     try {
       // 显示i18n实例的详细信息
-      let debugInfo = '<h4>🔍 i18n实例详细信息:</h4>';
-      
+      let debugInfo = '<h4>🔍 i18n实例详细信息:</h4>'
+
       if (!window.__VUE_I18N__) {
-        debugInfo += '<p style="color:red;">❌ __VUE_I18N__ 不存在</p>';
+        debugInfo += '<p style="color:red;">❌ __VUE_I18N__ 不存在</p>'
       } else {
-        const i18n = window.__VUE_I18N__;
+        const i18n = window.__VUE_I18N__
         debugInfo += `
           <p><strong>__VUE_I18N__ 类型:</strong> ${typeof i18n}</p>
           <p><strong>__VUE_I18N__ 键:</strong> ${Object.keys(i18n).slice(0, 10).join(', ')}</p>
           <p><strong>global 类型:</strong> ${typeof i18n.global}</p>
-        `;
-        
+        `
+
         // 安全地显示global信息
         try {
           if (i18n.global) {
-            const globalKeys = Object.keys(i18n.global).slice(0, 5);
-            debugInfo += `<p><strong>global 键:</strong> ${globalKeys.join(', ')}</p>`;
-            
+            const globalKeys = Object.keys(i18n.global).slice(0, 5)
+            debugInfo += `<p><strong>global 键:</strong> ${globalKeys.join(', ')}</p>`
+
             // 检查是否有翻译函数
             if (typeof i18n.global.t === 'function') {
-              debugInfo += '<p style="color:green;">✅ global.t 函数可用</p>';
+              debugInfo += '<p style="color:green;">✅ global.t 函数可用</p>'
             } else {
-              debugInfo += '<p style="color:orange;">⚠️ global.t 函数不可用</p>';
+              debugInfo += '<p style="color:orange;">⚠️ global.t 函数不可用</p>'
             }
           }
         } catch (e) {
-          debugInfo += `<p style="color:red;">❌ 检查global时出错: ${e.message}</p>`;
+          debugInfo += `<p style="color:red;">❌ 检查global时出错: ${e.message}</p>`
         }
-        
+
         // 尝试获取i18n实例
-        const i18nInstance = getI18nInstance();
+        const i18nInstance = getI18nInstance()
         if (i18nInstance) {
-          debugInfo += '<p style="color:green;">✅ 成功获取i18n实例</p>';
-          
+          debugInfo += '<p style="color:green;">✅ 成功获取i18n实例</p>'
+
           // 获取当前语言
-          let currentLanguage = 'unknown';
+          let currentLanguage = 'unknown'
           if (i18nInstance.locale && i18nInstance.locale.value) {
-            currentLanguage = i18nInstance.locale.value;
+            currentLanguage = i18nInstance.locale.value
           } else if (i18nInstance.locale) {
-            currentLanguage = i18nInstance.locale;
+            currentLanguage = i18nInstance.locale
           }
-          
-          debugInfo += `<p><strong>🌍 当前语言:</strong> ${currentLanguage}</p>`;
-          
+
+          debugInfo += `<p><strong>🌍 当前语言:</strong> ${currentLanguage}</p>`
+
           // 测试翻译
           try {
-            const testTranslation = i18nInstance.t('preferences.general.window.titleBarStyle.custom');
-            debugInfo += `<p><strong>🔄 测试翻译:</strong> ${testTranslation}</p>`;
+            const testTranslation = i18nInstance.t('preferences.general.window.titleBarStyle.custom')
+            debugInfo += `<p><strong>🔄 测试翻译:</strong> ${testTranslation}</p>`
           } catch (e) {
-            debugInfo += `<p style="color:red;"><strong>🔄 测试翻译失败:</strong> ${e.message}</p>`;
+            debugInfo += `<p style="color:red;"><strong>🔄 测试翻译失败:</strong> ${e.message}</p>`
           }
         } else {
-          debugInfo += '<p style="color:red;">❌ 无法获取有效的i18n实例</p>';
+          debugInfo += '<p style="color:red;">❌ 无法获取有效的i18n实例</p>'
         }
       }
-      
-      details.innerHTML = debugInfo;
+
+      details.innerHTML = debugInfo
     } catch (e) {
-      details.innerHTML = `<p style="color:red;">❌ 调试失败: ${e.message}</p>`;
+      details.innerHTML = `<p style="color:red;">❌ 调试失败: ${e.message}</p>`
     }
-  }, 500);
+  }, 500)
 }
 /*
 // 在页面上添加调试按钮（仅开发环境显示）
@@ -434,13 +434,13 @@ if (typeof document !== 'undefined') {
     const buttonContainer = document.createElement('div');
     buttonContainer.id = 'debugButtonContainer';
     buttonContainer.style.cssText = 'position:fixed;top:10px;right:10px;z-index:999;';
-    
+
     // 创建调试按钮
     const debugButton = document.createElement('button');
     debugButton.textContent = '🛠️ 调试';
     debugButton.style.cssText = 'padding:8px 15px;margin:5px;background:#f0f0f0;border:1px solid #ddd;border-radius:4px;cursor:pointer;';
     debugButton.onclick = debugLanguageState;
-    
+
     // 创建刷新按钮
     const refreshButton = document.createElement('button');
     refreshButton.textContent = '🔁 刷新';
@@ -450,7 +450,7 @@ if (typeof document !== 'undefined') {
     // 添加按钮到容器
     buttonContainer.appendChild(debugButton);
     buttonContainer.appendChild(refreshButton);
-    
+
     // 添加到文档
     document.body.appendChild(buttonContainer);
   }

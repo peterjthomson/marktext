@@ -1,5 +1,4 @@
-import htmlTags from 'html-tags'
-import { voidHtmlTags } from 'html-tags'
+import htmlTags, { voidHtmlTags } from 'html-tags'
 import { generateKeyHash, genUpper2LowerKeyHash } from '../utils/hash'
 import { getLongUniqueId } from '../utils/random'
 
@@ -322,7 +321,7 @@ export const DEFAULT_TURNDOWN_CONFIG = Object.freeze({
   strongDelimiter: '**', // ** or __
   linkStyle: 'inlined',
   linkReferenceStyle: 'full',
-  blankReplacement(content, node, options) {
+  blankReplacement (content, node, options) {
     if (node && node.classList.contains('ag-soft-line-break')) {
       return LINE_BREAK
     } else if (node && node.classList.contains('ag-hard-line-break')) {
