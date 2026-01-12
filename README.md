@@ -43,7 +43,6 @@
 - Simply check out the [Releases Page](https://github.com/Tkaixiang/marktext/releases)
 - Tested on:
   - `Ubuntu 24.0.2` (`AppImage` and `.deb` packages)
-  - _Would love some help in testing the other Linux packages!_
 
 ### Linux Package Managers
 
@@ -53,7 +52,7 @@
 
 ## MacOS
 
-> ⚠️ MacOS releases will show a "`MarkText is damaged and can't be opened`" due to a **lack of notorisation**.
+> MacOS releases may show a "`MarkText is damaged and can't be opened`" due to a **lack of notorisation**.
 > Please see [this fix here](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300) (which also applies to any other app that lacks a Developer Account signing)
 
 - Available on the [Releases Page](https://github.com/Tkaixiang/marktext/releases)
