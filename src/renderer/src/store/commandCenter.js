@@ -8,13 +8,13 @@ export const useCommandCenterStore = defineStore('commandCenter', {
     rootCommand: new RootCommand(staticCommands)
   }),
   actions: {
-    REGISTER_COMMAND(command) {
+    REGISTER_COMMAND (command) {
       this.rootCommand.subcommands.push(command)
     },
-    SORT_COMMANDS() {
+    SORT_COMMANDS () {
       this.rootCommand.subcommands.sort((a, b) => a.description.localeCompare(b.description))
     },
-    async LISTEN_COMMAND_CENTER_BUS() {
+    async LISTEN_COMMAND_CENTER_BUS () {
       // Wait for initial language setup before initializing commands
       let isInitialized = false
 

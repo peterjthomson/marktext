@@ -56,6 +56,19 @@ export const getCategory = () => [
 
 // 创建响应式的翻译映射函数
 export const getTranslatedSearchContent = () => {
+  // 检查当前语言设置
+  let currentLanguage = 'en'
+  try {
+    if (window.__VUE_I18N__) {
+      const g = typeof window.__VUE_I18N__.global === 'function'
+        ? window.__VUE_I18N__.global()
+        : window.__VUE_I18N__.global
+      if (g && g.locale) currentLanguage = g.locale.value || g.locale || 'en'
+    }
+  } catch (e) {
+    console.warn('⚠️ 无法获取当前语言设置:', e)
+  }
+
   const result = Object.keys(preferences)
     .map((k) => {
       const { description, enum: emums } = preferences[k]

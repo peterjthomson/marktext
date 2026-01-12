@@ -1,6 +1,6 @@
 {
   "name": "marktext",
-  "version": "0.18.6",
+  "version": "1.0.0",
   "description": "MarkText",
   "main": "./out/main/index.js",
   "type": "module",

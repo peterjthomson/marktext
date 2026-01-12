@@ -108,7 +108,7 @@ export const usePreferencesStore = defineStore('preferences', {
   },
 
   actions: {
-    SET_USER_PREFERENCE(preference) {
+    SET_USER_PREFERENCE (preference) {
       const oldLanguage = this.language
 
       Object.keys(preference).forEach((key) => {
@@ -122,13 +122,13 @@ export const usePreferencesStore = defineStore('preferences', {
         setLanguage(preference.language)
       }
     },
-    SET_MODE({ type, checked }) {
+    SET_MODE ({ type, checked }) {
       this[type] = checked
     },
-    TOGGLE_VIEW_MODE(entryName) {
+    TOGGLE_VIEW_MODE (entryName) {
       this[entryName] = !this[entryName]
     },
-    ASK_FOR_USER_PREFERENCE() {
+    ASK_FOR_USER_PREFERENCE () {
       window.electron.ipcRenderer.send('mt::ask-for-user-preference')
       window.electron.ipcRenderer.send('mt::ask-for-user-data')
 
@@ -137,7 +137,7 @@ export const usePreferencesStore = defineStore('preferences', {
       })
     },
 
-    SET_SINGLE_PREFERENCE({ type, value }) {
+    SET_SINGLE_PREFERENCE ({ type, value }) {
       // Update local state
       this[type] = value
 
@@ -150,19 +150,19 @@ export const usePreferencesStore = defineStore('preferences', {
       window.electron.ipcRenderer.send('mt::set-user-preference', { [type]: value })
     },
 
-    SET_USER_DATA({ type, value }) {
+    SET_USER_DATA ({ type, value }) {
       window.electron.ipcRenderer.send('mt::set-user-data', { [type]: value })
     },
 
-    SET_IMAGE_FOLDER_PATH(value) {
+    SET_IMAGE_FOLDER_PATH (value) {
       window.electron.ipcRenderer.send('mt::ask-for-modify-image-folder-path', value)
     },
 
-    SELECT_DEFAULT_DIRECTORY_TO_OPEN() {
+    SELECT_DEFAULT_DIRECTORY_TO_OPEN () {
       window.electron.ipcRenderer.send('mt::select-default-directory-to-open')
     },
 
-    LISTEN_FOR_VIEW() {
+    LISTEN_FOR_VIEW () {
       window.electron.ipcRenderer.on('mt::show-command-palette', () => {
         bus.emit('show-command-palette')
       })
@@ -173,14 +173,14 @@ export const usePreferencesStore = defineStore('preferences', {
     },
 
     // Toggle a view option and notify main process to toggle menu item.
-    LISTEN_TOGGLE_VIEW() {
+    LISTEN_TOGGLE_VIEW () {
       bus.on('view:toggle-view-entry', (entryName) => {
         this.TOGGLE_VIEW_MODE(entryName)
         this.DISPATCH_EDITOR_VIEW_STATE({ [entryName]: this[entryName] })
       })
     },
 
-    DISPATCH_EDITOR_VIEW_STATE(viewState) {
+    DISPATCH_EDITOR_VIEW_STATE (viewState) {
       const { windowId } = global.marktext.env
       window.electron.ipcRenderer.send('mt::view-layout-changed', windowId, viewState)
     }

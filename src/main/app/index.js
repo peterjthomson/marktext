@@ -24,7 +24,7 @@ class App {
    * @param {Accessor} accessor The application accessor for application instances.
    * @param {arg.Result} args Parsed application arguments.
    */
-  constructor(accessor, args) {
+  constructor (accessor, args) {
     this._accessor = accessor
     this._args = args || { _: [] }
     this._openFilesCache = []
@@ -43,7 +43,7 @@ class App {
   /**
    * The entry point into the application.
    */
-  init() {
+  init () {
     // Enable these features to use `backdrop-filter` css rules!
     if (isOsx) {
       app.commandLine.appendSwitch('enable-experimental-web-platform-features', 'true')
@@ -123,7 +123,7 @@ class App {
   /**
    * Initialize main process language from preferences
    */
-  async _initializeLanguage() {
+  async _initializeLanguage () {
     try {
       let currentLanguage = this._accessor.preferences.getItem('language')
 
@@ -181,7 +181,7 @@ class App {
     }
   }
 
-  async getScreenshotFileName() {
+  async getScreenshotFileName () {
     const screenshotFolderPath = await this._accessor.dataCenter.getItem('screenshotFolderPath')
     const fileName = `${dayjs().format('YYYY-MM-DD-HH-mm-ss')}-screenshot.png`
     return path.join(screenshotFolderPath, fileName)
@@ -392,7 +392,7 @@ class App {
    * @param {*} [options] The BrowserWindow options.
    * @returns {EditorWindow} The created editor window.
    */
-  _createEditorWindow(rootDirectory = null, fileList = [], markdownList = [], options = {}) {
+  _createEditorWindow (rootDirectory = null, fileList = [], markdownList = [], options = {}) {
     const editor = new EditorWindow(this._accessor)
     editor.createWindow(rootDirectory, fileList, markdownList, options)
     this._windowManager.add(editor)
@@ -405,7 +405,7 @@ class App {
   /**
    * Create a new setting window.
    */
-  _createSettingWindow(category) {
+  _createSettingWindow (category) {
     const setting = new SettingWindow(this._accessor)
     setting.createWindow(category)
     this._windowManager.add(setting)
@@ -414,7 +414,7 @@ class App {
     }
   }
 
-  _openFilesToOpen() {
+  _openFilesToOpen () {
     this._openPathList(this._openFilesCache, false)
   }
 
@@ -425,7 +425,7 @@ class App {
    * @param {boolean} openFilesInSameWindow Open all files in the same window with
    * the first directory and discard other directories.
    */
-  _openPathList(pathsToOpen, openFilesInSameWindow = false) {
+  _openPathList (pathsToOpen, openFilesInSameWindow = false) {
     const { _windowManager } = this
     const openFilesInNewWindow = this._accessor.preferences.getItem('openFilesInNewWindow')
 
@@ -546,7 +546,7 @@ class App {
     pathsToOpen.length = 0
   }
 
-  _openSettingsWindow(category) {
+  _openSettingsWindow (category) {
     const settingWins = this._windowManager.getWindowsByType(WindowType.SETTINGS)
     if (settingWins.length >= 1) {
       // A setting window is already created
@@ -562,7 +562,7 @@ class App {
     this._createSettingWindow(category)
   }
 
-  _listenForIpcMain() {
+  _listenForIpcMain () {
     registerKeyboardListeners()
     registerSpellcheckerListeners()
 

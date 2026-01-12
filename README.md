@@ -11,18 +11,27 @@
 
 <div align="center">
   <!-- Latest Release Version -->
-  <a href="https://github.com/Tkaixiang/marktext/releases/latest">
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/tkaixiang/marktext">
+  <a href="https://github.com/peterjthomson/marktext/releases/latest">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/peterjthomson/marktext">
   </a>
   <!-- Downloads total -->
-  <a href="https://github.com/Tkaixiang/marktext/releases">
-    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/tkaixiang/marktext/total">
+  <a href="https://github.com/peterjthomson/marktext/releases">
+    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/peterjthomson/marktext/total">
   </a>
   <!-- Downloads latest release -->
-  <a href="https://github.com/Tkaixiang/marktext/releases/latest">
-    <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/tkaixiang/marktext/latest/total">
+  <a href="https://github.com/peterjthomson/marktext/releases/latest">
+    <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/peterjthomson/marktext/latest/total">
   </a>
 </div>
+
+## 📥 Downloads
+
+**[⬇️ Download Latest Release](https://github.com/peterjthomson/marktext/releases/latest)**
+
+| Platform | Download |
+|----------|----------|
+| macOS (Apple Silicon) | [marktext-mac-arm64-1.0.0.dmg](https://github.com/peterjthomson/marktext/releases/download/v1.0.0/marktext-mac-arm64-1.0.0.dmg) |
+| macOS (Intel) | [marktext-mac-x64-1.0.0.dmg](https://github.com/peterjthomson/marktext/releases/download/v1.0.0/marktext-mac-x64-1.0.0.dmg) |
 
 - [MarkText](https://github.com/marktext/marktext) is a free and open source markdown editor originally written by [Jocs](https://github.com/Jocs) and [contributors](https://github.com/marktext/marktext/graphs/contributors). 
 
@@ -32,7 +41,7 @@
 
 ## Windows
 
-- Simply check out the [Releases Page](https://github.com/Tkaixiang/marktext/releases).
+- Simply check out the [Releases Page](https://github.com/peterjthomson/marktext/releases).
 
 - Tested on:
   
@@ -40,7 +49,7 @@
 
 ## Linux
 
-- Simply check out the [Releases Page](https://github.com/Tkaixiang/marktext/releases)
+- Simply check out the [Releases Page](https://github.com/peterjthomson/marktext/releases)
 - Tested on:
   - `Ubuntu 24.0.2` (`AppImage` and `.deb` packages)
 
@@ -52,10 +61,9 @@
 
 ## MacOS
 
-> MacOS releases may show a "`MarkText is damaged and can't be opened`" due to a **lack of notorisation**.
-> Please see [this fix here](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300) (which also applies to any other app that lacks a Developer Account signing)
-
-- Available on the [Releases Page](https://github.com/Tkaixiang/marktext/releases)
+- Available on the [Releases Page](https://github.com/peterjthomson/marktext/releases)
+- Both Apple Silicon (arm64) and Intel (x64) builds available
+- Signed and **notarized** for macOS Gatekeeper compatibility
 
 # 2. Screenshots
 

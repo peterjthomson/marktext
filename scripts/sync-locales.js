@@ -20,16 +20,16 @@ const TARGETS = [
   'pt.json'
 ]
 
-function readJson(filePath) {
+function readJson (filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'))
 }
 
-function writeJson(filePath, data) {
+function writeJson (filePath, data) {
   const content = JSON.stringify(data, null, 4) + '\n'
   fs.writeFileSync(filePath, content, 'utf8')
 }
 
-function mergeMissingKeys(src, dst, fillEmpty) {
+function mergeMissingKeys (src, dst, fillEmpty) {
   if (typeof src !== 'object' || src === null) return dst
   if (typeof dst !== 'object' || dst === null) dst = Array.isArray(src) ? [] : {}
 
@@ -43,7 +43,7 @@ function mergeMissingKeys(src, dst, fillEmpty) {
   return dst
 }
 
-function main() {
+function main () {
   const fillEmpty = process.argv.includes('--empty') || process.env.FILL_EMPTY === '1'
   const enPath = path.join(LOCALES_DIR, SOURCE_LOCALE)
   if (!fs.existsSync(enPath)) {

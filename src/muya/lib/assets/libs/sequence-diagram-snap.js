@@ -15,7 +15,7 @@ function Diagram() {
 /*
  * Return an existing actor with this alias, or creates a new one with alias and name.
  */
-Diagram.prototype.getActor = function(alias, name) {
+Diagram.prototype.getActor = function (alias, name) {
   alias = alias.trim()
 
   let i
@@ -32,7 +32,7 @@ Diagram.prototype.getActor = function(alias, name) {
 /*
  * Parses the input as either a alias, or a "name as alias", and returns the corresponding actor.
  */
-Diagram.prototype.getActorWithAlias = function(input) {
+Diagram.prototype.getActorWithAlias = function (input) {
   input = input.trim()
 
   // We are lazy and do some of the parsing in javascript :(. TODO move into the .jison file.
@@ -48,21 +48,21 @@ Diagram.prototype.getActorWithAlias = function(input) {
   return this.getActor(alias, name)
 }
 
-Diagram.prototype.setTitle = function(title) {
+Diagram.prototype.setTitle = function (title) {
   this.title = title
 }
 
-Diagram.prototype.addSignal = function(signal) {
+Diagram.prototype.addSignal = function (signal) {
   this.signals.push(signal)
 }
 
-Diagram.Actor = function(alias, name, index) {
+Diagram.Actor = function (alias, name, index) {
   this.alias = alias
   this.name = name
   this.index = index
 }
 
-Diagram.Signal = function(actorA, signaltype, actorB, message) {
+Diagram.Signal = function (actorA, signaltype, actorB, message) {
   this.type = 'Signal'
   this.actorA = actorA
   this.actorB = actorB
@@ -71,11 +71,11 @@ Diagram.Signal = function(actorA, signaltype, actorB, message) {
   this.message = message
 }
 
-Diagram.Signal.prototype.isSelf = function() {
+Diagram.Signal.prototype.isSelf = function () {
   return this.actorA.index == this.actorB.index
 }
 
-Diagram.Note = function(actor, placement, message) {
+Diagram.Note = function (actor, placement, message) {
   this.type = 'Note'
   this.actor = actor
   this.placement = placement
@@ -86,11 +86,11 @@ Diagram.Note = function(actor, placement, message) {
   }
 }
 
-Diagram.Note.prototype.hasManyActors = function() {
+Diagram.Note.prototype.hasManyActors = function () {
   return _.isArray(this.actor)
 }
 
-Diagram.unescape = function(s) {
+Diagram.unescape = function (s) {
   // Turn "\\n" into "\n"
   return s
     .trim()
@@ -121,11 +121,11 @@ Diagram.PLACEMENT = {
 if (typeof Object.getPrototypeOf !== 'function') {
   /* jshint -W103 */
   if (typeof 'test'.__proto__ === 'object') {
-    Object.getPrototypeOf = function(object) {
+    Object.getPrototypeOf = function (object) {
       return object.__proto__
     }
   } else {
-    Object.getPrototypeOf = function(object) {
+    Object.getPrototypeOf = function (object) {
       // May break if the constructor has been tampered with
       return object.constructor.prototype
     }
@@ -198,11 +198,11 @@ if (typeof Object.getPrototypeOf !== 'function') {
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-let parser = (function() {
+let parser = (function () {
   function Parser() {
     this.yy = {}
   }
-  let o = function(k, v, o, l) {
+  let o = function (k, v, o, l) {
     for (o = o || {}, l = k.length; l--; o[k[l]] = v);
     return o
   }
@@ -508,7 +508,7 @@ let parser = (function() {
       this.trace(str)
     },
     parse: function(input) {
-      function lex() {
+      function lex () {
         let token
         return (
           (token = lexer.lex() || EOF),
@@ -553,7 +553,7 @@ let parser = (function() {
           this.defaultActions[state]
             ? (action = this.defaultActions[state])
             : ((symbol !== null && typeof symbol !== 'undefined') || (symbol = lex()),
-            (action = table[state] && table[state][symbol])),
+              (action = table[state] && table[state][symbol])),
           typeof action === 'undefined' || !action.length || !action[0])
         ) {
           let errStr = ''
@@ -597,10 +597,10 @@ let parser = (function() {
             preErrorSymbol
               ? ((symbol = preErrorSymbol), (preErrorSymbol = null))
               : ((yyleng = lexer.yyleng),
-              (yytext = lexer.yytext),
-              (yylineno = lexer.yylineno),
-              (yyloc = lexer.yylloc),
-              recovering > 0 && recovering--)
+                (yytext = lexer.yytext),
+                (yylineno = lexer.yylineno),
+                (yyloc = lexer.yylloc),
+                recovering > 0 && recovering--)
             break
 
           case 2:
@@ -642,15 +642,15 @@ let parser = (function() {
       return !0
     }
   }
-  let lexer = (function() {
+  let lexer = (function () {
     let lexer = {
       EOF: 1,
-      parseError: function(str, hash) {
+      parseError: function (str, hash) {
         if (!this.yy.parser) throw new Error(str)
         this.yy.parser.parseError(str, hash)
       },
       // resets the lexer, sets new input
-      setInput: function(input, yy) {
+      setInput: function (input, yy) {
         return (
           (this.yy = yy || this.yy || {}),
           (this._input = input),
@@ -670,7 +670,7 @@ let parser = (function() {
         )
       },
       // consumes and returns one char from the input
-      input: function() {
+      input: function () {
         let ch = this._input[0]
           ;(this.yytext += ch),
         this.yyleng++,
@@ -686,7 +686,7 @@ let parser = (function() {
         )
       },
       // unshifts one char (or a string) into the input
-      unput: function(ch) {
+      unput: function (ch) {
         let len = ch.length
         let lines = ch.split(/(?:\r\n?|\n)/g)
           ;(this._input = ch + this._input),
@@ -715,11 +715,11 @@ let parser = (function() {
         )
       },
       // When called from action, caches matched text and appends it on next action
-      more: function() {
+      more: function () {
         return (this._more = !0), this
       },
       // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-      reject: function() {
+      reject: function () {
         return this.options.backtrack_lexer
           ? ((this._backtrack = !0), this)
           : this.parseError(
@@ -735,16 +735,16 @@ let parser = (function() {
           )
       },
       // retain first n characters of the match
-      less: function(n) {
+      less: function (n) {
         this.unput(this.match.slice(n))
       },
       // displays already matched input, i.e. for error messages
-      pastInput: function() {
+      pastInput: function () {
         let past = this.matched.substr(0, this.matched.length - this.match.length)
         return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, '')
       },
       // displays upcoming input, i.e. for error messages
-      upcomingInput: function() {
+      upcomingInput: function () {
         let next = this.match
         return (
           next.length < 20 && (next += this._input.substr(0, 20 - next.length)),
@@ -752,13 +752,13 @@ let parser = (function() {
         )
       },
       // displays the character position where the lexing error occurred, i.e. for error messages
-      showPosition: function() {
+      showPosition: function () {
         let pre = this.pastInput()
         let c = new Array(pre.length + 1).join('-')
         return pre + this.upcomingInput() + '\n' + c + '^'
       },
       // test the lexed token: return FALSE when not a match, otherwise return token
-      test_match: function(match, indexed_rule) {
+      test_match: function (match, indexed_rule) {
         let token, lines, backup
         if (
           (this.options.backtrack_lexer && // save context
@@ -821,7 +821,7 @@ let parser = (function() {
         return !1
       },
       // return next match in input
-      next: function() {
+      next: function () {
         if (this.done) return this.EOF
         this._input || (this.done = !0)
         let token, match, tempMatch, index
@@ -860,44 +860,44 @@ let parser = (function() {
             )
       },
       // return next match that has a token
-      lex: function() {
+      lex: function () {
         let r = this.next()
         return r || this.lex()
       },
       // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-      begin: function(condition) {
+      begin: function (condition) {
         this.conditionStack.push(condition)
       },
       // pop the previously active lexer condition state off the condition stack
-      popState: function() {
+      popState: function () {
         let n = this.conditionStack.length - 1
         return n > 0 ? this.conditionStack.pop() : this.conditionStack[0]
       },
       // produce the lexer rule set which is active for the currently active lexer condition state
-      _currentRules: function() {
+      _currentRules: function () {
         return this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]
           ? this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules
           : this.conditions.INITIAL.rules
       },
       // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-      topState: function(n) {
+      topState: function (n) {
         return (
           (n = this.conditionStack.length - 1 - Math.abs(n || 0)),
           n >= 0 ? this.conditionStack[n] : 'INITIAL'
         )
       },
       // alias for begin(condition)
-      pushState: function(condition) {
+      pushState: function (condition) {
         this.begin(condition)
       },
       // return the number of states currently on the stack
-      stateStackSize: function() {
+      stateStackSize: function () {
         return this.conditionStack.length
       },
       options: {
         'case-insensitive': !0
       },
-      performAction: function(yy, yy_, $avoiding_name_collisions, YY_START) {
+      performAction: function (yy, yy_, $avoiding_name_collisions, YY_START) {
         switch ($avoiding_name_collisions) {
           case 0:
             return 8
@@ -996,10 +996,10 @@ typeof require !== 'undefined' &&
   typeof exports !== 'undefined' &&
   ((exports.parser = parser),
   (exports.Parser = parser.Parser),
-  (exports.parse = function() {
+  (exports.parse = function () {
     return parser.parse.apply(parser, arguments)
   }),
-  (exports.main = function(args) {
+  (exports.main = function (args) {
     args[1] || (console.log('Usage: ' + args[0] + ' FILE'), process.exit(1))
     let source = require('fs').readFileSync(require('path').normalize(args[1]), 'utf8')
     return exports.parser.parse(source)
@@ -1018,12 +1018,12 @@ function ParseError(message, hash) {
 ParseError.prototype = new Error()
 Diagram.ParseError = ParseError
 
-Diagram.parse = function(input) {
+Diagram.parse = function (input) {
   // TODO jison v0.4.17 changed their API slightly, so parser is no longer defined:
 
   // Create the object to track state and deal with errors
   parser.yy = new Diagram()
-  parser.yy.parseError = function(message, hash) {
+  parser.yy.parseError = function (message, hash) {
     throw new ParseError(message, hash)
   }
 
@@ -1081,7 +1081,7 @@ let ALIGN_CENTER = 1
 function AssertException(message) {
   this.message = message
 }
-AssertException.prototype.toString = function() {
+AssertException.prototype.toString = function () {
   return 'AssertException: ' + this.message
 }
 
@@ -1092,7 +1092,7 @@ function assert(exp, message) {
 }
 
 if (!String.prototype.trim) {
-  String.prototype.trim = function() {
+  String.prototype.trim = function () {
     return this.replace(/^\s+|\s+$/g, '')
   }
 }
@@ -1197,13 +1197,13 @@ function handLine(x1, y1, x2, y2) {
  * BaseTheme
  ******************/
 
-let BaseTheme = function(diagram, options) {
+let BaseTheme = function (diagram, options) {
   this.init(diagram, options)
 }
 
 _.extend(BaseTheme.prototype, {
   // Init called while creating the Theme
-  init: function(diagram, options) {
+  init: function (diagram, options) {
     this.diagram = diagram
 
     this.actorsHeight_ = 0
@@ -1211,9 +1211,9 @@ _.extend(BaseTheme.prototype, {
     this.title_ = undefined // hack - This should be somewhere better
   },
 
-  setupPaper: function(container) {},
+  setupPaper: function (container) {},
 
-  draw: function(container) {
+  draw: function (container) {
     this.setupPaper(container)
 
     this.layout()
@@ -1226,7 +1226,7 @@ _.extend(BaseTheme.prototype, {
     this.drawSignals(y + this.actorsHeight_)
   },
 
-  layout: function() {
+  layout: function () {
     // Local copies
     let diagram = this.diagram
     let font = this.font_
@@ -1254,7 +1254,7 @@ _.extend(BaseTheme.prototype, {
 
     _.each(
       actors,
-      function(a) {
+      function (a) {
         let bb = this.textBBox(a.name, font)
         a.textBB = bb
 
@@ -1289,7 +1289,7 @@ _.extend(BaseTheme.prototype, {
 
     _.each(
       signals,
-      function(s) {
+      function (s) {
         // Indexes of the left and right actors involved
         let a
         let b
@@ -1359,11 +1359,11 @@ _.extend(BaseTheme.prototype, {
     let actorsX = 0
     _.each(
       actors,
-      function(a) {
+      function (a) {
         a.x = Math.max(actorsX, a.x)
 
         // TODO This only works if we loop in sequence, 0, 1, 2, etc
-        _.each(a.distances, function(distance, b) {
+        _.each(a.distances, function (distance, b) {
           // lodash (and possibly others) do not like sparse arrays
           // so sometimes they return undefined
           if (typeof distance === 'undefined') {
@@ -1391,20 +1391,20 @@ _.extend(BaseTheme.prototype, {
 
   // TODO Instead of one textBBox function, create a function for each element type, e.g
   //      layout_title, layout_actor, etc that returns it's bounding box
-  textBBox: function(text, font) {},
+  textBBox: function (text, font) {},
 
-  drawTitle: function() {
+  drawTitle: function () {
     let title = this.title_
     if (title) {
       this.drawTextBox(title, title.message, TITLE_MARGIN, TITLE_PADDING, this.font_, ALIGN_LEFT)
     }
   },
 
-  drawActors: function(offsetY) {
+  drawActors: function (offsetY) {
     let y = offsetY
     _.each(
       this.diagram.actors,
-      function(a) {
+      function (a) {
         // Top box
         this.drawActor(a, y, this.actorsHeight_)
 
@@ -1424,17 +1424,17 @@ _.extend(BaseTheme.prototype, {
     )
   },
 
-  drawActor: function(actor, offsetY, height) {
+  drawActor: function (actor, offsetY, height) {
     actor.y = offsetY
     actor.height = height
     this.drawTextBox(actor, actor.name, ACTOR_MARGIN, ACTOR_PADDING, this.font_, ALIGN_CENTER)
   },
 
-  drawSignals: function(offsetY) {
+  drawSignals: function (offsetY) {
     let y = offsetY
     _.each(
       this.diagram.signals,
-      function(s) {
+      function (s) {
         // TODO Add debug mode, that draws padding/margin box
         if (s.type == 'Signal') {
           if (s.isSelf()) {
@@ -1452,7 +1452,7 @@ _.extend(BaseTheme.prototype, {
     )
   },
 
-  drawSelfSignal: function(signal, offsetY) {
+  drawSelfSignal: function (signal, offsetY) {
     assert(signal.isSelf(), 'signal must be a self signal')
 
     let textBB = signal.textBB
@@ -1472,7 +1472,7 @@ _.extend(BaseTheme.prototype, {
     this.drawLine(aX + SELF_SIGNAL_WIDTH, y2, aX, y2, signal.linetype, signal.arrowtype)
   },
 
-  drawSignal: function(signal, offsetY) {
+  drawSignal: function (signal, offsetY) {
     let aX = getCenterX(signal.actorA)
     let bX = getCenterX(signal.actorB)
 
@@ -1488,7 +1488,7 @@ _.extend(BaseTheme.prototype, {
     this.drawLine(aX, y, bX, y, signal.linetype, signal.arrowtype)
   },
 
-  drawNote: function(note, offsetY) {
+  drawNote: function (note, offsetY) {
     note.y = offsetY
     let actorA = note.hasManyActors() ? note.actor[0] : note.actor
     let aX = getCenterX(actorA)
@@ -1518,7 +1518,7 @@ _.extend(BaseTheme.prototype, {
   /**
    * Draw text surrounded by a box
    */
-  drawTextBox: function(box, text, margin, padding, font, align) {
+  drawTextBox: function (box, text, margin, padding, font, align) {
     let x = box.x + margin
     let y = box.y + margin
     let w = box.width - 2 * margin
@@ -1568,7 +1568,7 @@ if (typeof Snap !== 'undefined') {
    * SnapTheme
    ******************/
 
-  let SnapTheme = function(diagram, options, resume) {
+  let SnapTheme = function (diagram, options, resume) {
     _.defaults(options, {
       'css-class': 'simple',
       'font-size': 16,
@@ -1579,7 +1579,7 @@ if (typeof Snap !== 'undefined') {
   }
 
   _.extend(SnapTheme.prototype, BaseTheme.prototype, {
-    init: function(diagram, options, resume) {
+    init: function (diagram, options, resume) {
       BaseTheme.prototype.init.call(this, diagram)
 
       this.paper_ = undefined
@@ -1598,13 +1598,13 @@ if (typeof Snap !== 'undefined') {
       l[LINETYPE.DOTTED] = '6,2'
 
       let that = this
-      this.waitForFont(function() {
+      this.waitForFont(function () {
         resume(that)
       })
     },
 
     // Wait for loading of the font
-    waitForFont: function(callback) {
+    waitForFont: function (callback) {
       let fontFamily = this.font_['font-family']
 
       if (typeof WebFont === 'undefined') {
@@ -1622,11 +1622,11 @@ if (typeof Snap !== 'undefined') {
           families: [fontFamily] // TODO replace this with something that reads the css
         },
         classes: false, // No need to place classes on the DOM, just use JS Events
-        active: function() {
+        active: function () {
           LOADED_FONTS[fontFamily] = true
           callback()
         },
-        inactive: function() {
+        inactive: function () {
           // If we fail to fetch the font, still continue.
           LOADED_FONTS[fontFamily] = true
           callback()
@@ -1634,13 +1634,13 @@ if (typeof Snap !== 'undefined') {
       })
     },
 
-    addDescription: function(svg, description) {
+    addDescription: function (svg, description) {
       let desc = document.createElementNS(xmlns, 'desc')
       desc.appendChild(document.createTextNode(description))
       svg.appendChild(desc)
     },
 
-    setupPaper: function(container) {
+    setupPaper: function (container) {
       // Container must be a SVG element. We assume it's a div, so lets create a SVG and insert
       let svg = document.createElementNS(xmlns, 'svg')
       container.appendChild(svg)
@@ -1667,7 +1667,7 @@ if (typeof Snap !== 'undefined') {
         .attr({ markerWidth: '4', id: 'markerArrowOpen' })
     },
 
-    layout: function() {
+    layout: function () {
       BaseTheme.prototype.layout.call(this)
       this.paper_.attr({
         width: this.diagram.width + 'px',
@@ -1675,7 +1675,7 @@ if (typeof Snap !== 'undefined') {
       })
     },
 
-    textBBox: function(text, font) {
+    textBBox: function (text, font) {
       // TODO getBBox will return the bounds with any whitespace/kerning. This makes some of our aligments screwed up
       let t = this.createText(text, font)
       let bb = t.getBBox()
@@ -1684,24 +1684,24 @@ if (typeof Snap !== 'undefined') {
     },
 
     // For each drawn element, push onto the stack, so it can be wrapped in a single outer element
-    pushToStack: function(element) {
+    pushToStack: function (element) {
       this._stack.push(element)
       return element
     },
 
     // Begin a group of elements
-    beginGroup: function() {
+    beginGroup: function () {
       this._stack = []
     },
 
     // Finishes the group, and returns the <group> element
-    finishGroup: function() {
+    finishGroup: function () {
       let g = this.paper_.group.apply(this.paper_, this._stack)
       this.beginGroup() // Reset the group
       return g
     },
 
-    createText: function(text, font) {
+    createText: function (text, font) {
       text = _.invoke(text.split('\n'), 'trim')
       let t = this.paper_.text(0, 0, text)
       t.attr(font || {})
@@ -1716,7 +1716,7 @@ if (typeof Snap !== 'undefined') {
       return t
     },
 
-    drawLine: function(x1, y1, x2, y2, linetype, arrowhead) {
+    drawLine: function (x1, y1, x2, y2, linetype, arrowhead) {
       let line = this.paper_.line(x1, y1, x2, y2).attr(LINE)
       if (linetype !== undefined) {
         line.attr('strokeDasharray', this.lineTypes_[linetype])
@@ -1727,7 +1727,7 @@ if (typeof Snap !== 'undefined') {
       return this.pushToStack(line)
     },
 
-    drawRect: function(x, y, w, h) {
+    drawRect: function (x, y, w, h) {
       let rect = this.paper_.rect(x, y, w, h).attr(RECT)
       return this.pushToStack(rect)
     },
@@ -1739,7 +1739,7 @@ if (typeof Snap !== 'undefined') {
      * font (Object)
      * align (string) ALIGN_LEFT or ALIGN_CENTER
      */
-    drawText: function(x, y, text, font, align) {
+    drawText: function (x, y, text, font, align) {
       let t = this.createText(text, font)
       let bb = t.getBBox()
 
@@ -1757,31 +1757,31 @@ if (typeof Snap !== 'undefined') {
       return t
     },
 
-    drawTitle: function() {
+    drawTitle: function () {
       this.beginGroup()
       BaseTheme.prototype.drawTitle.call(this)
       return this.finishGroup().addClass('title')
     },
 
-    drawActor: function(actor, offsetY, height) {
+    drawActor: function (actor, offsetY, height) {
       this.beginGroup()
       BaseTheme.prototype.drawActor.call(this, actor, offsetY, height)
       return this.finishGroup().addClass('actor')
     },
 
-    drawSignal: function(signal, offsetY) {
+    drawSignal: function (signal, offsetY) {
       this.beginGroup()
       BaseTheme.prototype.drawSignal.call(this, signal, offsetY)
       return this.finishGroup().addClass('signal')
     },
 
-    drawSelfSignal: function(signal, offsetY) {
+    drawSelfSignal: function (signal, offsetY) {
       this.beginGroup()
       BaseTheme.prototype.drawSelfSignal.call(this, signal, offsetY)
       return this.finishGroup().addClass('signal')
     },
 
-    drawNote: function(note, offsetY) {
+    drawNote: function (note, offsetY) {
       this.beginGroup()
       BaseTheme.prototype.drawNote.call(this, note, offsetY)
       return this.finishGroup().addClass('note')
@@ -1792,7 +1792,7 @@ if (typeof Snap !== 'undefined') {
    * SnapHandTheme
    ******************/
 
-  let SnapHandTheme = function(diagram, options, resume) {
+  let SnapHandTheme = function (diagram, options, resume) {
     _.defaults(options, {
       'css-class': 'hand',
       'font-size': 16,
@@ -1804,7 +1804,7 @@ if (typeof Snap !== 'undefined') {
 
   // Take the standard SnapTheme and make all the lines wobbly
   _.extend(SnapHandTheme.prototype, SnapTheme.prototype, {
-    drawLine: function(x1, y1, x2, y2, linetype, arrowhead) {
+    drawLine: function (x1, y1, x2, y2, linetype, arrowhead) {
       let line = this.paper_.path(handLine(x1, y1, x2, y2)).attr(LINE)
       if (linetype !== undefined) {
         line.attr('strokeDasharray', this.lineTypes_[linetype])
@@ -1815,7 +1815,7 @@ if (typeof Snap !== 'undefined') {
       return this.pushToStack(line)
     },
 
-    drawRect: function(x, y, w, h) {
+    drawRect: function (x, y, w, h) {
       let rect = this.paper_.path(handRect(x, y, w, h)).attr(RECT)
       return this.pushToStack(rect)
     }
@@ -1850,7 +1850,7 @@ Diagram.themes.simple = Diagram.themes.snapSimple || Diagram.themes.raphaelSimpl
  * container (HTMLElement|string) DOM element or its ID to draw on
  * options (Object)
  */
-Diagram.prototype.drawSVG = function(container, options) {
+Diagram.prototype.drawSVG = function (container, options) {
   let defaultOptions = {
     theme: 'hand'
   }
@@ -1868,7 +1868,7 @@ Diagram.prototype.drawSVG = function(container, options) {
   }
 
   let Theme = Diagram.themes[options.theme]
-  new Theme(this, options, function(drawing) {
+  new Theme(this, options, function (drawing) {
     drawing.draw(div)
   })
 } // end of drawSVG

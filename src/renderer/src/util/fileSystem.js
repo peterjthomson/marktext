@@ -7,17 +7,17 @@ import dayjs from 'dayjs'
 import { Octokit } from '@octokit/rest'
 import { isWindows } from './index'
 
-export const create = async(pathname, type) => {
+export const create = async (pathname, type) => {
   return type === 'directory'
     ? window.fileUtils.ensureDir(pathname)
     : window.fileUtils.outputFile(pathname, '')
 }
 
-export const paste = async({ src, dest, type }) => {
+export const paste = async ({ src, dest, type }) => {
   return type === 'cut' ? window.fileUtils.move(src, dest) : window.fileUtils.copy(src, dest)
 }
 
-export const rename = async(src, dest) => {
+export const rename = async (src, dest) => {
   return window.fileUtils.move(src, dest)
 }
 
@@ -38,7 +38,7 @@ export const getContentHash = (content) => {
  * @param {String} imagePath The image to move.
  * @returns {String} The relative path the image from given `filePath`.
  */
-export const moveToRelativeFolder = async(cwd, relativeName, filePath, imagePath) => {
+export const moveToRelativeFolder = async (cwd, relativeName, filePath, imagePath) => {
   if (!relativeName) {
     relativeName = 'assets'
   } else if (window.path.isAbsolute(relativeName)) {
@@ -57,7 +57,7 @@ export const moveToRelativeFolder = async(cwd, relativeName, filePath, imagePath
   return dstRelPath
 }
 
-export const moveImageToFolder = async(pathname, image, outputDir) => {
+export const moveImageToFolder = async (pathname, image, outputDir) => {
   await window.fileUtils.ensureDir(outputDir)
   const isPath = typeof image === 'string'
   if (isPath) {
@@ -93,15 +93,15 @@ export const moveImageToFolder = async(pathname, image, outputDir) => {
 /**
  * @jocs todo, rewrite it use class
  */
-export const uploadImage = async(pathname, image, preferences) => {
+export const uploadImage = async (pathname, image, preferences) => {
   const { currentUploader, imageBed, githubToken: auth, cliScript } = preferences
   const { owner, repo, branch } = imageBed.github
   const isPath = typeof image === 'string'
   const MAX_SIZE = 5 * 1024 * 1024
   let resolvePromise, rejectPromise
-  const promise = new Promise((resolve, reject) => {
-    resolvePromise = resolve
-    rejectPromise = reject
+  const promise = new Promise((res, rej) => {
+    resolvePromise = res
+    rejectPromise = rej
   })
 
   if (currentUploader === 'none') {
@@ -139,14 +139,14 @@ export const uploadImage = async(pathname, image, preferences) => {
       process.platform === 'win32'
         ? ['picgo', 'picgo.exe']
         : [
-          'picgo',
-          '/opt/homebrew/bin/picgo',
-          '/usr/local/bin/picgo',
-          '/usr/bin/picgo',
+            'picgo',
+            '/opt/homebrew/bin/picgo',
+            '/usr/local/bin/picgo',
+            '/usr/bin/picgo',
           `${process.env.HOME}/.npm-global/bin/picgo`,
           `${process.env.HOME}/.npm/bin/picgo`,
           '/usr/local/lib/node_modules/.bin/picgo'
-        ]
+          ]
     for (const c of candidates) {
       try {
         if (window.commandExists?.exists && window.commandExists.exists(c)) return c
@@ -162,7 +162,6 @@ export const uploadImage = async(pathname, image, preferences) => {
 
   const parsePicgoOutput = (text) => {
     const raw = String(text || '')
-    // eslint-disable-next-line no-control-regex
     const cleaned = raw.replace(/\u001b\[[0-9;]*m/g, '') // strip ANSI colors
     try {
       const lines = cleaned
@@ -200,7 +199,7 @@ export const uploadImage = async(pathname, image, preferences) => {
     return null
   }
 
-  const uploadByCommand = async(uploader, filepath, suffix = '') => {
+  const uploadByCommand = async (uploader, filepath, suffix = '') => {
     let localIsPath = true
     let localPath = filepath
     if (typeof filepath !== 'string') {
