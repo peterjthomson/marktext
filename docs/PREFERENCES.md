@@ -2,88 +2,109 @@
 
 Preferences can be controlled and modified in the settings window or via the `preferences.json` file in the [application data directory](APPLICATION_DATA_DIRECTORY.md).
 
-#### General
+### General
 
-| Key                    | Type    | Default Value | Description                                                                                                                                              |
-| ---------------------- | ------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| autoSave               | Boolean | false         | Automatically save the content being edited. option value: true, false                                                                                   |
-| autoSaveDelay          | Number  | 5000          | The delay in milliseconds after a changed file is saved automatically? 1000 ~10000                                                                       |
-| titleBarStyle          | String  | custom        | The title bar style on Linux and Window: `custom` or `native`                                                                                            |
-| openFilesInNewWindow   | Boolean | false         | true, false                                                                                                                                              |
-| openFolderInNewWindow  | Boolean | false         | true, false                                                                                                                                              |
-| zoom                   | Number  | 1.0           | The zoom level. Between 0.5 and 2.0 inclusive.                                                                                                           |
-| hideScrollbar          | Boolean | false         | Whether to hide scrollbars. Optional value: true, false                                                                                                  |
-| wordWrapInToc          | Boolean | false         | Whether to enable word wrap in TOC. Optional value: true, false                                                                                          |
-| fileSortBy             | String  | created       | Sort files in opened folder by `created` time, modified time and title.                                                                                  |
-| startUpAction          | String  | lastState     | The action after MarkText startup, open the last edited content, open the specified folder or blank page, optional value: `lastState`, `folder`, `blank` |
-| defaultDirectoryToOpen | String  | `""`          | The path that should be opened if `startUpAction=folder`.                                                                                                |
-| language               | String  | en            | The language MarkText use.                                                                                                                               |
+| Key                    | Type    | Default   | Description                                                                                           |
+| ---------------------- | ------- | --------- | ----------------------------------------------------------------------------------------------------- |
+| autoSave               | Boolean | false     | Automatically save the content being edited                                                           |
+| autoSaveDelay          | Number  | 5000      | The delay in milliseconds before a changed file is saved (1000-10000)                                 |
+| titleBarStyle          | String  | custom    | The title bar style on Linux and Windows: `custom` or `native`                                        |
+| openFilesInNewWindow   | Boolean | false     | Open files in a new window                                                                            |
+| openFolderInNewWindow  | Boolean | false     | Open folder via menu in a new window                                                                  |
+| zoom                   | Number  | 1.0       | The zoom level (0.5 - 2.0)                                                                            |
+| hideScrollbar          | Boolean | false     | Whether to hide scrollbars                                                                            |
+| wordWrapInToc          | Boolean | false     | Whether to enable word wrap in TOC                                                                    |
+| fileSortBy             | String  | modified  | Sort files in opened folder: `created`, `modified`, or `title`                                        |
+| startUpAction          | String  | blank     | The action after startup: `lastState`, `folder`, or `blank`                                           |
+| defaultDirectoryToOpen | String  | ""        | The path that should be opened if `startUpAction=folder`                                              |
+| language               | String  | en        | The UI language                                                                                       |
 
-#### Editor
+### Editor
 
-| Key                                | Type    | Defaut             | Description                                                                                                                                                                    |
-| ---------------------------------- | ------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| fontSize                           | Number  | 16                 | Font size in pixels. 12 ~ 32                                                                                                                                                   |
-| editorFontFamily                   | String  | Open Sans          | Font Family                                                                                                                                                                    |
-| lineHeight                         | Number  | 1.6                | Line Height                                                                                                                                                                    |
-| autoPairBracket                    | Boolean | true               | Automatically brackets when editing                                                                                                                                            |
-| autoPairMarkdownSyntax             | Boolean | true               | Autocomplete markdown syntax                                                                                                                                                   |
-| autoPairQuote                      | Boolean | true               | Automatic completion of quotes                                                                                                                                                 |
-| endOfLine                          | String  | default            | The newline character used at the end of each line. The default value is default, which selects your operating system's default newline character. `lf` `crlf` `default`       |
-| textDirection                      | String  | ltr                | The writing text direction, optional value: `ltr` or `rtl`                                                                                                                     |
-| codeFontSize                       | Number  | 14                 | Font size on code block, the range is 12 ~ 28                                                                                                                                  |
-| codeFontFamily                     | String  | `DejaVu Sans Mono` | Code font family                                                                                                                                                               |
-| trimUnnecessaryCodeBlockEmptyLines | Boolean | true               | Whether to trim the beginning and end empty line in Code block                                                                                                                 |
-| hideQuickInsertHint                | Boolean | false              | Hide hint for quickly creating paragraphs                                                                                                                                      |
-| imageDropAction                    | String  | folder             | The default behavior after paste or drag the image to MarkText, upload it to the image cloud (if configured), move to the specified folder, insert the path                    |
-| defaultEncoding                    | String  | `utf8`             | The default file encoding                                                                                                                                                      |
-| autoGuessEncoding                  | Boolean | true               | Try to automatically guess the file encoding when opening files                                                                                                                |
-| trimTrailingNewline                | Enum    | `2`                | Ensure a single trailing newline or whether trailing newlines should be removed: `0`: trim all trailing newlines, `1`: ensure single newline, `2`: auto detect, `3`: disabled. |
-| hideLinkPopup                      | Boolean | false              | It will not show the link popup when hover over the link if set `hideLinkPopup` to true                                                                                        |
-| autoCheck                          | Boolean | false              | Whether to automatically check related task. Optional value: true, false                                                                                                       |
+| Key                                | Type    | Default          | Description                                                                                                    |
+| ---------------------------------- | ------- | ---------------- | -------------------------------------------------------------------------------------------------------------- |
+| editorFontFamily                   | String  | Open Sans        | Editor font family                                                                                             |
+| fontSize                           | Number  | 16               | Font size in pixels (12-32)                                                                                    |
+| lineHeight                         | Number  | 1.6              | Line height (1.2-2.0)                                                                                          |
+| editorLineWidth                    | String  | ""               | Maximum editor width. Empty string or suffixes: `ch`, `px`, `%`                                                |
+| wrapCodeBlocks                     | Boolean | true             | Wrap text inside code blocks                                                                                   |
+| codeFontSize                       | Number  | 14               | Font size in code blocks (12-28)                                                                               |
+| codeFontFamily                     | String  | DejaVu Sans Mono | Code font family                                                                                               |
+| codeBlockLineNumbers               | Boolean | true             | Show line numbers in code blocks                                                                               |
+| trimUnnecessaryCodeBlockEmptyLines | Boolean | true             | Trim beginning and ending empty lines in code blocks                                                           |
+| autoPairBracket                    | Boolean | true             | Automatically pair brackets when editing                                                                       |
+| autoPairMarkdownSyntax             | Boolean | true             | Autocomplete markdown syntax                                                                                   |
+| autoPairQuote                      | Boolean | true             | Automatic completion of quotes                                                                                 |
+| surroundSelection                  | Boolean | true             | Wrap selected text with brackets, quotes, or markdown syntax when typing                                       |
+| endOfLine                          | String  | default          | Newline character: `default`, `lf`, or `crlf`                                                                  |
+| defaultEncoding                    | String  | utf8             | Default file encoding                                                                                          |
+| autoGuessEncoding                  | Boolean | true             | Try to automatically guess file encoding                                                                       |
+| trimTrailingNewline                | Number  | 2                | Trailing newline handling: `0` (trim all), `1` (ensure single), `2` (auto detect), `3` (disabled)              |
+| textDirection                      | String  | ltr              | Writing text direction: `ltr` or `rtl`                                                                         |
+| hideQuickInsertHint                | Boolean | false            | Hide hint for quickly creating paragraphs                                                                      |
+| hideLinkPopup                      | Boolean | false            | Hide link popup when hovering                                                                                  |
+| autoCheck                          | Boolean | false            | Automatically check related task checkboxes                                                                    |
 
-#### Markdown
+### Markdown
 
-| Key                 | Type    | Default | Description                                                                                                                         |
-| ------------------- | ------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| preferLooseListItem | Boolean | true    | The preferred list type.                                                                                                            |
-| bulletListMarker    | String  | `-`     | The preferred marker used in bullet list, optional value: `-`, `*` `+`                                                              |
-| orderListDelimiter  | String  | `.`     | The preferred delimiter used in order list, optional value: `.` `)`                                                                 |
-| preferHeadingStyle  | String  | `atx`   | The preferred heading style in MarkText, optional value `atx` `setext`, [more info](https://spec.commonmark.org/0.29/#atx-headings) |
-| tabSize             | Number  | 4       | The number of spaces a tab is equal to                                                                                              |
-| listIndentation     | String  | 1       | The list indentation of sub list items or paragraphs, optional value `dfm`, `tab` or number 1~4                                     |
-| frontmatterType     | String  | `-`     | The frontmatter type: `-` (YAML), `+` (TOML), `;` (JSON) or `{` (JSON)                                                              |
-| superSubScript      | Boolean | `false` | Enable pandoc's markdown extension superscript and subscript.                                                                       |
-| footnote            | Boolean | `false` | Enable pandoc's footnote markdown extension                                                                                         |
-| sequenceTheme       | String  | `hand`  | Change the theme of [js-sequence-diagrams](https://bramp.github.io/js-sequence-diagrams/)                                           |
+| Key                 | Type    | Default | Description                                                             |
+| ------------------- | ------- | ------- | ----------------------------------------------------------------------- |
+| preferLooseListItem | Boolean | true    | Prefer loose list items                                                 |
+| bulletListMarker    | String  | -       | Bullet list marker: `-`, `*`, or `+`                                    |
+| orderListDelimiter  | String  | .       | Ordered list delimiter: `.` or `)`                                      |
+| preferHeadingStyle  | String  | atx     | Heading style: `atx` or `setext`                                        |
+| tabSize             | Number  | 4       | Number of spaces a tab equals                                           |
+| listIndentation     | Mixed   | 1       | List indentation: `dfm`, `tab`, or number 1-4                           |
+| frontmatterType     | String  | -       | Frontmatter type: `-` (YAML), `+` (TOML), `;` (JSON), `{` (JSON object) |
+| superSubScript      | Boolean | false   | Enable superscript (`^text^`) and subscript (`~text~`)                  |
+| footnote            | Boolean | false   | Enable footnote syntax                                                  |
+| isHtmlEnabled       | Boolean | true    | Enable HTML rendering in markdown                                       |
+| isGitlabCompatibilityEnabled | Boolean | false | Enable GitLab compatibility mode                               |
+| sequenceTheme       | String  | hand    | Sequence diagram theme: `hand` or `simple`                              |
 
-#### Theme
+### Theme
 
-| Key   | Type   | Default | Description                                                           |
-| ----- | ------ | ------- | --------------------------------------------------------------------- |
-| theme | String | light   | `dark`, `graphite`, `material-dark`, `one-dark`, `light` or `ulysses` |
+| Key               | Type    | Default | Description                                                                     |
+| ----------------- | ------- | ------- | ------------------------------------------------------------------------------- |
+| theme             | String  | light   | Theme: `dark`, `graphite`, `material-dark`, `one-dark`, `light`, or `ulysses`   |
+| followSystemTheme | Boolean | false   | Use separate themes for light/dark system modes                                 |
+| lightModeTheme    | String  | light   | Theme to use when system is in light mode                                       |
+| darkModeTheme     | String  | dark    | Theme to use when system is in dark mode                                        |
+| customCss         | String  | ""      | Custom CSS to apply to the current theme                                        |
 
-#### Editable via file
+### Spelling
 
-These entires don't have a settings option and need to be changed manually.
+| Key                    | Type    | Default | Description                           |
+| ---------------------- | ------- | ------- | ------------------------------------- |
+| spellcheckerEnabled    | Boolean | false   | Enable spell checking                 |
+| spellcheckerNoUnderline| Boolean | false   | Don't underline spelling mistakes     |
+| spellcheckerLanguage   | String  | en-US   | Spell checker language                |
 
-##### View
+### Image
 
-| Key                            | Type    | Default | Description                                        |
-| ------------------------------ | ------- | ------- | -------------------------------------------------- |
-| sideBarVisibility<sup>\*</sup> | Boolean | false   | Controls the visibility of the sidebar.            |
-| tabBarVisibility<sup>\*</sup>  | Boolean | false   | Controls the visibility of the tabs.               |
-| sourceCodeModeEnabled\*        | Boolean | false   | Controls the visibility of the source-code editor. |
+| Key                        | Type    | Default | Description                                              |
+| -------------------------- | ------- | ------- | -------------------------------------------------------- |
+| imageInsertAction          | String  | path    | Default image action: `upload`, `folder`, or `path`      |
+| imagePreferRelativeDirectory | Boolean | false | Prefer relative image directory                          |
+| imageRelativeDirectoryName | String  | assets  | Relative image folder name                               |
 
-\*: These options are default/fallback values that are used if not session is loaded and are overwritten by the menu entries.
+### View (editable via file only)
 
-##### File system
+These settings don't have a UI option and need to be changed manually in `preferences.json`.
 
-| Key                  | Type             | Default | Description                                                                                                                                                               |
-| -------------------- | ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| searchExclusions     | Array of Strings | `[]`    | The filename exclusions for the file searcher. Default: `'*.markdown', '*.mdown', '*.mkdn', '*.md', '*.mkd', '*.mdwn', '*.mdtxt', '*.mdtext', '*.mdx', '*.text', '*.txt'` |
-| searchMaxFileSize    | String           | `""`    | The maximum file size to search in (e.g. 50K or 10MB). Default: unlimited                                                                                                 |
-| searchIncludeHidden  | Boolean          | false   | Search hidden files and directories                                                                                                                                       |
-| searchNoIgnore       | Boolean          | false   | Don't respect ignore files such as `.gitignore`.                                                                                                                          |
-| searchFollowSymlinks | Boolean          | true    | Whether to follow symbolic links.                                                                                                                                         |
-| watcherUsePolling    | Boolean          | false   | Whether to use polling to receive file changes. Polling may leads to high CPU utilization.                                                                                |
+| Key                   | Type    | Default | Description                                |
+| --------------------- | ------- | ------- | ------------------------------------------ |
+| sideBarVisibility     | Boolean | false   | Default sidebar visibility                 |
+| tabBarVisibility      | Boolean | false   | Default tab bar visibility                 |
+| sourceCodeModeEnabled | Boolean | false   | Default source code mode state             |
+
+### File System (editable via file only)
+
+| Key                  | Type             | Default | Description                                                        |
+| -------------------- | ---------------- | ------- | ------------------------------------------------------------------ |
+| searchExclusions     | Array of Strings | []      | Glob patterns to exclude from search                               |
+| searchMaxFileSize    | String           | ""      | Maximum file size to search (e.g., `50K`, `10M`). Empty = unlimited |
+| searchIncludeHidden  | Boolean          | false   | Search hidden files and directories                                |
+| searchNoIgnore       | Boolean          | false   | Don't respect ignore files like `.gitignore`                       |
+| searchFollowSymlinks | Boolean          | true    | Follow symbolic links                                              |
+| watcherUsePolling    | Boolean          | false   | Use polling for file watching (needed for network drives)          |
