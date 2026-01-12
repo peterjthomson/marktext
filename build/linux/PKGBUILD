@@ -2,7 +2,7 @@
 # PKGBUILD for Arch Linux / Omarchy
 
 pkgname=marktext
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="A simple and elegant open-source markdown editor that focused on speed and usability"
 arch=('x86_64')
