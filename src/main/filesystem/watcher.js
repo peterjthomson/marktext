@@ -18,7 +18,7 @@ const EVENT_NAME = {
   file: 'mt::update-file'
 }
 
-const add = async (win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
+const add = async(win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
   const stats = await fsPromises.stat(pathname)
   const birthTime = stats.birthtime
   const isMarkdown = hasMarkdownExtension(pathname)
@@ -66,7 +66,7 @@ const unlink = (win, pathname, type) => {
   })
 }
 
-const change = async (win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
+const change = async(win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
   // No need to update the tree view if the file content has changed.
   if (type === 'dir') return
 
@@ -136,14 +136,14 @@ class Watcher {
   /**
    * @param {Preference} preferences The preference instance.
    */
-  constructor (preferences) {
+  constructor(preferences) {
     this._preferences = preferences
     this._ignoreChangeEvents = []
     this.watchers = {}
   }
 
   // Watch a file or directory and return a unwatch function.
-  watch (win, watchPath, type = 'dir'/* file or dir */) {
+  watch(win, watchPath, type = 'dir'/* file or dir */) {
     // TODO: Is it needed to set `watcherUsePolling` ? because macOS need to set to true.
     const usePolling = isOsx ? true : this._preferences.getItem('watcherUsePolling')
 
@@ -221,7 +221,7 @@ class Watcher {
           if (renameTimer) {
             clearTimeout(renameTimer)
           }
-          renameTimer = setTimeout(async () => {
+          renameTimer = setTimeout(async() => {
             renameTimer = null
             if (disposed) {
               return
@@ -280,7 +280,7 @@ class Watcher {
   }
 
   // Remove a single watcher.
-  unwatch (win, watchPath, type = 'dir') {
+  unwatch(win, watchPath, type = 'dir') {
     for (const id of Object.keys(this.watchers)) {
       const w = this.watchers[id]
       if (
@@ -296,7 +296,7 @@ class Watcher {
   }
 
   // Remove all watchers from the given window id.
-  unwatchByWindowId (windowId) {
+  unwatchByWindowId(windowId) {
     const watchers = []
     const watchIds = []
     for (const id of Object.keys(this.watchers)) {
@@ -312,7 +312,7 @@ class Watcher {
     }
   }
 
-  close () {
+  close() {
     Object.keys(this.watchers).forEach(id => this.watchers[id].close())
     this.watchers = {}
     this._ignoreChangeEvents = []
@@ -327,7 +327,7 @@ class Watcher {
    * @param {string} pathname The path to ignore.
    * @param {number} [duration] The duration in ms to ignore the changed event.
    */
-  ignoreChangedEvent (windowId, pathname, duration = WATCHER_STABILITY_THRESHOLD + (WATCHER_STABILITY_POLL_INTERVAL * 2)) {
+  ignoreChangedEvent(windowId, pathname, duration = WATCHER_STABILITY_THRESHOLD + (WATCHER_STABILITY_POLL_INTERVAL * 2)) {
     this._ignoreChangeEvents.push({ windowId, pathname, duration, start: new Date() })
   }
 
@@ -339,7 +339,7 @@ class Watcher {
    * @param {string} type
    * @param {boolean} usePolling
    */
-  async _shouldIgnoreEvent (winId, pathname, type, usePolling) {
+  async _shouldIgnoreEvent(winId, pathname, type, usePolling) {
     if (type === 'file') {
       const { _ignoreChangeEvents } = this
       const currentTime = new Date()

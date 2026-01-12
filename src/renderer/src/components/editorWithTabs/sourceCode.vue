@@ -1,10 +1,12 @@
 <template>
-  <div ref="sourceCodeContainer" class="source-code"></div>
+  <div
+    ref="sourceCodeContainer"
+    class="source-code"
+  />
 </template>
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useEditorStore } from '@/store/editor'
 import { usePreferencesStore } from '@/store/preferences'
 import { storeToRefs } from 'pinia'

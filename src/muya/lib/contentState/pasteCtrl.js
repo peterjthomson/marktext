@@ -13,7 +13,7 @@ const LINE_BREAKS_REG = /\n/
 
 const pasteCtrl = (ContentState) => {
   // check paste type: `MERGE` or `NEWLINE`
-  ContentState.prototype.checkPasteType = function (start, fragment) {
+  ContentState.prototype.checkPasteType = function(start, fragment) {
     const fragmentType = fragment.type
     const parent = this.getParent(start)
 
@@ -46,7 +46,7 @@ const pasteCtrl = (ContentState) => {
   }
 
   // Try to identify the data type.
-  ContentState.prototype.checkCopyType = function (html, rawText) {
+  ContentState.prototype.checkCopyType = function(html, rawText) {
     let type = 'copyAsMarkdown'
     const match = /^<([a-zA-Z\d-]+)(?=\s|>).*?>[\s\S]+?<\/([a-zA-Z\d-]+)>$/.exec(rawText.trim())
     if (match && match[1]) {
@@ -67,7 +67,7 @@ const pasteCtrl = (ContentState) => {
     return type
   }
 
-  ContentState.prototype.standardizeHTML = async function (rawHtml) {
+  ContentState.prototype.standardizeHTML = async function(rawHtml) {
     // Only extract the `body.innerHTML` when the `html` is a full HTML Document.
     if (/<body>[\s\S]*<\/body>/.test(rawHtml)) {
       const match = /<body>([\s\S]*)<\/body>/.exec(rawHtml)
@@ -127,7 +127,7 @@ const pasteCtrl = (ContentState) => {
     return tempWrapper.innerHTML
   }
 
-  ContentState.prototype.pasteImage = async function (event) {
+  ContentState.prototype.pasteImage = async function(event) {
     // Try to guess the clipboard file path.
     const imagePath = this.muya.options.clipboardFilePath()
 
@@ -242,7 +242,7 @@ const pasteCtrl = (ContentState) => {
   }
 
   // Handle global events.
-  ContentState.prototype.docPasteHandler = async function (event) {
+  ContentState.prototype.docPasteHandler = async function(event) {
     // TODO: Pasting into CodeMirror will not work for special data like images
     // or tables (HTML) because it's not handled.
 
@@ -270,7 +270,7 @@ const pasteCtrl = (ContentState) => {
   }
 
   // Handle `normal` and `pasteAsPlainText` paste for preview mode.
-  ContentState.prototype.pasteHandler = async function (event, type = 'normal', rawText, rawHtml) {
+  ContentState.prototype.pasteHandler = async function(event, type = 'normal', rawText, rawHtml) {
     event.preventDefault()
     event.stopPropagation()
 

@@ -10,7 +10,7 @@ class Accessor {
   /**
    * @param {AppEnvironment} appEnvironment The application environment instance.
    */
-  constructor (appEnvironment) {
+  constructor(appEnvironment) {
     const userDataPath = appEnvironment.paths.userDataPath
 
     this.env = appEnvironment
@@ -27,7 +27,7 @@ class Accessor {
     this.windowManager = new WindowManager(this.menu, this.preferences)
   }
 
-  _loadCommands () {
+  _loadCommands() {
     const { commandManager } = this
     loadDefaultCommands(commandManager)
     loadMenuCommands(commandManager)

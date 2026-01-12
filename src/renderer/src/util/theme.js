@@ -8,7 +8,6 @@ import {
 import { dark, graphite, materialDark, oneDark, ulysses, tufte } from './themeColor'
 import { isLinux } from './index'
 
-const ORIGINAL_THEME = '#409EFF'
 const patchTheme = (css) => {
   return `@media not print {\n${css}\n}`
 }
@@ -17,41 +16,6 @@ const getEmojiPickerPatch = () => {
   return isLinux
     ? '.ag-emoji-picker section .emoji-wrapper .item span { font-family: sans-serif, "Noto Color Emoji"; }'
     : ''
-}
-
-const getThemeCluster = (themeColor) => {
-  const tintColor = (color, tint) => {
-    let red = parseInt(color.slice(1, 3), 16)
-    let green = parseInt(color.slice(3, 5), 16)
-    let blue = parseInt(color.slice(5, 7), 16)
-    if (tint === 0) {
-      // when primary color is in its rgb space
-      return [red, green, blue].join(',')
-    } else {
-      red += Math.round(tint * (255 - red))
-      green += Math.round(tint * (255 - green))
-      blue += Math.round(tint * (255 - blue))
-      red = red.toString(16)
-      green = green.toString(16)
-      blue = blue.toString(16)
-      return `#${red}${green}${blue}`
-    }
-  }
-
-  const clusters = [
-    {
-      color: themeColor,
-      variable: 'var(--themeColor)'
-    }
-  ]
-  for (let i = 9; i >= 1; i--) {
-    clusters.push({
-      color: tintColor(themeColor, Number((i / 10).toFixed(2))),
-      variable: `var(--themeColor${10 - i}0)`
-    })
-  }
-
-  return clusters
 }
 
 export const addThemeStyle = (theme) => {

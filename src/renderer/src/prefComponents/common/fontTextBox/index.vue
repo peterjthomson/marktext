@@ -1,5 +1,8 @@
 <template>
-  <section class="pref-font-input-item" :class="{ 'ag-underdevelop': disable }">
+  <section
+    class="pref-font-input-item"
+    :class="{ 'ag-underdevelop': disable }"
+  >
     <div class="description">
       <span>{{ description }}:</span>
       <InfoFilled
@@ -19,10 +22,16 @@
       @select="handleSelect"
     >
       <template #suffix>
-        <ArrowDown width="16" height="16" class="el-input__icon" />
+        <ArrowDown
+          width="16"
+          height="16"
+          class="el-input__icon"
+        />
       </template>
       <template #default="{ item }">
-        <div class="family">{{ item }}</div>
+        <div class="family">
+          {{ item }}
+        </div>
       </template>
     </el-autocomplete>
   </section>
@@ -85,12 +94,12 @@ const handleMoreClick = () => {
   }
 }
 
-onMounted(async () => {
+onMounted(async() => {
   // Delay load native library because it's not needed for the editor and causes a delay.
   const { getFonts } = require('font-list')
 
   const fonts = await getFonts()
-  fontFamilies.value = fonts.map((f) => f.replace(/\"/g, '').trim())
+  fontFamilies.value = fonts.map((f) => f.replace(/"/g, '').trim())
 })
 </script>
 

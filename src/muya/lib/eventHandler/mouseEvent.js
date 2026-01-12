@@ -2,13 +2,13 @@ import { getLinkInfo } from '../utils/getLinkInfo'
 import { collectFootnotes } from '../utils'
 
 class MouseEvent {
-  constructor (muya) {
+  constructor(muya) {
     this.muya = muya
     this.mouseBinding()
     this.mouseDown()
   }
 
-  mouseBinding () {
+  mouseBinding() {
     const { container, eventCenter } = this.muya
     const handler = event => {
       const target = event.target
@@ -18,7 +18,7 @@ class MouseEvent {
       const { hideLinkPopup, footnote } = this.muya.options
       const rect = parent.getBoundingClientRect()
       const reference = {
-        getBoundingClientRect () {
+        getBoundingClientRect() {
           return rect
         }
       }
@@ -82,7 +82,7 @@ class MouseEvent {
     eventCenter.attachDOMEvent(container, 'mouseout', leaveHandler)
   }
 
-  mouseDown () {
+  mouseDown() {
     const { container, eventCenter, contentState } = this.muya
     const handler = event => {
       const target = event.target

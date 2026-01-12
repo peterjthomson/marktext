@@ -1,4 +1,5 @@
 import { Menu, MenuItem } from 'electron'
+/* eslint-disable camelcase */
 import {
   getCUT,
   getCOPY,
@@ -10,6 +11,7 @@ import {
   getINSERT_BEFORE,
   getINSERT_AFTER
 } from './menuItems'
+/* eslint-enable camelcase */
 import spellcheckMenuBuilder from './spellcheck'
 import { t } from '../../i18n'
 

@@ -15,10 +15,10 @@
         ]"
         @click="!followSystemTheme && onSelectChange('theme', t.name)"
       >
-        <div v-html="t.html"></div>
+        <div v-html="t.html" />
       </div>
     </section>
-    <separator></separator>
+    <separator />
 
     <Bool
       :description="t('preferences.theme.followSystemTheme')"
@@ -28,7 +28,9 @@
 
     <compound v-if="followSystemTheme">
       <template #head>
-        <h6 class="title">{{ t('preferences.theme.modeThemes') }}</h6>
+        <h6 class="title">
+          {{ t('preferences.theme.modeThemes') }}
+        </h6>
       </template>
       <template #children>
         <cur-select
@@ -36,19 +38,21 @@
           :value="lightModeTheme"
           :options="themeOptions"
           :on-change="(value) => onSelectChange('lightModeTheme', value)"
-        ></cur-select>
+        />
 
         <cur-select
           :description="t('preferences.theme.darkModeTheme')"
           :value="darkModeTheme"
           :options="themeOptions"
           :on-change="(value) => onSelectChange('darkModeTheme', value)"
-        ></cur-select>
+        />
       </template>
     </compound>
 
     <div>
-      <div style="font-size: smaller; color: var(--editorColor)">{{ t('preferences.theme.customCss') }}</div>
+      <div style="font-size: smaller; color: var(--editorColor)">
+        {{ t('preferences.theme.customCss') }}
+      </div>
       <textarea
         style="
           width: 100%;
@@ -59,18 +63,25 @@
         rows="10"
         :value="customCss"
         @change="(event) => onSelectChange('customCss', event.target.value)"
-      ></textarea>
+      />
     </div>
-    <separator v-show="false"></separator>
-    <section v-show="false" class="import-themes ag-underdevelop">
+    <separator v-show="false" />
+    <section
+      v-show="false"
+      class="import-themes ag-underdevelop"
+    >
       <div>
         <span>{{ t('preferences.theme.openThemesFolder') }}</span>
-        <el-button size="small">{{ t('preferences.theme.openFolder') }}</el-button>
+        <el-button size="small">
+          {{ t('preferences.theme.openFolder') }}
+        </el-button>
       </div>
 
       <div>
         <span>{{ t('preferences.theme.importCustomThemes') }}</span>
-        <el-button size="small">{{ t('preferences.theme.importTheme') }}</el-button>
+        <el-button size="small">
+          {{ t('preferences.theme.importTheme') }}
+        </el-button>
       </div>
     </section>
   </div>
@@ -104,7 +115,7 @@ const themeOptions = configThemes.map(theme => ({
   value: theme.name
 }))
 
-onMounted(async () => {
+onMounted(async() => {
   const newThemes = []
   for (const theme of configThemes) {
     const html = await markdownToHtml(themeMd.replace(/{theme}/, theme.name))

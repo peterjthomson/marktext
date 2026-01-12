@@ -1,4 +1,5 @@
 // NOTE: This are mutable fields that may change at runtime.
+/* eslint-disable camelcase */
 
 import { t } from '../../i18n'
 
@@ -24,7 +25,7 @@ export const getPASTE = () => ({
 export const getCOPY_AS_MARKDOWN = () => ({
   label: t('contextMenu.copyAsMarkdown'),
   id: 'copyAsMarkdownMenuItem',
-  click (menuItem, targetWindow) {
+  click(menuItem, targetWindow) {
     targetWindow.webContents.send('mt::cm-copy-as-markdown')
   }
 })
@@ -32,7 +33,7 @@ export const getCOPY_AS_MARKDOWN = () => ({
 export const getCOPY_AS_HTML = () => ({
   label: t('contextMenu.copyAsHtml'),
   id: 'copyAsHtmlMenuItem',
-  click (menuItem, targetWindow) {
+  click(menuItem, targetWindow) {
     targetWindow.webContents.send('mt::cm-copy-as-html')
   }
 })
@@ -40,7 +41,7 @@ export const getCOPY_AS_HTML = () => ({
 export const getPASTE_AS_PLAIN_TEXT = () => ({
   label: t('contextMenu.pasteAsPlainText'),
   id: 'pasteAsPlainTextMenuItem',
-  click (menuItem, targetWindow) {
+  click(menuItem, targetWindow) {
     targetWindow.webContents.send('mt::cm-paste-as-plain-text')
   }
 })
@@ -48,7 +49,7 @@ export const getPASTE_AS_PLAIN_TEXT = () => ({
 export const getINSERT_BEFORE = () => ({
   label: t('contextMenu.insertParagraphBefore'),
   id: 'insertParagraphBeforeMenuItem',
-  click (menuItem, targetWindow) {
+  click(menuItem, targetWindow) {
     targetWindow.webContents.send('mt::cm-insert-paragraph', 'before')
   }
 })
@@ -56,7 +57,7 @@ export const getINSERT_BEFORE = () => ({
 export const getINSERT_AFTER = () => ({
   label: t('contextMenu.insertParagraphAfter'),
   id: 'insertParagraphAfterMenuItem',
-  click (menuItem, targetWindow) {
+  click(menuItem, targetWindow) {
     targetWindow.webContents.send('mt::cm-insert-paragraph', 'after')
   }
 })

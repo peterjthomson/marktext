@@ -3,7 +3,7 @@ import { isLengthEven, getParagraphReference } from '../utils'
 const TABLE_BLOCK_REG = /^\|.*?(\\*)\|.*?(\\*)\|/
 
 const tableBlockCtrl = ContentState => {
-  ContentState.prototype.createTableInFigure = function ({ rows, columns }, tableContents = []) {
+  ContentState.prototype.createTableInFigure = function({ rows, columns }, tableContents = []) {
     const table = this.createBlock('table', {
       row: rows - 1, // zero base
       column: columns - 1
@@ -40,7 +40,7 @@ const tableBlockCtrl = ContentState => {
     return table
   }
 
-  ContentState.prototype.createFigure = function ({ rows, columns }) {
+  ContentState.prototype.createFigure = function({ rows, columns }) {
     const { end } = this.cursor
     const table = this.createTableInFigure({ rows, columns })
     const figureBlock = this.createBlock('figure', {
@@ -67,7 +67,7 @@ const tableBlockCtrl = ContentState => {
     this.partialRender()
   }
 
-  ContentState.prototype.createTable = function (tableChecker) {
+  ContentState.prototype.createTable = function(tableChecker) {
     this.createFigure(tableChecker)
 
     this.muya.dispatchSelectionChange()
@@ -75,7 +75,7 @@ const tableBlockCtrl = ContentState => {
     this.muya.dispatchChange()
   }
 
-  ContentState.prototype.initTable = function (block) {
+  ContentState.prototype.initTable = function(block) {
     const { text } = block.children[0]
     const rowHeader = []
     const len = text.length
@@ -107,7 +107,7 @@ const tableBlockCtrl = ContentState => {
     return this.firstInDescendant(table.children[1]) // first cell content in tbody
   }
 
-  ContentState.prototype.tableToolBarClick = function (type) {
+  ContentState.prototype.tableToolBarClick = function(type) {
     const { start: { key } } = this.cursor
     const block = this.getBlock(key)
     const parentBlock = this.getParent(block)
@@ -236,7 +236,7 @@ const tableBlockCtrl = ContentState => {
   }
 
   // insert/remove row/column
-  ContentState.prototype.editTable = function ({ location, action, target }, cellContentKey) {
+  ContentState.prototype.editTable = function({ location, action, target }, cellContentKey) {
     let block
     let start
     let end
@@ -388,7 +388,7 @@ const tableBlockCtrl = ContentState => {
     this.muya.eventCenter.dispatch('stateChange')
   }
 
-  ContentState.prototype.getTableBlock = function () {
+  ContentState.prototype.getTableBlock = function() {
     const { start, end } = this.cursor
     const startBlock = this.getBlock(start.key)
     const endBlock = this.getBlock(end.key)
@@ -403,7 +403,7 @@ const tableBlockCtrl = ContentState => {
     }
   }
 
-  ContentState.prototype.tableBlockUpdate = function (block) {
+  ContentState.prototype.tableBlockUpdate = function(block) {
     const { type } = block
     if (type !== 'p') return false
     const { text } = block.children[0]

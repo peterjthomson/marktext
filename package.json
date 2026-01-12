@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MarkText",
   "main": "./out/main/index.js",
+  "type": "module",
   "author": "Marktext Contributors (Tkaixiang fork)",
   "homepage": "https://github.com/Tkaixiang/marktext",
   "scripts": {

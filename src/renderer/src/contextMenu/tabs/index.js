@@ -1,4 +1,5 @@
 import { getCurrentWindow, Menu as RemoteMenu, MenuItem as RemoteMenuItem } from '@electron/remote'
+/* eslint-disable camelcase */
 import {
   SEPARATOR,
   getCLOSE_THIS,
@@ -9,6 +10,7 @@ import {
   getCOPY_PATH,
   getSHOW_IN_FOLDER
 } from './menuItems'
+/* eslint-enable camelcase */
 
 export const showContextMenu = (event, tab) => {
   const menu = new RemoteMenu()

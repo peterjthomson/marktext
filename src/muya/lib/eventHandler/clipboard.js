@@ -1,5 +1,5 @@
 class Clipboard {
-  constructor (muya) {
+  constructor(muya) {
     this.muya = muya
     this._copyType = 'normal' // `normal` or `copyAsMarkdown` or `copyAsHtml`
     this._pasteType = 'normal' // `normal` or `pasteAsPlainText`
@@ -7,7 +7,7 @@ class Clipboard {
     this.listen()
   }
 
-  listen () {
+  listen() {
     const { container, eventCenter, contentState } = this.muya
     const docPasteHandler = event => {
       contentState.docPasteHandler(event)
@@ -45,17 +45,17 @@ class Clipboard {
 
   // TODO: `document.execCommand` is deprecated!
 
-  copyAsMarkdown () {
+  copyAsMarkdown() {
     this._copyType = 'copyAsMarkdown'
     document.execCommand('copy')
   }
 
-  copyAsHtml () {
+  copyAsHtml() {
     this._copyType = 'copyAsHtml'
     document.execCommand('copy')
   }
 
-  pasteAsPlainText () {
+  pasteAsPlainText() {
     this._pasteType = 'pasteAsPlainText'
     document.execCommand('paste')
   }
@@ -65,7 +65,7 @@ class Clipboard {
    * @param {string|object} type copyBlock or copyCodeContent
    * @param {string|object} info  is the block key if it's string, or block if it's object
    */
-  copy (type, info) {
+  copy(type, info) {
     this._copyType = type
     this._copyInfo = info
     document.execCommand('copy')
