@@ -42,7 +42,7 @@ export const ENCODING_NAME_MAP = Object.freeze({
  *
  * @param {Encoding} enc The encoding object.
  */
-export const getEncodingName = enc => {
+export const getEncodingName = (enc) => {
   const { encoding, isBom } = enc
   let str = ENCODING_NAME_MAP[encoding] || encoding
   if (isBom) {

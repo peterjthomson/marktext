@@ -21,19 +21,19 @@ You can use either a class or object at runtime to register a command via the bu
 
 ```js
 export class ExampleCommand {
-  constructor () {
+  constructor() {
     this.id = 'example-id'
     this.description = 'Example'
   }
 
   // Execute the command.
-  async execute () {
+  async execute() {
     // No-op
   }
 }
 
 export class Example2Command {
-  constructor () {
+  constructor() {
     this.id = 'example-2-id'
     this.description = 'Example 2'
     this.placeholder = '' // Textbox placeholder (optional)
@@ -50,20 +50,22 @@ export class Example2Command {
   // note that `subcommands` must be available and the command cannot be loaded
   // as root command when no `run` method is available (optional).
   run = async () => {
-    this.subcommands = [{
-      id: 'example-2-sub-1',
-      description: 'Subcommand 1',
-      execute: async () => {
-        // No-op
+    this.subcommands = [
+      {
+        id: 'example-2-sub-1',
+        description: 'Subcommand 1',
+        execute: async () => {
+          // No-op
+        }
+      },
+      {
+        id: 'example-2-sub-2',
+        description: 'Subcommand 2',
+        execute: async () => {
+          // No-op
+        }
       }
-    },
-    {
-      id: 'example-2-sub-2',
-      description: 'Subcommand 2',
-      execute: async () => {
-        // No-op
-      }
-    }]
+    ]
   }
 
   // Run when the command palette is unloaded and the command is root.
@@ -74,7 +76,7 @@ export class Example2Command {
   // Handle search queries when the entry is root. Must return available
   // entries that should be shown in UI. If not defined the default searcher
   // is used (optional).
-  search = async query => {
+  search = async (query) => {
     return []
   }
 
@@ -89,7 +91,7 @@ export class Example2Command {
 
   // When defined this method is called when a subcommand is executed
   // instead `execute` on subcommand (optional).
-  executeSubcommand = async id => {
+  executeSubcommand = async (id) => {
     // No-op
   }
 }

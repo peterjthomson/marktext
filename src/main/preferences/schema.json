@@ -12,10 +12,7 @@
   },
   "titleBarStyle": {
     "description": "General--The title bar style (Windows and Linux system only).",
-    "enum": [
-      "custom",
-      "native"
-    ],
+    "enum": ["custom", "native"],
     "default": "custom"
   },
   "openFilesInNewWindow": {
@@ -47,20 +44,12 @@
   },
   "fileSortBy": {
     "description": "General--Sort files in opened folder by created time, modified time and title.",
-    "enum": [
-      "modified",
-      "created",
-      "title"
-    ],
+    "enum": ["modified", "created", "title"],
     "default": "modified"
   },
   "startUpAction": {
     "description": "General--The action after MarkText startup, open the last edited content, open the specified folder or blank page",
-    "enum": [
-      "folder",
-      "lastState",
-      "blank"
-    ],
+    "enum": ["folder", "lastState", "blank"],
     "default": "blank"
   },
   "defaultDirectoryToOpen": {
@@ -148,11 +137,7 @@
   },
   "endOfLine": {
     "description": "Editor--The newline character used at the end of each line. The default value is default, which selects your operating system's default newline character.",
-    "enum": [
-      "default",
-      "lf",
-      "crlf"
-    ],
+    "enum": ["default", "lf", "crlf"],
     "default": "default"
   },
   "defaultEncoding": {
@@ -205,19 +190,11 @@
   "trimTrailingNewline": {
     "description": "Editor--The trim trailing newline option.",
     "default": 2,
-    "enum": [
-      0,
-      1,
-      2,
-      3
-    ]
+    "enum": [0, 1, 2, 3]
   },
   "textDirection": {
     "description": "Editor--The writing text direction",
-    "enum": [
-      "ltr",
-      "rtl"
-    ],
+    "enum": ["ltr", "rtl"],
     "default": "ltr"
   },
   "hideQuickInsertHint": {
@@ -242,27 +219,17 @@
   },
   "bulletListMarker": {
     "description": "Markdown--The marker used in bullet list",
-    "enum": [
-      "-",
-      "*",
-      "+"
-    ],
+    "enum": ["-", "*", "+"],
     "default": "-"
   },
   "orderListDelimiter": {
     "description": "Markdown--The dilimiter used in order list",
-    "enum": [
-      ".",
-      ")"
-    ],
+    "enum": [".", ")"],
     "default": "."
   },
   "preferHeadingStyle": {
     "description": "Markdown--The preferred heading style in MarkText",
-    "enum": [
-      "atx",
-      "setext"
-    ],
+    "enum": ["atx", "setext"],
     "default": "atx"
   },
   "tabSize": {
@@ -272,24 +239,12 @@
   },
   "listIndentation": {
     "description": "Markdown--Select the indent of list",
-    "enum": [
-      "dfm",
-      "tab",
-      1,
-      2,
-      3,
-      4
-    ],
+    "enum": ["dfm", "tab", 1, 2, 3, 4],
     "default": 1
   },
   "frontmatterType": {
     "description": "Markdown--The frontmatter type",
-    "enum": [
-      "-",
-      "+",
-      ";",
-      "{"
-    ],
+    "enum": ["-", "+", ";", "{"],
     "default": "-"
   },
   "superSubScript": {
@@ -314,10 +269,7 @@
   },
   "sequenceTheme": {
     "description": "Markdown--Sequence diagram theme",
-    "enum": [
-      "hand",
-      "simple"
-    ],
+    "enum": ["hand", "simple"],
     "default": "hand"
   },
   "theme": {
@@ -363,11 +315,7 @@
   },
   "imageInsertAction": {
     "description": "Image--The default behavior after insert image from local folder",
-    "enum": [
-      "upload",
-      "folder",
-      "path"
-    ],
+    "enum": ["upload", "folder", "path"],
     "default": "path"
   },
   "imagePreferRelativeDirectory": {

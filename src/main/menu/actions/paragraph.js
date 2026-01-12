@@ -2,12 +2,18 @@ import { COMMANDS } from '../../commands'
 
 const DISABLE_LABELS = [
   // paragraph menu items
-  'heading1MenuItem', 'heading2MenuItem', 'heading3MenuItem', 'heading4MenuItem',
-  'heading5MenuItem', 'heading6MenuItem',
-  'upgradeHeadingMenuItem', 'degradeHeadingMenuItem',
+  'heading1MenuItem',
+  'heading2MenuItem',
+  'heading3MenuItem',
+  'heading4MenuItem',
+  'heading5MenuItem',
+  'heading6MenuItem',
+  'upgradeHeadingMenuItem',
+  'degradeHeadingMenuItem',
   'tableMenuItem',
   // formats menu items
-  'hyperlinkMenuItem', 'imageMenuItem'
+  'hyperlinkMenuItem',
+  'imageMenuItem'
 ]
 
 const MENU_ID_MAP = Object.freeze({
@@ -36,89 +42,89 @@ const transformEditorElement = (win, type) => {
   }
 }
 
-export const bulletList = win => {
+export const bulletList = (win) => {
   transformEditorElement(win, 'ul-bullet')
 }
 
-export const codeFence = win => {
+export const codeFence = (win) => {
   transformEditorElement(win, 'pre')
 }
 
-export const degradeHeading = win => {
+export const degradeHeading = (win) => {
   transformEditorElement(win, 'degrade heading')
 }
 
-export const frontMatter = win => {
+export const frontMatter = (win) => {
   transformEditorElement(win, 'front-matter')
 }
 
-export const heading1 = win => {
+export const heading1 = (win) => {
   transformEditorElement(win, 'heading 1')
 }
 
-export const heading2 = win => {
+export const heading2 = (win) => {
   transformEditorElement(win, 'heading 2')
 }
 
-export const heading3 = win => {
+export const heading3 = (win) => {
   transformEditorElement(win, 'heading 3')
 }
 
-export const heading4 = win => {
+export const heading4 = (win) => {
   transformEditorElement(win, 'heading 4')
 }
 
-export const heading5 = win => {
+export const heading5 = (win) => {
   transformEditorElement(win, 'heading 5')
 }
 
-export const heading6 = win => {
+export const heading6 = (win) => {
   transformEditorElement(win, 'heading 6')
 }
 
-export const horizontalLine = win => {
+export const horizontalLine = (win) => {
   transformEditorElement(win, 'hr')
 }
 
-export const htmlBlock = win => {
+export const htmlBlock = (win) => {
   transformEditorElement(win, 'html')
 }
 
-export const looseListItem = win => {
+export const looseListItem = (win) => {
   transformEditorElement(win, 'loose-list-item')
 }
 
-export const mathFormula = win => {
+export const mathFormula = (win) => {
   transformEditorElement(win, 'mathblock')
 }
 
-export const orderedList = win => {
+export const orderedList = (win) => {
   transformEditorElement(win, 'ol-order')
 }
 
-export const paragraph = win => {
+export const paragraph = (win) => {
   transformEditorElement(win, 'paragraph')
 }
 
-export const quoteBlock = win => {
+export const quoteBlock = (win) => {
   transformEditorElement(win, 'blockquote')
 }
 
-export const table = win => {
+export const table = (win) => {
   transformEditorElement(win, 'table')
 }
 
-export const taskList = win => {
+export const taskList = (win) => {
   transformEditorElement(win, 'ul-task')
 }
 
-export const increaseHeading = win => {
+export const increaseHeading = (win) => {
   transformEditorElement(win, 'upgrade heading')
 }
 
 // --- Commands -------------------------------------------------------------
 
-export const loadParagraphCommands = commandManager => {
+export const loadParagraphCommands = (commandManager) => {
   commandManager.add(COMMANDS.PARAGRAPH_BULLET_LIST, bulletList)
   commandManager.add(COMMANDS.PARAGRAPH_CODE_FENCE, codeFence)
   commandManager.add(COMMANDS.PARAGRAPH_DEGRADE_HEADING, degradeHeading)
@@ -148,38 +154,42 @@ export const loadParagraphCommands = commandManager => {
 
 const setParagraphMenuItemStatus = (applicationMenu, bool) => {
   const paragraphMenuItem = applicationMenu.getMenuItemById('paragraphMenuEntry')
-  paragraphMenuItem.submenu.items
-    .forEach(item => (item.enabled = bool))
+  paragraphMenuItem.submenu.items.forEach((item) => (item.enabled = bool))
 }
 
 const setMultipleStatus = (applicationMenu, list, status) => {
   const paragraphMenuItem = applicationMenu.getMenuItemById('paragraphMenuEntry')
   paragraphMenuItem.submenu.items
-    .filter(item => item.id && list.includes(item.id))
-    .forEach(item => (item.enabled = status))
+    .filter((item) => item.id && list.includes(item.id))
+    .forEach((item) => (item.enabled = status))
 }
 
-const setCheckedMenuItem = (applicationMenu, { affiliation, isTable, isLooseListItem, isTaskList }) => {
+const setCheckedMenuItem = (
+  applicationMenu,
+  { affiliation, isTable, isLooseListItem, isTaskList }
+) => {
   const paragraphMenuItem = applicationMenu.getMenuItemById('paragraphMenuEntry')
-  paragraphMenuItem.submenu.items.forEach(item => (item.checked = false))
-  paragraphMenuItem.submenu.items.forEach(item => {
+  paragraphMenuItem.submenu.items.forEach((item) => (item.checked = false))
+  paragraphMenuItem.submenu.items.forEach((item) => {
     if (!item.id) {
       return false
     } else if (item.id === 'looseListItemMenuItem') {
       item.checked = !!isLooseListItem
-    } else if (Object.keys(affiliation).some(b => {
-      if (b === 'ul' && isTaskList) {
-        if (item.id === 'taskListMenuItem') {
+    } else if (
+      Object.keys(affiliation).some((b) => {
+        if (b === 'ul' && isTaskList) {
+          if (item.id === 'taskListMenuItem') {
+            return true
+          }
+          return false
+        } else if (isTable && item.id === 'tableMenuItem') {
+          return true
+        } else if (item.id === 'codeFencesMenuItem' && /code$/.test(b)) {
           return true
         }
-        return false
-      } else if (isTable && item.id === 'tableMenuItem') {
-        return true
-      } else if (item.id === 'codeFencesMenuItem' && /code$/.test(b)) {
-        return true
-      }
-      return b === MENU_ID_MAP[item.id]
-    })) {
+        return b === MENU_ID_MAP[item.id]
+      })
+    ) {
       item.checked = true
     }
   })
@@ -204,7 +214,7 @@ export const updateSelectionMenus = (applicationMenu, state) => {
 
   // Reset format menu.
   const formatMenuItem = applicationMenu.getMenuItemById('formatMenuItem')
-  formatMenuItem.submenu.items.forEach(item => (item.enabled = true))
+  formatMenuItem.submenu.items.forEach((item) => (item.enabled = true))
 
   // Handle menu checked.
   setCheckedMenuItem(applicationMenu, state)
@@ -220,7 +230,7 @@ export const updateSelectionMenus = (applicationMenu, state) => {
 
     // A code line is selected.
     if (isCodeContent) {
-      formatMenuItem.submenu.items.forEach(item => (item.enabled = false))
+      formatMenuItem.submenu.items.forEach((item) => (item.enabled = false))
 
       // TODO: Allow to transform to paragraph for other code blocks too but
       //   currently not supported by Muya.
@@ -235,14 +245,14 @@ export const updateSelectionMenus = (applicationMenu, state) => {
       //  setMultipleStatus(applicationMenu, ['codeFencesMenuItem'], true)
       // }
 
-      if (Object.keys(affiliation).some(b => /code$/.test(b))) {
+      if (Object.keys(affiliation).some((b) => /code$/.test(b))) {
         setMultipleStatus(applicationMenu, ['codeFencesMenuItem'], true)
       }
     }
   } else if (isMultiline) {
     formatMenuItem.submenu.items
-      .filter(item => item.id && DISABLE_LABELS.includes(item.id))
-      .forEach(item => (item.enabled = false))
+      .filter((item) => item.id && DISABLE_LABELS.includes(item.id))
+      .forEach((item) => (item.enabled = false))
     setMultipleStatus(applicationMenu, DISABLE_LABELS, false)
   }
 

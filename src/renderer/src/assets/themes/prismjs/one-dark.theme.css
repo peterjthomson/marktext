@@ -26,9 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-code[class*="language-"],
+code[class*='language-'],
 pre.ag-paragraph {
-  color: #ABB2BF;
+  color: #abb2bf;
   /*font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;*/
   text-align: left;
   white-space: pre;
@@ -54,15 +54,15 @@ pre.ag-paragraph {
 }
 
 /* Inline Code */
-:not(pre) > code[class*="language-"],
+:not(pre) > code[class*='language-'],
 pre.ag-paragraph {
   background: #3a3f4b;
 }
 
 /* Inline Code */
-:not(pre) > code[class*="language-"] {
-  padding: .1em;
-  border-radius: .3em;
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em;
+  border-radius: 0.3em;
   white-space: normal;
 }
 
@@ -70,7 +70,7 @@ pre.ag-paragraph {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #5C6370;
+  color: #5c6370;
 }
 
 .token.punctuation {

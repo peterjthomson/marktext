@@ -7,7 +7,7 @@ MarkText key bindings for Linux. Please see [general key bindings](KEYBINDINGS.m
 #### File menu
 
 | Id                     | Default                                       | Description                           |
-|:---------------------- | --------------------------------------------- | ------------------------------------- |
+| :--------------------- | --------------------------------------------- | ------------------------------------- |
 | `file.new-window`      | <kbd>Ctrl</kbd>+<kbd>N</kbd>                  | New window                            |
 | `file.new-tab`         | <kbd>Ctrl</kbd>+<kbd>T</kbd>                  | New tab                               |
 | `file.open-file`       | <kbd>Ctrl</kbd>+<kbd>O</kbd>                  | Open markdown file                    |
@@ -26,7 +26,7 @@ MarkText key bindings for Linux. Please see [general key bindings](KEYBINDINGS.m
 #### Edit menu
 
 | Id                        | Default                                       | Description                                     |
-|:------------------------- | --------------------------------------------- | ----------------------------------------------- |
+| :------------------------ | --------------------------------------------- | ----------------------------------------------- |
 | `edit.undo`               | <kbd>Ctrl</kbd>+<kbd>Z</kbd>                  | Undo last operation                             |
 | `edit.redo`               | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> | Redo last operation                             |
 | `edit.cut`                | <kbd>Ctrl</kbd>+<kbd>X</kbd>                  | Cut selected text                               |
@@ -93,8 +93,8 @@ MarkText key bindings for Linux. Please see [general key bindings](KEYBINDINGS.m
 | ----------------------------- | ---------------------------- | ------------------------- |
 | `window.minimize`             | <kbd>Ctrl</kbd>+<kbd>M</kbd> | Minimize the window       |
 | `window.toggle-always-on-top` | -                            | Toogle always on top mode |
-| `window.zoomIn`              | -                            | Zoom in                   |
-| `window.zoomOut`             | -                            | Zoom out                  |
+| `window.zoomIn`               | -                            | Zoom in                   |
+| `window.zoomOut`              | -                            | Zoom out                  |
 | `window.toggle-full-screen`   | <kbd>F11</kbd>               | Toggle fullscreen mode    |
 
 #### View menu
@@ -116,22 +116,22 @@ MarkText key bindings for Linux. Please see [general key bindings](KEYBINDINGS.m
 
 #### Tabs
 
-| Id                       | Default                                         | Description                  |
-| ------------------------ | ----------------------------------------------- | ---------------------------- |
-| `tabs.cycle-forward`     | <kbd>Ctrl</kbd>+<kbd>Tab</kbd>                  | Cycle through tabs           |
-| `tabs.cycle-backward`    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | Cycle backwards through tabs |
-| `tabs.switchToleft`    | <kbd>Ctrl</kbd>+<kbd>PageUp</kbd>               | Switch tab to the left       |
-| `tabs.switchToright`   | <kbd>Ctrl</kbd>+<kbd>PageDown</kbd>             | Switch tab to the right      |
-| `tabs.switchTofirst`   | <kbd>Ctrl</kbd>+<kbd>1</kbd>                    | Switch tab to the 1st        |
-| `tabs.switchTosecond`  | <kbd>Ctrl</kbd>+<kbd>2</kbd>                    | Switch tab to the 2nd        |
-| `tabs.switchTothird`   | <kbd>Ctrl</kbd>+<kbd>3</kbd>                    | Switch tab to the 3rd        |
-| `tabs.switchTofourth`  | <kbd>Ctrl</kbd>+<kbd>4</kbd>                    | Switch tab to the 4th        |
-| `tabs.switchTofifth`   | <kbd>Ctrl</kbd>+<kbd>5</kbd>                    | Switch tab to the 5th        |
-| `tabs.switchTosixth`   | <kbd>Ctrl</kbd>+<kbd>6</kbd>                    | Switch tab to the 6th        |
-| `tabs.switchToseventh` | <kbd>Ctrl</kbd>+<kbd>7</kbd>                    | Switch tab to the 7th        |
-| `tabs.switchToeighth`  | <kbd>Ctrl</kbd>+<kbd>8</kbd>                    | Switch tab to the 8th        |
-| `tabs.switchToninth`   | <kbd>Ctrl</kbd>+<kbd>9</kbd>                    | Switch tab to the 9th        |
-| `tabs.switchTotenth`   | <kbd>Ctrl</kbd>+<kbd>0</kbd>                    | Switch tab to the 10th       |
+| Id                      | Default                                         | Description                  |
+| ----------------------- | ----------------------------------------------- | ---------------------------- |
+| `tabs.cycleForward`     | <kbd>Ctrl</kbd>+<kbd>Tab</kbd>                  | Cycle through tabs           |
+| `tabs.cycleBackward`    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | Cycle backwards through tabs |
+| `tabs.switchToLeft`     | <kbd>Ctrl</kbd>+<kbd>PageUp</kbd>               | Switch tab to the left       |
+| `tabs.switchToRight`    | <kbd>Ctrl</kbd>+<kbd>PageDown</kbd>             | Switch tab to the right      |
+| `tabs.switchToFirst`    | <kbd>Ctrl</kbd>+<kbd>1</kbd>                    | Switch to 1st tab            |
+| `tabs.switchToSecond`   | <kbd>Ctrl</kbd>+<kbd>2</kbd>                    | Switch to 2nd tab            |
+| `tabs.switchToThird`    | <kbd>Ctrl</kbd>+<kbd>3</kbd>                    | Switch to 3rd tab            |
+| `tabs.switchToFourth`   | <kbd>Ctrl</kbd>+<kbd>4</kbd>                    | Switch to 4th tab            |
+| `tabs.switchToFifth`    | <kbd>Ctrl</kbd>+<kbd>5</kbd>                    | Switch to 5th tab            |
+| `tabs.switchToSixth`    | <kbd>Ctrl</kbd>+<kbd>6</kbd>                    | Switch to 6th tab            |
+| `tabs.switchToSeventh`  | <kbd>Ctrl</kbd>+<kbd>7</kbd>                    | Switch to 7th tab            |
+| `tabs.switchToEighth`   | <kbd>Ctrl</kbd>+<kbd>8</kbd>                    | Switch to 8th tab            |
+| `tabs.switchToNinth`    | <kbd>Ctrl</kbd>+<kbd>9</kbd>                    | Switch to 9th tab            |
+| `tabs.switchToTenth`    | <kbd>Ctrl</kbd>+<kbd>0</kbd>                    | Switch to 10th tab           |
 
 #### Misc
 

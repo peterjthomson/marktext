@@ -5,13 +5,14 @@ This guide is designed for AI agents (Claude, GPT, Copilot, etc.) loading into t
 ## Quick Overview
 
 **MarkText** is a cross-platform markdown editor built with:
+
 - **Electron 39** - Desktop application framework
 - **Vue 3** - Frontend UI framework (Composition API)
 - **Pinia** - State management
 - **electron-vite** - Build system (Vite-based)
 - **Muya** - Custom WYSIWYG markdown editor engine (in `src/muya/`)
 
-This is a fork by [Tkaixiang](https://github.com/Tkaixiang/marktext) that modernized the original MarkText with Vue 3, Pinia, and electron-vite.
+This a new fork by **Peter Thomson** of the fork recent by [Tkaixiang](https://github.com/Tkaixiang/marktext) that modernized the original MarkText with Vue 3, Pinia, and electron-vite.
 
 ## Project Structure
 
@@ -61,15 +62,16 @@ marktext/
 
 ### 1. Process Architecture
 
-| Process | Location | Module Type | Purpose |
-|---------|----------|-------------|---------|
-| Main | `src/main/` | CommonJS | System operations, window management, file I/O |
-| Renderer | `src/renderer/` | ES Modules | Vue 3 UI, user interaction |
-| Preload | `src/preload/` | CommonJS | IPC bridge, exposes safe APIs to renderer |
+| Process  | Location        | Module Type | Purpose                                        |
+| -------- | --------------- | ----------- | ---------------------------------------------- |
+| Main     | `src/main/`     | CommonJS    | System operations, window management, file I/O |
+| Renderer | `src/renderer/` | ES Modules  | Vue 3 UI, user interaction                     |
+| Preload  | `src/preload/`  | CommonJS    | IPC bridge, exposes safe APIs to renderer      |
 
 ### 2. IPC Communication
 
 Main and renderer communicate via IPC with `mt::` prefixed event names:
+
 ```javascript
 // Renderer → Main
 window.electron.ipcRenderer.send('mt::save-file', data)
@@ -81,6 +83,7 @@ win.webContents.send('mt::file-saved', result)
 ### 3. State Management (Pinia)
 
 Key stores in `src/renderer/src/store/`:
+
 - `editor.js` - Document tabs, content, file tree (largest store)
 - `preferences.js` - User settings
 - `layout.js` - UI layout state
@@ -90,6 +93,7 @@ Key stores in `src/renderer/src/store/`:
 ### 4. The Muya Editor Engine
 
 **IMPORTANT**: `src/muya/` is the core markdown editor. It's complex and tightly coupled. Modifications require deep understanding of:
+
 - Block-based document structure
 - Virtual DOM rendering (snabbdom)
 - Markdown parsing pipeline
@@ -136,15 +140,15 @@ npm run format       # Prettier format
 
 ## Important Files to Know
 
-| File | Purpose |
-|------|---------|
-| `src/main/index.js` | Main process entry |
-| `src/main/app/index.js` | App controller |
-| `src/renderer/src/main.js` | Renderer entry |
-| `src/renderer/src/pages/app.vue` | Main editor page |
+| File                               | Purpose              |
+| ---------------------------------- | -------------------- |
+| `src/main/index.js`                | Main process entry   |
+| `src/main/app/index.js`            | App controller       |
+| `src/renderer/src/main.js`         | Renderer entry       |
+| `src/renderer/src/pages/app.vue`   | Main editor page     |
 | `src/main/preferences/schema.json` | All user preferences |
-| `electron.vite.config.mjs` | Build configuration |
-| `electron-builder.yml` | Packaging config |
+| `electron.vite.config.mjs`         | Build configuration  |
+| `electron-builder.yml`             | Packaging config     |
 
 ## Code Style
 
@@ -173,17 +177,17 @@ npm run format       # Prettier format
 
 ## Where to Find Things
 
-| Looking for... | Location |
-|----------------|----------|
-| User preferences | `src/main/preferences/` |
-| Keyboard shortcuts | `src/main/keyboard/` |
-| Menu definitions | `src/main/menu/templates/` |
-| Vue components | `src/renderer/src/components/` |
-| Pinia stores | `src/renderer/src/store/` |
-| CSS themes | `src/renderer/src/assets/themes/` |
-| Editor engine | `src/muya/lib/` |
-| Translations | `static/locales/` |
-| Build icons | `build/` |
+| Looking for...     | Location                          |
+| ------------------ | --------------------------------- |
+| User preferences   | `src/main/preferences/`           |
+| Keyboard shortcuts | `src/main/keyboard/`              |
+| Menu definitions   | `src/main/menu/templates/`        |
+| Vue components     | `src/renderer/src/components/`    |
+| Pinia stores       | `src/renderer/src/store/`         |
+| CSS themes         | `src/renderer/src/assets/themes/` |
+| Editor engine      | `src/muya/lib/`                   |
+| Translations       | `static/locales/`                 |
+| Build icons        | `build/`                          |
 
 ## Getting Help
 

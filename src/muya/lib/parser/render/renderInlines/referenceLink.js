@@ -4,18 +4,10 @@ import { sanitizeHyperlink } from '../../../utils/url'
 
 export default function referenceLink(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor)
-  const labelClass = className === CLASS_OR_ID.AG_GRAY
-    ? CLASS_OR_ID.AG_REFERENCE_LABEL
-    : className
+  const labelClass = className === CLASS_OR_ID.AG_GRAY ? CLASS_OR_ID.AG_REFERENCE_LABEL : className
 
   const { start, end } = token.range
-  const {
-    anchor,
-    children,
-    backlash,
-    isFullLink,
-    label
-  } = token
+  const { anchor, children, backlash, isFullLink, label } = token
   const MARKER = '['
   const key = (label + backlash.second).toLowerCase()
   const backlashStart = start + MARKER.length + anchor.length
@@ -28,13 +20,7 @@ export default function referenceLink(h, cursor, block, token, outerClass) {
   ]
 
   const { href, title } = this.labels.get(key)
-  const startMarker = this.highlight(
-    h,
-    block,
-    start,
-    start + MARKER.length,
-    token
-  )
+  const startMarker = this.highlight(h, block, start, start + MARKER.length, token)
   const endMarker = this.highlight(
     h,
     block,
@@ -42,7 +28,9 @@ export default function referenceLink(h, cursor, block, token, outerClass) {
     end,
     token
   )
-  const anchorSelector = href ? `a.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_REFERENCE_LINK}` : `span.${CLASS_OR_ID.AG_REFERENCE_LINK}`
+  const anchorSelector = href
+    ? `a.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_REFERENCE_LINK}`
+    : `span.${CLASS_OR_ID.AG_REFERENCE_LINK}`
   const data = {
     attrs: {
       spellcheck: 'false'
@@ -75,13 +63,7 @@ export default function referenceLink(h, cursor, block, token, outerClass) {
       start + 3 * MARKER.length + anchor.length + backlash.first.length,
       token
     )
-    const lastMarker = this.highlight(
-      h,
-      block,
-      end - MARKER.length,
-      end,
-      token
-    )
+    const lastMarker = this.highlight(h, block, end - MARKER.length, end, token)
     const secondBacklashStart = end - MARKER.length - backlash.second.length
 
     return [

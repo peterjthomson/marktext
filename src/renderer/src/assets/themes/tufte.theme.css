@@ -142,7 +142,8 @@
 #ag-editor-id,
 .ag-contents,
 .editor-wrapper {
-  font-family: "ET Book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif !important;
+  font-family:
+    'ET Book', Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia, serif !important;
 }
 
 /* Slight size bump for body text only */
@@ -151,9 +152,15 @@ p.ag-paragraph {
 }
 
 /* All headings - base styles, serif */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: rgba(51, 47, 43, 0.9);
-  font-family: "ET Book", Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif !important;
+  font-family:
+    'ET Book', Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia, serif !important;
 }
 
 /* H1 - Main title, centered, larger and commanding */
@@ -193,7 +200,8 @@ h4 {
   margin-top: 1.4em;
 }
 
-h5, h6 {
+h5,
+h6 {
   text-align: left;
   font-size: 1em;
   font-weight: 600;
@@ -223,7 +231,7 @@ li.ag-task-list-item {
   list-style-type: none;
   position: relative;
 }
-li.ag-task-list-item > input[type=checkbox] {
+li.ag-task-list-item > input[type='checkbox'] {
   position: absolute;
   cursor: pointer;
   width: 16px;
@@ -236,7 +244,7 @@ li.ag-task-list-item > input[type=checkbox] {
 li.ag-task-list-item > input.ag-checkbox-checked {
   opacity: 0.5;
 }
-li.ag-task-list-item > input[type=checkbox]::before {
+li.ag-task-list-item > input[type='checkbox']::before {
   content: '';
   width: 16px;
   height: 16px;
@@ -273,7 +281,7 @@ li.ag-task-list-item > input.ag-checkbox-checked::after {
 }
 
 /* Horizontal rule - centered, elegant short line with warm color */
-p:not(.ag-active)[data-role="hr"]::before {
+p:not(.ag-active)[data-role='hr']::before {
   content: '';
   position: absolute;
   width: 20%;

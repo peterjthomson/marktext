@@ -15,7 +15,7 @@ export const watchers = new Map()
 const filesHandler = (files, directory, key) => {
   const IMAGE_REG = new RegExp('(' + IMAGE_EXTENSIONS.join('|') + ')$', 'i')
   const onlyDirAndImage = files
-    .map(file => {
+    .map((file) => {
       const fullPath = path.join(directory, file)
       let type = ''
       if (isDirectory(fullPath)) {
@@ -28,10 +28,7 @@ const filesHandler = (files, directory, key) => {
         type
       }
     })
-    .filter(({
-      file,
-      type
-    }) => {
+    .filter(({ file, type }) => {
       if (BLACK_LIST.includes(file)) return false
       return type === 'directory' || type === 'image'
     })
@@ -54,7 +51,7 @@ const rebuild = (directory) => {
   })
 }
 
-const watchDirectory = directory => {
+const watchDirectory = (directory) => {
   if (watchers.has(directory)) return // Do not duplicate watch the same directory
   const watcher = fs.watch(directory, (eventType, filename) => {
     if (eventType === 'rename') {

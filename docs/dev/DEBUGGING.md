@@ -30,4 +30,4 @@ $ node-profiler renderer
 $ marktext --inspect=5858 --remote-debugging-port=8315
 ```
 
-After the successful launch of MarkText, press `Ctrl+C` on both `node-profiler` instances. The tools created two files named `main.cpuprofile` and `renderer.cpuprofile`. You can now analyse these files via *Chrome Developer Tools* or *Visual Studio Code*.
+After the successful launch of MarkText, press `Ctrl+C` on both `node-profiler` instances. The tools created two files named `main.cpuprofile` and `renderer.cpuprofile`. You can now analyse these files via _Chrome Developer Tools_ or _Visual Studio Code_.

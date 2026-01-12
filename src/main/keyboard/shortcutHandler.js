@@ -29,7 +29,9 @@ class Keybindings {
     if (appEnvironment.isDevMode) {
       for (const [id, accelerator] of this.keys) {
         if (!commandManager.has(id)) {
-          console.error(`[DEBUG] Command with id="${id}" isn't available for accelerator="${accelerator}".`)
+          console.error(
+            `[DEBUG] Command with id="${id}" isn't available for accelerator="${accelerator}".`
+          )
         }
       }
     }
@@ -80,8 +82,7 @@ class Keybindings {
     if (!isFile2(configPath)) {
       fs.writeFileSync(configPath, '{\n\n\n}\n', 'utf-8')
     }
-    shell.openPath(configPath)
-      .catch(err => console.error(err))
+    shell.openPath(configPath).catch((err) => console.error(err))
   }
 
   getDefaultKeybindings() {

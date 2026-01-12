@@ -10,7 +10,7 @@ class MouseEvent {
 
   mouseBinding() {
     const { container, eventCenter } = this.muya
-    const handler = event => {
+    const handler = (event) => {
       const target = event.target
       const parent = target.parentNode
       const preSibling = target.previousElementSibling
@@ -53,7 +53,7 @@ class MouseEvent {
         })
       }
     }
-    const leaveHandler = event => {
+    const leaveHandler = (event) => {
       const target = event.target
       const parent = target.parentNode
       const preSibling = target.previousElementSibling
@@ -84,7 +84,7 @@ class MouseEvent {
 
   mouseDown() {
     const { container, eventCenter, contentState } = this.muya
-    const handler = event => {
+    const handler = (event) => {
       const target = event.target
       if (target.classList && target.classList.contains('ag-drag-handler')) {
         contentState.handleMouseDown(event)

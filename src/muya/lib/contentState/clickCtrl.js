@@ -5,7 +5,7 @@ import { getParentCheckBox } from '../utils/getParentCheckBox'
 import { cumputeCheckboxStatus } from '../utils/cumputeCheckBoxStatus'
 
 const clickCtrl = (ContentState) => {
-  ContentState.prototype.clickHandler = function(event) {
+  ContentState.prototype.clickHandler = function (event) {
     const { eventCenter } = this.muya
     const { target } = event
     if (isMuyaEditorElement(target)) {
@@ -210,14 +210,14 @@ const clickCtrl = (ContentState) => {
     }
   }
 
-  ContentState.prototype.setCheckBoxState = function(checkbox, checked) {
+  ContentState.prototype.setCheckBoxState = function (checkbox, checked) {
     checkbox.checked = checked
     const block = this.getBlock(checkbox.id)
     block.checked = checked
     checkbox.classList.toggle(CLASS_OR_ID.AG_CHECKBOX_CHECKED)
   }
 
-  ContentState.prototype.updateParentsCheckBoxState = function(checkbox) {
+  ContentState.prototype.updateParentsCheckBoxState = function (checkbox) {
     let parent = getParentCheckBox(checkbox)
     while (parent !== null) {
       const checked = cumputeCheckboxStatus(parent)
@@ -230,7 +230,7 @@ const clickCtrl = (ContentState) => {
     }
   }
 
-  ContentState.prototype.updateChildrenCheckBoxState = function(checkbox, checked) {
+  ContentState.prototype.updateChildrenCheckBoxState = function (checkbox, checked) {
     const checkboxes = checkbox.parentElement.querySelectorAll(
       `input ~ ul .${CLASS_OR_ID.AG_TASK_LIST_ITEM_CHECKBOX}`
     )
@@ -244,7 +244,7 @@ const clickCtrl = (ContentState) => {
   }
 
   // handle task list item checkbox click
-  ContentState.prototype.listItemCheckBoxClick = function(checkbox) {
+  ContentState.prototype.listItemCheckBoxClick = function (checkbox) {
     const { checked } = checkbox
     this.setCheckBoxState(checkbox, checked)
 

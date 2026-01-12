@@ -20,7 +20,14 @@ const PRE_BLOCK_HASH = {
   'vega-lite': `.${CLASS_OR_ID.AG_VEGA_LITE}`
 }
 
-export default function renderContainerBlock(parent, block, activeBlocks, matches, useCache = false, t) {
+export default function renderContainerBlock(
+  parent,
+  block,
+  activeBlocks,
+  matches,
+  useCache = false,
+  t
+) {
   let selector = this.getSelector(block, activeBlocks)
   const {
     key,
@@ -43,7 +50,9 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
     this.renderingRowContainer = block
   }
 
-  const children = block.children.map(child => this.renderBlock(block, child, activeBlocks, matches, useCache, t))
+  const children = block.children.map((child) =>
+    this.renderBlock(block, child, activeBlocks, matches, useCache, t)
+  )
   const data = {
     attrs: {},
     dataset: {}
@@ -89,7 +98,7 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
     }
 
     if (cells && cells.length) {
-      const cell = cells.find(c => c.key === key)
+      const cell = cells.find((c) => c.key === key)
       if (cell) {
         const { top, right, bottom, left } = cell
         selector += '.ag-cell-selected'
@@ -110,7 +119,9 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
       // Judge whether to render the table drag bar.
       const { renderingTable, renderingRowContainer } = this
 
-      const findTable = renderingTable ? activeBlocks.find(b => b.key === renderingTable.key) : null
+      const findTable = renderingTable
+        ? activeBlocks.find((b) => b.key === renderingTable.key)
+        : null
       if (findTable && renderingRowContainer) {
         const { row: tableRow, column: tableColumn } = findTable
         const isLastRow = () => {
@@ -144,7 +155,11 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
   } else if (type === 'figure') {
     if (functionType) {
       Object.assign(data.dataset, { role: functionType.toUpperCase() })
-      if (functionType === 'table' && activeBlocks[0] && activeBlocks[0].functionType === 'cellContent') {
+      if (
+        functionType === 'table' &&
+        activeBlocks[0] &&
+        activeBlocks[0].functionType === 'cellContent'
+      ) {
         children.unshift(renderTableTools(activeBlocks, t))
       } else if (functionType !== 'footnote') {
         children.unshift(renderEditIcon(t))
@@ -153,9 +168,7 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
       }
     }
 
-    if (
-      /html|multiplemath|flowchart|mermaid|sequence|plantuml|vega-lite/.test(functionType)
-    ) {
+    if (/html|multiplemath|flowchart|mermaid|sequence|plantuml|vega-lite/.test(functionType)) {
       selector += `.${CLASS_OR_ID.AG_CONTAINER_BLOCK}`
       Object.assign(data.attrs, { spellcheck: 'false' })
     }
@@ -168,7 +181,9 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
     Object.assign(data.dataset, { marker: bulletMarkerOrDelimiter })
     selector += `.${CLASS_OR_ID.AG_LIST_ITEM}`
     selector += `.ag-${listItemType}-list-item`
-    selector += isLooseListItem ? `.${CLASS_OR_ID.AG_LOOSE_LIST_ITEM}` : `.${CLASS_OR_ID.AG_TIGHT_LIST_ITEM}`
+    selector += isLooseListItem
+      ? `.${CLASS_OR_ID.AG_LOOSE_LIST_ITEM}`
+      : `.${CLASS_OR_ID.AG_TIGHT_LIST_ITEM}`
   } else if (type === 'pre') {
     Object.assign(data.attrs, { spellcheck: 'false' })
     Object.assign(data.dataset, { role: functionType })
@@ -176,7 +191,7 @@ export default function renderContainerBlock(parent, block, activeBlocks, matche
 
     if (/html|multiplemath|mermaid|flowchart|vega-lite|sequence|plantuml/.test(functionType)) {
       const codeBlock = block.children[0]
-      const code = codeBlock.children.map(line => line.text).join('\n')
+      const code = codeBlock.children.map((line) => line.text).join('\n')
       this.codeCache.set(block.key, code)
     }
   }

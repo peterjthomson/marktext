@@ -148,7 +148,7 @@ const setupDragDropHandler = () => {
     false
   )
 }
-onMounted(async() => {
+onMounted(async () => {
   if (global.marktext.initialState) {
     preferencesStore.SET_USER_PREFERENCE(global.marktext.initialState)
   }

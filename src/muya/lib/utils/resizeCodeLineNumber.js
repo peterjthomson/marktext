@@ -12,19 +12,19 @@ const NEW_LINE_EXP = /\n(?!$)/g
  * Returns style declarations for the element
  * @param {Element} element
  */
-const getStyles = function(element) {
+const getStyles = function (element) {
   if (!element) {
     return null
   }
 
-  return window.getComputedStyle ? getComputedStyle(element) : (element.currentStyle || null)
+  return window.getComputedStyle ? getComputedStyle(element) : element.currentStyle || null
 }
 
 /**
-* Resizes line numbers spans according to height of line of code
-* @param {Element} element <pre> element
-*/
-const resizeCodeBlockLineNumber = function(element) {
+ * Resizes line numbers spans according to height of line of code
+ * @param {Element} element <pre> element
+ */
+const resizeCodeBlockLineNumber = function (element) {
   // FIXME: Heavy performance issues with this function, please see #1648.
 
   const codeStyles = getStyles(element)
@@ -45,7 +45,7 @@ const resizeCodeBlockLineNumber = function(element) {
 
     lineNumberSizer.style.display = 'block'
 
-    codeLines.forEach(function(line, lineNumber) {
+    codeLines.forEach(function (line, lineNumber) {
       lineNumberSizer.textContent = line || '\n'
       const lineSize = lineNumberSizer.getBoundingClientRect().height
       lineNumbersWrapper.children[lineNumber].style.height = lineSize + 'px'

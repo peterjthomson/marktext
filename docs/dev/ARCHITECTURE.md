@@ -63,7 +63,9 @@ TBD
 1. Click `File -> Open File` and a file dialog is shown that emit `app-open-file-by-id` with the editor window id to open the file in and resolved absolute file path.
 2. The application (`App` instance) tries to find the specified editor and call `openTab` on the editor window. A new editor window is created if no editor window exists.
 3. The editor window tries to load the markdown file via `loadMarkdownFile` and send the result via the `mt::open-new-tab` event to the renderer process.
-  - Each opened file is also added to the filesystem watcher and the full path is saved to track opened file in the current editor window.
+
+- Each opened file is also added to the filesystem watcher and the full path is saved to track opened file in the current editor window.
+
 4. The event is triggered in `src/renderer/store/editor.js` (renderer process), does some checks and create a new document state that represent a markdown document and tab state.
 5. The new created tab is either opened and the `file-changed` event is emitted or just added to the tab state.
 6. Both Muya and the source-code editor listen on this event and change the markdown document accordingly.

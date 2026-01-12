@@ -18,47 +18,56 @@ const icons = [
     tooltip: 'Bold',
     shortcut: `${COMMAND_KEY}+B`,
     icon: strongIcon
-  }, {
+  },
+  {
     type: 'em',
     tooltip: 'Italic',
     shortcut: `${COMMAND_KEY}+I`,
     icon: emphasisIcon
-  }, {
+  },
+  {
     type: 'u',
     tooltip: 'Underline',
     shortcut: `${COMMAND_KEY}+U`,
     icon: underlineIcon
-  }, {
+  },
+  {
     type: 'del',
     tooltip: 'Strikethrough',
     shortcut: `${COMMAND_KEY}+D`,
     icon: strikeIcon
-  }, {
+  },
+  {
     type: 'mark',
     tooltip: 'Highlight',
     shortcut: `⇧+${COMMAND_KEY}+H`,
     icon: highlightIcon
-  }, {
+  },
+  {
     type: 'inline_code',
     tooltip: 'Inline Code',
     shortcut: `${COMMAND_KEY}+\``,
     icon: codeIcon
-  }, {
+  },
+  {
     type: 'inline_math',
     tooltip: 'Inline Math',
     shortcut: `⇧+${COMMAND_KEY}+M`,
     icon: mathIcon
-  }, {
+  },
+  {
     type: 'link',
     tooltip: 'Link',
     shortcut: `${COMMAND_KEY}+L`,
     icon: linkIcon
-  }, {
+  },
+  {
     type: 'image',
     tooltip: 'Image',
     shortcut: `⇧+${COMMAND_KEY}+I`,
     icon: imageIcon
-  }, {
+  },
+  {
     type: 'clear',
     tooltip: 'Clear Formatting',
     shortcut: `⇧+${COMMAND_KEY}+R`,

@@ -12,10 +12,10 @@
 
 .ag-transformer .top-left,
 .ag-transformer .bottom-right {
-  cursor: nwse-resize
+  cursor: nwse-resize;
 }
 
 .ag-transformer .top-right,
 .ag-transformer .bottom-left {
-  cursor: nesw-resize
+  cursor: nesw-resize;
 }

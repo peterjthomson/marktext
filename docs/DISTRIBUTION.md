@@ -73,6 +73,7 @@ npm install
 ```
 
 If native modules fail to build, try:
+
 ```bash
 npm run rebuild-native
 ```
@@ -84,6 +85,7 @@ npm run dev
 ```
 
 Features:
+
 - Hot module replacement for renderer
 - Fast rebuilds via Vite
 - DevTools accessible via View menu
@@ -124,12 +126,13 @@ All packages are output to `dist/`.
 
 ### Windows
 
-| File | Type | Description |
-|------|------|-------------|
+| File                                   | Type           | Description                   |
+| -------------------------------------- | -------------- | ----------------------------- |
 | `marktext-win-x64-{version}-setup.exe` | NSIS Installer | Full installer with shortcuts |
-| `marktext-win-x64-{version}.zip` | Portable | No installation required |
+| `marktext-win-x64-{version}.zip`       | Portable       | No installation required      |
 
 Installer features:
+
 - Per-user installation (no admin required)
 - Desktop and Start Menu shortcuts
 - Optional install directory selection
@@ -137,26 +140,27 @@ Installer features:
 
 ### macOS
 
-| File | Type | Description |
-|------|------|-------------|
-| `marktext-mac-x64-{version}.dmg` | Disk Image | Intel Macs |
-| `marktext-mac-arm64-{version}.dmg` | Disk Image | Apple Silicon |
-| `marktext-mac-x64-{version}.zip` | Archive | Intel Macs (portable) |
-| `marktext-mac-arm64-{version}.zip` | Archive | Apple Silicon (portable) |
+| File                               | Type       | Description              |
+| ---------------------------------- | ---------- | ------------------------ |
+| `marktext-mac-x64-{version}.dmg`   | Disk Image | Intel Macs               |
+| `marktext-mac-arm64-{version}.dmg` | Disk Image | Apple Silicon            |
+| `marktext-mac-x64-{version}.zip`   | Archive    | Intel Macs (portable)    |
+| `marktext-mac-arm64-{version}.zip` | Archive    | Apple Silicon (portable) |
 
 **Important:** macOS builds are **not notarized**. Users will see security warnings. They need to:
+
 1. Right-click the app → Open, or
 2. Run: `xattr -cr /Applications/MarkText.app`
 
 ### Linux
 
-| File | Type | Description |
-|------|------|-------------|
-| `marktext-linux-{version}.AppImage` | AppImage | Universal, no install |
-| `marktext-linux-{version}.deb` | Debian Package | Ubuntu, Debian, Mint |
-| `marktext-linux-{version}.rpm` | RPM Package | Fedora, RHEL, openSUSE |
-| `marktext-linux-{version}.snap` | Snap Package | Ubuntu Snap Store |
-| `marktext-linux-{version}.tar.gz` | Archive | Manual installation |
+| File                                | Type           | Description            |
+| ----------------------------------- | -------------- | ---------------------- |
+| `marktext-linux-{version}.AppImage` | AppImage       | Universal, no install  |
+| `marktext-linux-{version}.deb`      | Debian Package | Ubuntu, Debian, Mint   |
+| `marktext-linux-{version}.rpm`      | RPM Package    | Fedora, RHEL, openSUSE |
+| `marktext-linux-{version}.snap`     | Snap Package   | Ubuntu Snap Store      |
+| `marktext-linux-{version}.tar.gz`   | Archive        | Manual installation    |
 
 ## Configuration Files
 
@@ -209,11 +213,15 @@ export default defineConfig({
     }
   },
   preload: {
-    build: { /* ... */ }
+    build: {
+      /* ... */
+    }
   },
   renderer: {
     plugins: [vue(), svgLoader()],
-    build: { /* ... */ }
+    build: {
+      /* ... */
+    }
   }
 })
 ```
@@ -222,14 +230,14 @@ export default defineConfig({
 
 MarkText registers for markdown file types:
 
-| Extension | MIME Type |
-|-----------|-----------|
-| `.md` | text/markdown |
+| Extension   | MIME Type     |
+| ----------- | ------------- |
+| `.md`       | text/markdown |
 | `.markdown` | text/markdown |
-| `.mmd` | text/markdown |
-| `.mdown` | text/markdown |
-| `.mdtxt` | text/markdown |
-| `.mdtext` | text/markdown |
+| `.mmd`      | text/markdown |
+| `.mdown`    | text/markdown |
+| `.mdtxt`    | text/markdown |
+| `.mdtext`   | text/markdown |
 
 ## Localization
 
@@ -240,6 +248,7 @@ npm run minify-locales
 ```
 
 This creates `.min.json` versions in `static/locales/` that are:
+
 - Smaller file size
 - Stripped of comments
 - Optimized for bundling
@@ -271,12 +280,14 @@ publish:
 ### Disabling Updates
 
 In preferences, users can:
+
 - Disable auto-update checks
 - Choose manual update checking
 
 ## Release Process
 
 See [Release Documentation](dev/RELEASE.md) for:
+
 - Version bumping
 - Changelog generation
 - GitHub Release creation
@@ -298,6 +309,7 @@ npm run rebuild-native
 ### macOS Security Warnings
 
 Users seeing "damaged app" message:
+
 ```bash
 xattr -cr /Applications/MarkText.app
 ```
@@ -305,11 +317,13 @@ xattr -cr /Applications/MarkText.app
 ### Linux AppImage Issues
 
 Make executable:
+
 ```bash
 chmod +x marktext-linux-{version}.AppImage
 ```
 
 FUSE required for AppImage. If missing:
+
 ```bash
 # Ubuntu/Debian
 sudo apt install fuse libfuse2
@@ -348,12 +362,12 @@ jobs:
 
 Approximate sizes:
 
-| Platform | Installer | Unpacked |
-|----------|-----------|----------|
-| Windows | ~80 MB | ~250 MB |
-| macOS | ~90 MB | ~280 MB |
-| Linux AppImage | ~100 MB | N/A |
-| Linux deb/rpm | ~70 MB | ~220 MB |
+| Platform       | Installer | Unpacked |
+| -------------- | --------- | -------- |
+| Windows        | ~80 MB    | ~250 MB  |
+| macOS          | ~90 MB    | ~280 MB  |
+| Linux AppImage | ~100 MB   | N/A      |
+| Linux deb/rpm  | ~70 MB    | ~220 MB  |
 
 ## Related Documentation
 

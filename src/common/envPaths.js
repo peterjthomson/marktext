@@ -13,7 +13,11 @@ class EnvPaths {
 
     this._electronUserDataPath = userDataPath // path.join(userDataPath, 'electronUserData')
     this._userDataPath = userDataPath
-    this._logPath = path.join(this._userDataPath, 'logs', `${currentDate.getFullYear()}${currentDate.getMonth() + 1}`)
+    this._logPath = path.join(
+      this._userDataPath,
+      'logs',
+      `${currentDate.getFullYear()}${currentDate.getMonth() + 1}`
+    )
     this._preferencesPath = userDataPath // path.join(this._userDataPath, 'preferences')
 
     this._dataCenterPath = userDataPath

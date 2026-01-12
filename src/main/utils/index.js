@@ -64,10 +64,13 @@ const getFirstLineOfText = (markdown) => {
     if (inCodeBlock) continue
 
     // Skip empty lines, horizontal rules, and common markdown-only lines
-    if (!trimmed ||
-        /^(-{3,}|_{3,}|\*{3,})$/.test(trimmed) || // Horizontal rules
-        /^(\[.*\]:\s*\S+)$/.test(trimmed) || // Link references
-        /^<!--.*-->$/.test(trimmed)) { // HTML comments
+    if (
+      !trimmed ||
+      /^(-{3,}|_{3,}|\*{3,})$/.test(trimmed) || // Horizontal rules
+      /^(\[.*\]:\s*\S+)$/.test(trimmed) || // Link references
+      /^<!--.*-->$/.test(trimmed)
+    ) {
+      // HTML comments
       continue
     }
 
@@ -96,7 +99,7 @@ const getFirstLineOfText = (markdown) => {
 
 // TODO: Remove this function and load the recommend title from the editor (renderer) when
 // requesting the document to save/export.
-export const getRecommendTitleFromMarkdownString = markdown => {
+export const getRecommendTitleFromMarkdownString = (markdown) => {
   if (!markdown) return ''
 
   // First, try to find a header (excluding code blocks)
@@ -145,7 +148,7 @@ export const getRecommendTitleFromMarkdownString = markdown => {
  * @param {string} name The special directory name.
  * @returns {string} The resolved special directory path.
  */
-export const getPath = name => {
+export const getPath = (name) => {
   if (name === 'userData') {
     throw new Error('Do not use "getPath" for user data path!')
   }
@@ -159,8 +162,11 @@ export const hasSameKeys = (a, b) => {
 }
 
 export const getLogLevel = () => {
-  if (!global.MARKTEXT_DEBUG_VERBOSE || typeof global.MARKTEXT_DEBUG_VERBOSE !== 'number' ||
-    global.MARKTEXT_DEBUG_VERBOSE <= 0) {
+  if (
+    !global.MARKTEXT_DEBUG_VERBOSE ||
+    typeof global.MARKTEXT_DEBUG_VERBOSE !== 'number' ||
+    global.MARKTEXT_DEBUG_VERBOSE <= 0
+  ) {
     return process.env.NODE_ENV === 'development' ? 'debug' : 'info'
   } else if (global.MARKTEXT_DEBUG_VERBOSE === 1) {
     return 'verbose'

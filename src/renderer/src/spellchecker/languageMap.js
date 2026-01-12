@@ -5,7 +5,7 @@ import langMap from 'iso-639-1'
  *
  * @param {string} langCode The ISO two or four-letter language code (e.g. en, en-US) or BCP-47 code.
  */
-export const getLanguageName = languageCode => {
+export const getLanguageName = (languageCode) => {
   if (!languageCode || languageCode.length < 2) {
     return null
   }
@@ -33,8 +33,8 @@ export const getLanguageName = languageCode => {
  *
  * @param {string} langCode The ISO 4-letter language code.
  */
-const getHunspellLanguageName = langCode => {
-  const item = HUNSPELL_DICTIONARY_LANGUAGE_MAP.find(item => item.value === langCode)
+const getHunspellLanguageName = (langCode) => {
+  const item = HUNSPELL_DICTIONARY_LANGUAGE_MAP.find((item) => item.value === langCode)
   if (!item) {
     return null
   }
@@ -42,8 +42,9 @@ const getHunspellLanguageName = langCode => {
 }
 
 // All available Hunspell dictionary languages - modified to support English only
-const HUNSPELL_DICTIONARY_LANGUAGE_MAP = Object.freeze([{
-
-  label: 'English (en-US)', // English
-  value: 'en-US'
-}])
+const HUNSPELL_DICTIONARY_LANGUAGE_MAP = Object.freeze([
+  {
+    label: 'English (en-US)', // English
+    value: 'en-US'
+  }
+])

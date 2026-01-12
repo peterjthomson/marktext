@@ -145,7 +145,9 @@ function validateAllTranslationFiles() {
     // 添加到摘要
     const status = validationResult.validJson
       ? '✅ VALID'
-      : validationResult.exists ? '❌ INVALID' : '❓ MISSING'
+      : validationResult.exists
+        ? '❌ INVALID'
+        : '❓ MISSING'
     report.summary.push(`${language}: ${status} (${validationResult.keyCount} keys)`)
   }
 
@@ -155,7 +157,7 @@ function validateAllTranslationFiles() {
   log.info(`[i18n] Invalid files: ${report.invalidFiles}`)
   log.info(`[i18n] Missing files: ${report.missingFiles}`)
 
-  report.summary.forEach(line => log.info(`[i18n] ${line}`))
+  report.summary.forEach((line) => log.info(`[i18n] ${line}`))
 
   // 如果有错误，输出详细错误信息
   if (report.invalidFiles > 0 || report.missingFiles > 0) {
@@ -164,7 +166,9 @@ function validateAllTranslationFiles() {
       if (!details.validJson) {
         log.error(`[i18n] ${lang}: ${details.parseError?.message || 'Unknown error'}`)
         if (details.parseError?.line) {
-          log.error(`[i18n] ${lang}: Error at line ${details.parseError.line}, column ${details.parseError.column}`)
+          log.error(
+            `[i18n] ${lang}: Error at line ${details.parseError.line}, column ${details.parseError.column}`
+          )
         }
       }
     })
@@ -251,20 +255,24 @@ function setupI18nErrorHandling() {
 
   // 监听进程中的 i18n 相关错误
   const originalConsoleError = console.error
-  console.error = function(...args) {
+  console.error = function (...args) {
     const message = args.join(' ')
 
     // 检测 i18n 相关错误
-    if (message.includes('SyntaxError: 11') ||
-        message.includes('parsePlural') ||
-        message.includes('i18n') ||
-        message.includes('translation')) {
+    if (
+      message.includes('SyntaxError: 11') ||
+      message.includes('parsePlural') ||
+      message.includes('i18n') ||
+      message.includes('translation')
+    ) {
       log.error('[i18n] Detected i18n-related error:', ...args)
 
       // 尝试提供更多调试信息
       if (message.includes('SyntaxError: 11')) {
         log.error('[i18n] This appears to be a Vue i18n plural syntax error.')
-        log.error('[i18n] Check for "|" characters in translation strings that may be interpreted as plural syntax.')
+        log.error(
+          '[i18n] Check for "|" characters in translation strings that may be interpreted as plural syntax.'
+        )
 
         // 重新验证翻译文件
         log.info('[i18n] Re-validating translation files due to syntax error...')

@@ -2,7 +2,7 @@ import { h } from '../snabbdom'
 
 const NEW_LINE_EXP = /\n(?!$)/g
 
-const renderLineNumberRows = codeContent => {
+const renderLineNumberRows = (codeContent) => {
   const { text } = codeContent
   const match = text.match(NEW_LINE_EXP)
   let linesNum = match ? match.length + 1 : 1

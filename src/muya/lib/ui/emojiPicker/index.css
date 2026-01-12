@@ -36,7 +36,9 @@
   align-items: center;
   box-sizing: border-box;
   border-radius: 50%;
-  font-family: "Open Sans", "Clear Sans", "Helvetica Neue", Arial, sans-serif, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji";
+  font-family:
+    'Open Sans', 'Clear Sans', 'Helvetica Neue', Arial, sans-serif, 'Segoe UI Emoji',
+    'Apple Color Emoji', 'Noto Color Emoji';
 }
 
 .ag-emoji-picker:hover .active {
@@ -44,8 +46,9 @@
   border-color: transparent;
 }
 
-.ag-emoji-picker .active, .ag-emoji-picker .item:hover {
- background-color: var(--floatHoverColor);
+.ag-emoji-picker .active,
+.ag-emoji-picker .item:hover {
+  background-color: var(--floatHoverColor);
 }
 
 .ag-emoji-picker section .emoji-wrapper .item span {
@@ -56,6 +59,6 @@
   text-align: center;
   line-height: 1.15;
   color: #000;
-  transition: transform .2s ease-in;
+  transition: transform 0.2s ease-in;
   transform-origin: center;
 }

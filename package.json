@@ -1,11 +1,11 @@
 {
   "name": "marktext",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MarkText",
   "main": "./out/main/index.js",
   "type": "module",
-  "author": "Marktext Contributors (Tkaixiang fork)",
-  "homepage": "https://github.com/Tkaixiang/marktext",
+  "author": "Marktext Contributors (PeterJThomson fork)",
+  "homepage": "https://github.com/peterjthomson/marktext",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -33,7 +33,7 @@
     "axios": "^1.13.2",
     "ced": "^2.0.0",
     "chokidar": "^5.0.0",
-    "codemirror": "^5.65.19",
+    "codemirror": "^5.65.20",
     "command-exists": "^1.2.9",
     "deep-equal": "^2.2.3",
     "dom-autoscroller": "^2.3.4",

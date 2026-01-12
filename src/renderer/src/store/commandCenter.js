@@ -8,17 +8,17 @@ export const useCommandCenterStore = defineStore('commandCenter', {
     rootCommand: new RootCommand(staticCommands)
   }),
   actions: {
-    REGISTER_COMMAND (command) {
+    REGISTER_COMMAND(command) {
       this.rootCommand.subcommands.push(command)
     },
-    SORT_COMMANDS () {
+    SORT_COMMANDS() {
       this.rootCommand.subcommands.sort((a, b) => a.description.localeCompare(b.description))
     },
-    async LISTEN_COMMAND_CENTER_BUS () {
+    async LISTEN_COMMAND_CENTER_BUS() {
       // Wait for initial language setup before initializing commands
       let isInitialized = false
 
-      const initializeCommands = async() => {
+      const initializeCommands = async () => {
         if (!isInitialized) {
           this.rootCommand.subcommands = await getCommandsWithDescriptions()
           this.SORT_COMMANDS()
@@ -27,7 +27,7 @@ export const useCommandCenterStore = defineStore('commandCenter', {
       }
 
       // Listen for language changes and initialize/update command descriptions
-      bus.on('language-changed', async() => {
+      bus.on('language-changed', async () => {
         // Update all command descriptions when language changes
         this.rootCommand.subcommands = await getCommandsWithDescriptions()
         this.SORT_COMMANDS()
@@ -35,7 +35,7 @@ export const useCommandCenterStore = defineStore('commandCenter', {
       })
 
       // Delay initial setup to allow language initialization
-      setTimeout(async() => {
+      setTimeout(async () => {
         await initializeCommands()
       }, 100)
 

@@ -8,8 +8,12 @@ const FUNCTION_TYPE_LANG = {
   html: 'markup'
 }
 
-const containerCtrl = ContentState => {
-  ContentState.prototype.createContainerBlock = function(functionType, value = '', style = undefined) {
+const containerCtrl = (ContentState) => {
+  ContentState.prototype.createContainerBlock = function (
+    functionType,
+    value = '',
+    style = undefined
+  ) {
     const figureBlock = this.createBlock('figure', {
       functionType
     })
@@ -27,7 +31,7 @@ const containerCtrl = ContentState => {
     return figureBlock
   }
 
-  ContentState.prototype.createPreAndPreview = function(functionType, value = '') {
+  ContentState.prototype.createPreAndPreview = function (functionType, value = '') {
     const lang = FUNCTION_TYPE_LANG[functionType]
     const preBlock = this.createBlock('pre', {
       functionType,
@@ -64,7 +68,8 @@ const containerCtrl = ContentState => {
     return { preBlock, preview }
   }
 
-  ContentState.prototype.initContainerBlock = function(functionType, block, style = undefined) { // p block
+  ContentState.prototype.initContainerBlock = function (functionType, block, style = undefined) {
+    // p block
     block.type = 'figure'
     block.functionType = functionType
     block.children = []
@@ -83,7 +88,7 @@ const containerCtrl = ContentState => {
     return preBlock.children[0].children[0]
   }
 
-  ContentState.prototype.handleContainerBlockClick = function(figureEle) {
+  ContentState.prototype.handleContainerBlockClick = function (figureEle) {
     const { id } = figureEle
     const mathBlock = this.getBlock(id)
     const preBlock = mathBlock.children[0]
@@ -98,7 +103,7 @@ const containerCtrl = ContentState => {
     this.partialRender()
   }
 
-  ContentState.prototype.updateMathBlock = function(block) {
+  ContentState.prototype.updateMathBlock = function (block) {
     const functionType = 'multiplemath'
     const { type } = block
 

@@ -105,17 +105,19 @@ const themes = ref([])
 const { t } = useI18n()
 const preferenceStore = usePreferencesStore()
 
-const { followSystemTheme, lightModeTheme, darkModeTheme, theme, customCss } = storeToRefs(preferenceStore)
+const { followSystemTheme, lightModeTheme, darkModeTheme, theme, customCss } =
+  storeToRefs(preferenceStore)
 
 // Generate dropdown options from configThemes
-const themeOptions = configThemes.map(theme => ({
-  label: theme.name.split('-').map(word =>
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' '),
+const themeOptions = configThemes.map((theme) => ({
+  label: theme.name
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' '),
   value: theme.name
 }))
 
-onMounted(async() => {
+onMounted(async () => {
   const newThemes = []
   for (const theme of configThemes) {
     const html = await markdownToHtml(themeMd.replace(/{theme}/, theme.name))

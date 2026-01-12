@@ -30,7 +30,7 @@ class BaseScrollFloat extends BaseFloat {
   listen() {
     super.listen()
     const { eventCenter, container } = this.muya
-    const handler = event => {
+    const handler = (event) => {
       if (!this.status) return
       switch (event.key) {
         case EVENT_KEYS.ArrowUp:
@@ -69,7 +69,7 @@ class BaseScrollFloat extends BaseFloat {
   }
 
   step(direction) {
-    let index = this.renderArray.findIndex(item => {
+    let index = this.renderArray.findIndex((item) => {
       return item === this.activeItem
     })
     index = direction === 'next' ? index + 1 : index - 1

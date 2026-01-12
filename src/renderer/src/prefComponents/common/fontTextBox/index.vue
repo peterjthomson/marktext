@@ -94,7 +94,7 @@ const handleMoreClick = () => {
   }
 }
 
-onMounted(async() => {
+onMounted(async () => {
   // Delay load native library because it's not needed for the editor and causes a delay.
   const { getFonts } = require('font-list')
 

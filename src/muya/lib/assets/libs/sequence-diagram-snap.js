@@ -211,7 +211,7 @@ let parser = (function () {
   let $V2 = [1, 17]
   let $V3 = [24, 29, 30]
   let parser = {
-    trace: function() {},
+    trace: function () {},
     yy: {},
     symbols_: {
       error: 2,
@@ -293,7 +293,7 @@ let parser = (function () {
       [26, 1],
       [14, 1]
     ],
-    performAction: function(yytext, yyleng, yylineno, yy, yystate, $$, _$) {
+    performAction: function (yytext, yyleng, yylineno, yy, yystate, $$, _$) {
       /* this == yyval */
       let $0 = $$.length - 1
       switch (yystate) {
@@ -503,12 +503,12 @@ let parser = (function () {
       29: [2, 24],
       37: [2, 13]
     },
-    parseError: function(str, hash) {
+    parseError: function (str, hash) {
       if (!hash.recoverable) throw new Error(str)
       this.trace(str)
     },
-    parse: function(input) {
-      function lex () {
+    parse: function (input) {
+      function lex() {
         let token
         return (
           (token = lexer.lex() || EOF),
@@ -532,11 +532,13 @@ let parser = (function () {
       let sharedState = {
         yy: {}
       }
-      for (let k in this.yy) { Object.prototype.hasOwnProperty.call(this.yy, k) && (sharedState.yy[k] = this.yy[k]) }
-      lexer.setInput(input, sharedState.yy),
+      for (let k in this.yy) {
+        Object.prototype.hasOwnProperty.call(this.yy, k) && (sharedState.yy[k] = this.yy[k])
+      }
+      ;(lexer.setInput(input, sharedState.yy),
       (sharedState.yy.lexer = lexer),
       (sharedState.yy.parser = this),
-      typeof lexer.yylloc === 'undefined' && (lexer.yylloc = {})
+      typeof lexer.yylloc === 'undefined' && (lexer.yylloc = {}))
       let yyloc = lexer.yylloc
       lstack.push(yyloc)
       let ranges = lexer.options && lexer.options.ranges
@@ -546,41 +548,41 @@ let parser = (function () {
       for (
         var symbol, preErrorSymbol, state, action, r, p, len, newState, expected, yyval = {};
         ;
-
       ) {
         if (
           ((state = stack[stack.length - 1]),
           this.defaultActions[state]
             ? (action = this.defaultActions[state])
             : ((symbol !== null && typeof symbol !== 'undefined') || (symbol = lex()),
-              (action = table[state] && table[state][symbol])),
+            (action = table[state] && table[state][symbol])),
           typeof action === 'undefined' || !action.length || !action[0])
         ) {
           let errStr = ''
           expected = []
           for (p in table[state]) {
             this.terminals_[p] && p > TERROR && expected.push("'" + this.terminals_[p] + "'")
-          }(errStr = lexer.showPosition
+          }
+          ;((errStr = lexer.showPosition
             ? 'Parse error on line ' +
-                (yylineno + 1) +
-                ':\n' +
-                lexer.showPosition() +
-                '\nExpecting ' +
-                expected.join(', ') +
-                ", got '" +
-                (this.terminals_[symbol] || symbol) +
-                "'"
+              (yylineno + 1) +
+              ':\n' +
+              lexer.showPosition() +
+              '\nExpecting ' +
+              expected.join(', ') +
+              ", got '" +
+              (this.terminals_[symbol] || symbol) +
+              "'"
             : 'Parse error on line ' +
-                (yylineno + 1) +
-                ': Unexpected ' +
-                (symbol == EOF ? 'end of input' : "'" + (this.terminals_[symbol] || symbol) + "'")),
+              (yylineno + 1) +
+              ': Unexpected ' +
+              (symbol == EOF ? 'end of input' : "'" + (this.terminals_[symbol] || symbol) + "'")),
           this.parseError(errStr, {
             text: lexer.match,
             token: this.terminals_[symbol] || symbol,
             line: lexer.yylineno,
             loc: yyloc,
             expected
-          })
+          }))
         }
         if (action[0] instanceof Array && action.length > 1) {
           throw new Error(
@@ -589,7 +591,7 @@ let parser = (function () {
         }
         switch (action[0]) {
           case 1:
-            stack.push(symbol),
+            ;(stack.push(symbol),
             vstack.push(lexer.yytext),
             lstack.push(lexer.yylloc),
             stack.push(action[1]),
@@ -600,7 +602,7 @@ let parser = (function () {
                 (yytext = lexer.yytext),
                 (yylineno = lexer.yylineno),
                 (yyloc = lexer.yylloc),
-                recovering > 0 && recovering--)
+                recovering > 0 && recovering--))
             break
 
           case 2:
@@ -614,25 +616,27 @@ let parser = (function () {
                 last_column: lstack[lstack.length - 1].last_column
               }),
               ranges &&
-                  (yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                  ]),
+                (yyval._$.range = [
+                  lstack[lstack.length - (len || 1)].range[0],
+                  lstack[lstack.length - 1].range[1]
+                ]),
               (r = this.performAction.apply(
                 yyval,
                 [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args)
               )),
               typeof r !== 'undefined')
-            ) { return r }
-            len &&
-                ((stack = stack.slice(0, -1 * len * 2)),
-                (vstack = vstack.slice(0, -1 * len)),
-                (lstack = lstack.slice(0, -1 * len))),
+            ) {
+              return r
+            }
+            ;(len &&
+              ((stack = stack.slice(0, -1 * len * 2)),
+              (vstack = vstack.slice(0, -1 * len)),
+              (lstack = lstack.slice(0, -1 * len))),
             stack.push(this.productions_[action[1]][0]),
             vstack.push(yyval.$),
             lstack.push(yyval._$),
             (newState = table[stack[stack.length - 2]][stack[stack.length - 1]]),
-            stack.push(newState)
+            stack.push(newState))
             break
 
           case 3:
@@ -672,11 +676,11 @@ let parser = (function () {
       // consumes and returns one char from the input
       input: function () {
         let ch = this._input[0]
-          ;(this.yytext += ch),
+        ;((this.yytext += ch),
         this.yyleng++,
         this.offset++,
         (this.match += ch),
-        (this.matched += ch)
+        (this.matched += ch))
         let lines = ch.match(/(?:\r\n?|\n).*/g)
         return (
           lines ? (this.yylineno++, this.yylloc.last_line++) : this.yylloc.last_column++,
@@ -689,14 +693,14 @@ let parser = (function () {
       unput: function (ch) {
         let len = ch.length
         let lines = ch.split(/(?:\r\n?|\n)/g)
-          ;(this._input = ch + this._input),
+        ;((this._input = ch + this._input),
         (this.yytext = this.yytext.substr(0, this.yytext.length - len)),
         // this.yyleng -= len;
-        (this.offset -= len)
+        (this.offset -= len))
         let oldLines = this.match.split(/(?:\r\n?|\n)/g)
-          ;(this.match = this.match.substr(0, this.match.length - 1)),
+        ;((this.match = this.match.substr(0, this.match.length - 1)),
         (this.matched = this.matched.substr(0, this.matched.length - 1)),
-        lines.length - 1 && (this.yylineno -= lines.length - 1)
+        lines.length - 1 && (this.yylineno -= lines.length - 1))
         let r = this.yylloc.range
         return (
           (this.yylloc = {
@@ -705,8 +709,8 @@ let parser = (function () {
             first_column: this.yylloc.first_column,
             last_column: lines
               ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) +
-                  oldLines[oldLines.length - lines.length].length -
-                  lines[0].length
+                oldLines[oldLines.length - lines.length].length -
+                lines[0].length
               : this.yylloc.first_column - len
           }),
           this.options.ranges && (this.yylloc.range = [r[0], r[0] + this.yyleng - len]),
@@ -716,7 +720,7 @@ let parser = (function () {
       },
       // When called from action, caches matched text and appends it on next action
       more: function () {
-        return (this._more = !0), this
+        return ((this._more = !0), this)
       },
       // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
       reject: function () {
@@ -724,9 +728,9 @@ let parser = (function () {
           ? ((this._backtrack = !0), this)
           : this.parseError(
             'Lexical error on line ' +
-                  (this.yylineno + 1) +
-                  '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' +
-                  this.showPosition(),
+                (this.yylineno + 1) +
+                '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' +
+                this.showPosition(),
             {
               text: '',
               token: null,
@@ -762,27 +766,27 @@ let parser = (function () {
         let token, lines, backup
         if (
           (this.options.backtrack_lexer && // save context
-              ((backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                  first_line: this.yylloc.first_line,
-                  last_line: this.last_line,
-                  first_column: this.yylloc.first_column,
-                  last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-              }),
-              this.options.ranges && (backup.yylloc.range = this.yylloc.range.slice(0))),
+            ((backup = {
+              yylineno: this.yylineno,
+              yylloc: {
+                first_line: this.yylloc.first_line,
+                last_line: this.last_line,
+                first_column: this.yylloc.first_column,
+                last_column: this.yylloc.last_column
+              },
+              yytext: this.yytext,
+              match: this.match,
+              matches: this.matches,
+              matched: this.matched,
+              yyleng: this.yyleng,
+              offset: this.offset,
+              _more: this._more,
+              _input: this._input,
+              yy: this.yy,
+              conditionStack: this.conditionStack.slice(0),
+              done: this.done
+            }),
+            this.options.ranges && (backup.yylloc.range = this.yylloc.range.slice(0))),
           (lines = match[0].match(/(?:\r\n?|\n).*/g)),
           lines && (this.yylineno += lines.length),
           (this.yylloc = {
@@ -797,8 +801,7 @@ let parser = (function () {
           (this.match += match[0]),
           (this.matches = match),
           (this.yyleng = this.yytext.length),
-          this.options.ranges &&
-              (this.yylloc.range = [this.offset, (this.offset += this.yyleng)]),
+          this.options.ranges && (this.yylloc.range = [this.offset, (this.offset += this.yyleng)]),
           (this._more = !1),
           (this._backtrack = !1),
           (this._input = this._input.slice(match[0].length)),
@@ -812,7 +815,9 @@ let parser = (function () {
           )),
           this.done && this._input && (this.done = !1),
           token)
-        ) { return token }
+        ) {
+          return token
+        }
         if (this._backtrack) {
           // recover context
           for (let k in backup) this[k] = backup[k]
@@ -849,9 +854,9 @@ let parser = (function () {
             ? this.EOF
             : this.parseError(
               'Lexical error on line ' +
-                    (this.yylineno + 1) +
-                    '. Unrecognized text.\n' +
-                    this.showPosition(),
+                  (this.yylineno + 1) +
+                  '. Unrecognized text.\n' +
+                  this.showPosition(),
               {
                 text: '',
                 token: null,
@@ -989,7 +994,12 @@ let parser = (function () {
     }
     return lexer
   })()
-  return (parser.lexer = lexer), (Parser.prototype = parser), (parser.Parser = Parser), new Parser()
+  return (
+    (parser.lexer = lexer),
+    (Parser.prototype = parser),
+    (parser.Parser = Parser),
+    new Parser()
+  )
 })()
 
 typeof require !== 'undefined' &&

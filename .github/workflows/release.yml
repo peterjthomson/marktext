@@ -4,18 +4,52 @@ on:
   push:
     tags:
       - v*.*.*
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 1.0.0)'
+        required: false
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
+  # Quality checks before building
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci --no-audit --no-fund --ignore-scripts
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Run Format Check
+        run: npm run format -- --check
+
+  # Build for all platforms
+  build:
+    needs: lint
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-22.04
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: mac
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install python 3.12
         uses: actions/setup-python@v5
@@ -23,79 +57,176 @@ jobs:
           python-version: '3.12'
 
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 22.21.1
+          node-version: 22
 
       - name: Install Linux Build Dependencies
-        if: matrix.os == 'ubuntu-22.04'
-        run: sudo apt-get update && sudo apt-get install -y icnsutils graphicsmagick xz-utils libx11-dev libxkbfile-dev gnome-keyring libsecret-1-dev libfontconfig-dev rpm
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            icnsutils \
+            graphicsmagick \
+            xz-utils \
+            libx11-dev \
+            libxkbfile-dev \
+            gnome-keyring \
+            libsecret-1-dev \
+            libfontconfig-dev \
+            rpm
 
-        # --ignore-scripts first to prevent postinstall scripts from running (we will run electron-rebuild manually later)
-        # --no-audit and --no-fund to reduce noise
+      # Install dependencies without running postinstall scripts (we rebuild manually)
       - name: Install Dependencies
         run: npm ci --no-audit --no-fund --ignore-scripts --loglevel verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Electron seems to require C++20 support for native modules now after Electron 33
+      # Electron requires C++20 support for native modules (Electron 33+)
       - name: Set C++20 for MacOS
-        if: matrix.os == 'macos-latest'
+        if: matrix.platform == 'mac'
         run: |
           echo "CXXFLAGS=-std=gnu++20 -stdlib=libc++" >> $GITHUB_ENV
 
       - name: Rebuild native modules for Electron (MacOS + Windows)
-        if: matrix.os != 'ubuntu-22.04'
+        if: matrix.platform != 'linux'
         run: npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Enforce using gcc/g++ on Linux for electron-rebuild instead of clang (.npmrc covers some settings too)
-      - name: Rebuild native modules for Electron (Ubuntu)
-        if: matrix.os == 'ubuntu-22.04'
+      # Use gcc/g++ on Linux for electron-rebuild instead of clang
+      - name: Rebuild native modules for Electron (Linux)
+        if: matrix.platform == 'linux'
         run: USE_ELECTRON_CLANG=0 npx @electron/rebuild -f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: build-linux
-        if: matrix.os == 'ubuntu-22.04'
+      # Build for Linux
+      - name: Build Linux
+        if: matrix.platform == 'linux'
         run: npm run build:linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Mac builds have been disabled due to a lack of a Developer ID to sign it
-      # All builds by default will give a "this app is damaged and can't be opened" error
-      - name: build-mac
-        if: matrix.os == 'macos-latest'
+      # Build for Mac with code signing and notarization
+      # Requires: APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID secrets
+      - name: Build Mac
+        if: matrix.platform == 'mac'
         run: npm run build:mac
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Code signing
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          # Notarization (can be slow - up to 30 minutes)
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
-      - name: build-win
-        if: matrix.os == 'windows-latest'
+      # Build for Windows
+      - name: Build Windows
+        if: matrix.platform == 'windows'
         run: npm run build:win
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: release
-        uses: softprops/action-gh-release@v1
+      # Upload build artifacts
+      - name: Upload Linux Artifacts
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
         with:
-          draft: true
-          name: 'Release ${{ github.ref_name }}'
-          body: |
-            ## ⚠️ Note for MacOS Users
-            - MacOS releases will show a "`MarkText is damaged and can't be opened`" due to a **lack of notorisation**. 
-            - Please see [this fix here](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300) (which also applies to any other app that lacks a Developer Account signing) 
-
-            ## Changes
-          files: |
-            dist/*.exe
-            dist/*.zip
-            dist/*.dmg
+          name: linux-builds
+          path: |
             dist/*.AppImage
             dist/*.snap
             dist/*.deb
             dist/*.rpm
             dist/*.tar.gz
+          if-no-files-found: error
+
+      - name: Upload Mac Artifacts
+        if: matrix.platform == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-builds
+          path: |
+            dist/*.dmg
+            dist/*.zip
+          if-no-files-found: error
+
+      - name: Upload Windows Artifacts
+        if: matrix.platform == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-builds
+          path: |
+            dist/*.exe
+            dist/*.zip
+          if-no-files-found: error
+
+  # Create GitHub Release with all artifacts
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+          find artifacts -type f \( -name "*.exe" -o -name "*.zip" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.snap" -o -name "*.deb" -o -name "*.rpm" -o -name "*.tar.gz" \) -exec cp {} release-files/ \;
+          ls -la release-files/
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          VERSION="${GITHUB_REF_NAME:-${{ github.event.inputs.version || 'dev' }}}"
+          cat << 'EOF' > release-notes.md
+          ## MarkText $VERSION
+
+          ### Downloads
+
+          #### macOS
+          - **Apple Silicon (M1/M2/M3)**: `marktext-mac-arm64-*.dmg`
+          - **Intel**: `marktext-mac-x64-*.dmg`
+
+          #### Windows
+          - **Installer**: `marktext-win-x64-*-setup.exe`
+          - **Portable**: `marktext-win-x64-*.zip`
+
+          #### Linux
+          - **AppImage** (universal): `marktext-linux-*.AppImage`
+          - **Debian/Ubuntu**: `marktext-linux-*.deb`
+          - **Fedora/RHEL**: `marktext-linux-*.rpm`
+          - **Snap**: `marktext-linux-*.snap`
+          - **Arch/Manual**: `marktext-linux-*.tar.gz`
+
+          ### Notes for macOS Users
+          If you encounter "`MarkText is damaged and can't be opened`" error:
+          ```bash
+          xattr -cr /Applications/MarkText.app
+          ```
+
+          ### Notes for Arch Linux Users
+          Extract the tar.gz and run `marktext` from the extracted directory, or create a PKGBUILD.
+          EOF
+          echo "notes_file=release-notes.md" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true
+          body_path: ${{ steps.notes.outputs.notes_file }}
+          files: release-files/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -45,14 +45,14 @@
   width: 16px;
   overflow: hidden;
   color: var(--iconColor);
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
 
-.ag-front-menu li.item .icon-wrapper i.icon > i[class^=icon-] {
+.ag-front-menu li.item .icon-wrapper i.icon > i[class^='icon-'] {
   display: inline-block;
   width: 100%;
   height: 100%;
-  filter: drop-shadow(16px 0 currentColor); 
+  filter: drop-shadow(16px 0 currentColor);
   position: relative;
   left: -16px;
 }
@@ -69,7 +69,7 @@
 
 .ag-front-menu > ul li > .short-cut {
   color: var(--editorColor50);
-  transform: scale(.8);
+  transform: scale(0.8);
   margin-right: 10px;
 }
 
@@ -82,7 +82,7 @@
   border-radius: 2px;
   box-shadow: var(--floatShadow);
   background-color: var(--floatBgColor);
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
   transform-origin: left;
   overflow-y: auto;
   overflow-x: hidden;

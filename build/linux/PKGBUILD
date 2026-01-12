@@ -1,0 +1,60 @@
+# Maintainer: MarkText Contributors
+# PKGBUILD for Arch Linux / Omarchy
+
+pkgname=marktext
+pkgver=1.0.1
+pkgrel=1
+pkgdesc="A simple and elegant open-source markdown editor that focused on speed and usability"
+arch=('x86_64')
+url="https://github.com/peterjthomson/marktext"
+license=('MIT')
+depends=('electron' 'libsecret' 'libxkbfile')
+makedepends=('npm' 'nodejs' 'python')
+optdepends=(
+    'hunspell: for spell checking'
+    'pandoc: for document conversion'
+)
+source=("$pkgname-$pkgver.tar.gz::https://github.com/peterjthomson/marktext/releases/download/v$pkgver/marktext-linux-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+    cd "$srcdir"
+    
+    # Create directories
+    install -dm755 "$pkgdir/opt/$pkgname"
+    install -dm755 "$pkgdir/usr/bin"
+    install -dm755 "$pkgdir/usr/share/applications"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/512x512/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/256x256/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/128x128/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/64x64/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/48x48/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/32x32/apps"
+    install -dm755 "$pkgdir/usr/share/icons/hicolor/16x16/apps"
+    
+    # Copy application files
+    cp -r * "$pkgdir/opt/$pkgname/"
+    
+    # Create executable symlink
+    ln -s /opt/$pkgname/marktext "$pkgdir/usr/bin/marktext"
+    
+    # Install desktop file
+    cat > "$pkgdir/usr/share/applications/marktext.desktop" << EOF
+[Desktop Entry]
+Name=MarkText
+Comment=A simple and elegant markdown editor
+Exec=/opt/marktext/marktext %F
+Icon=marktext
+Type=Application
+Terminal=false
+Categories=Office;TextEditor;Utility;
+MimeType=text/markdown;text/x-markdown;
+StartupWMClass=marktext
+Keywords=marktext;markdown;editor;
+EOF
+    
+    # Note: Icons should be extracted from the tar.gz if available
+    # or downloaded from the repository
+}
+
+# vim:set ts=4 sw=4 et:

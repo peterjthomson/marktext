@@ -7,19 +7,18 @@ TBD
 ### Raw markdown document
 
 ```typescript
-interface IMarkdownDocumentRaw
-{
+interface IMarkdownDocumentRaw {
   // Markdown content
-  markdown: string,
+  markdown: string
   // Filename
-  filename: string,
+  filename: string
   // Full path (may be empty?)
-  pathname: string,
+  pathname: string
 
   // Document encoding
-  encoding: string,
+  encoding: string
   // "lf" or "crlf"
-  lineEnding: string,
+  lineEnding: string
   // Convert document ("lf") to `lineEnding` when saving
   adjustLineEndingOnSave: boolean
 
@@ -33,31 +32,29 @@ interface IMarkdownDocumentRaw
 A markdown document (`IMarkdownDocument`) represent a file.
 
 ```typescript
-interface IMarkdownDocument
-{
+interface IMarkdownDocument {
   // Markdown content
-  markdown: string,
+  markdown: string
   // Filename
-  filename: string,
+  filename: string
   // Full path (may be empty?)
-  pathname: string,
+  pathname: string
 
   // Document encoding
-  encoding: string,
+  encoding: string
   // "lf" or "crlf"
-  lineEnding: string,
+  lineEnding: string
   // Convert document ("lf") to `lineEnding` when saving
   adjustLineEndingOnSave: boolean
 }
 ```
 
 ```typescript
-interface IMarkdownDocumentOptions
-{
+interface IMarkdownDocumentOptions {
   // Document encoding
-  encoding: string,
+  encoding: string
   // "lf" or "crlf"
-  lineEnding: string,
+  lineEnding: string
   // Convert document ("lf") to `lineEnding` when saving
   adjustLineEndingOnSave: boolean
 }
@@ -68,29 +65,28 @@ interface IMarkdownDocumentOptions
 Internal state of a markdown document. `IMarkdownDocument` is used to create a `IFileState`.
 
 ```typescript
-interface IDocumentState
-{
-  isSaved: boolean,
-  pathname: string,
-  filename: string,
-  markdown: string,
-  encoding: string,
-  lineEnding: string,
-  adjustLineEndingOnSave: boolean,
+interface IDocumentState {
+  isSaved: boolean
+  pathname: string
+  filename: string
+  markdown: string
+  encoding: string
+  lineEnding: string
+  adjustLineEndingOnSave: boolean
   history: {
-    stack: Array<any>,
+    stack: Array<any>
     index: number
-  },
-  cursor: any,
+  }
+  cursor: any
   wordCount: {
-    paragraph: number,
-    word: number,
-    character: number,
+    paragraph: number
+    word: number
+    character: number
     all: number
-  },
+  }
   searchMatches: {
-    index: number,
-    matches: Array<any>,
+    index: number
+    matches: Array<any>
     value: string
   }
 }

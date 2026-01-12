@@ -112,7 +112,7 @@ const LATIN_SYMBOLS_MAP = {
   '&': 'and',
   '<': 'less',
   '>': 'greater',
-  '\'': 'single-quote',
+  "'": 'single-quote',
   '"': 'double-quote'
 }
 const GREEK_MAP = {
@@ -539,17 +539,22 @@ const initialize = () => {
   for (const lookup of ALL_DOWNCODE_MAPS) {
     Object.assign(downcoderMap, lookup)
   }
-  downcoderRegex = new RegExp(Object.keys(downcoderMap).map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g')
+  downcoderRegex = new RegExp(
+    Object.keys(downcoderMap)
+      .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|'),
+    'g'
+  )
 }
 
-export const downcode = slug => {
+export const downcode = (slug) => {
   initialize()
-  return slug.replace(downcoderRegex, function(m) {
+  return slug.replace(downcoderRegex, function (m) {
     return downcoderMap[m]
   })
 }
 
-export const slugify = s => {
+export const slugify = (s) => {
   let slug = downcode(s)
     .toLowerCase()
     .trim()

@@ -38,7 +38,7 @@ export const useEditorStore = defineStore('editor', {
      * Copies the specified heading's github-slug to the clipboard.
      * @param {string} id The heading-id to copy.
      */
-    copyGithubSlug (key) {
+    copyGithubSlug(key) {
       const item = this.listToc.find((i) => i.slug === key)
 
       if (item) {
@@ -57,14 +57,14 @@ export const useEditorStore = defineStore('editor', {
     /**
      * Update scroll position for the currentFile
      */
-    updateScrollPosition (scrollTop) {
+    updateScrollPosition(scrollTop) {
       this.currentFile.scrollTop = scrollTop
     },
 
     /**
      * Push a tab specific notification on stack that never disappears.
      */
-    pushTabNotification (data) {
+    pushTabNotification(data) {
       const defaultAction = () => {}
       const { tabId, msg } = data
       const action = data.action || defaultAction
@@ -100,7 +100,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    loadChange (change) {
+    loadChange(change) {
       const { tabs, currentFile } = this
       const { data, pathname } = change
       const {
@@ -183,7 +183,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    FORMAT_LINK_CLICK ({ data, dirname }) {
+    FORMAT_LINK_CLICK({ data, dirname }) {
       // Check if the link starts with a #, that is a local anchor link.
 
       if (data.href.length > 0 && data.href[0] === '#') {
@@ -205,14 +205,14 @@ export const useEditorStore = defineStore('editor', {
       window.electron.ipcRenderer.send('mt::format-link-click', { data, dirname })
     },
 
-    LISTEN_SCREEN_SHOT () {
+    LISTEN_SCREEN_SHOT() {
       window.electron.ipcRenderer.on('mt::screenshot-captured', () => {
         bus.emit('screenshot-captured')
       })
     },
 
     // image path auto complement
-    ASK_FOR_IMAGE_AUTO_PATH (src) {
+    ASK_FOR_IMAGE_AUTO_PATH(src) {
       const { pathname } = this.currentFile
       if (pathname) {
         let rs
@@ -235,11 +235,11 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    SEARCH (value) {
+    SEARCH(value) {
       this.currentFile.searchMatches = JSON.parse(JSON.stringify(value)) // deep clone to trigger state changes
     },
 
-    SHOW_IMAGE_DELETION_URL (deletionUrl) {
+    SHOW_IMAGE_DELETION_URL(deletionUrl) {
       notice
         .notify({
           title: i18n.global.t('store.editor.imageDeletionUrlTitle'),
@@ -253,7 +253,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // We need to update line endings menu when changing tabs.
-    UPDATE_LINE_ENDING_MENU () {
+    UPDATE_LINE_ENDING_MENU() {
       const { lineEnding } = this.currentFile
       if (lineEnding) {
         const { windowId } = global.marktext.env
@@ -262,7 +262,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // Helper to clear the saving spinner with minimum display time
-    _clearSavingSpinner () {
+    _clearSavingSpinner() {
       const MIN_SPINNER_TIME = 1000 // Minimum time to show spinner (1 second)
       const elapsed = Date.now() - (this._saveStartTime || 0)
       const remaining = Math.max(0, MIN_SPINNER_TIME - elapsed)
@@ -272,7 +272,7 @@ export const useEditorStore = defineStore('editor', {
       }, remaining)
     },
 
-    FILE_SAVE () {
+    FILE_SAVE() {
       const projectStore = useProjectStore()
       const { id, filename, pathname, markdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
@@ -295,7 +295,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // need pass some data to main process when `save` menu item clicked
-    LISTEN_FOR_SAVE () {
+    LISTEN_FOR_SAVE() {
       window.electron.ipcRenderer.on('mt::editor-ask-file-save', () => {
         this.FILE_SAVE()
       })
@@ -304,7 +304,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    FILE_SAVE_AS () {
+    FILE_SAVE_AS() {
       const projectStore = useProjectStore()
       const { id, filename, pathname, markdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
@@ -327,7 +327,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // need pass some data to main process when `save as` menu item clicked
-    LISTEN_FOR_SAVE_AS () {
+    LISTEN_FOR_SAVE_AS() {
       window.electron.ipcRenderer.on('mt::editor-ask-file-save-as', () => {
         this.FILE_SAVE_AS()
       })
@@ -336,7 +336,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_SET_PATHNAME () {
+    LISTEN_FOR_SET_PATHNAME() {
       window.electron.ipcRenderer.on('mt::set-pathname', (_, fileInfo) => {
         const { tabs } = this
         const { pathname, id } = fileInfo
@@ -401,7 +401,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_CLOSE () {
+    LISTEN_FOR_CLOSE() {
       const projectStore = useProjectStore()
       window.electron.ipcRenderer.on('mt::ask-for-close', () => {
         const unsavedFiles = this.tabs
@@ -427,7 +427,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_SAVE_CLOSE () {
+    LISTEN_FOR_SAVE_CLOSE() {
       window.electron.ipcRenderer.on('mt::force-close-tabs-by-id', (_, tabIdList) => {
         if (Array.isArray(tabIdList) && tabIdList.length) {
           this.CLOSE_TABS(tabIdList)
@@ -435,7 +435,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    ASK_FOR_SAVE_ALL (closeTabs) {
+    ASK_FOR_SAVE_ALL(closeTabs) {
       const { tabs } = this
       const projectStore = useProjectStore()
       const unsavedFiles = tabs
@@ -465,7 +465,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    MOVE_FILE_TO () {
+    MOVE_FILE_TO() {
       const projectStore = useProjectStore()
       const { id, filename, pathname, markdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
@@ -488,7 +488,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    LISTEN_FOR_MOVE_TO () {
+    LISTEN_FOR_MOVE_TO() {
       window.electron.ipcRenderer.on('mt::editor-move-file', () => {
         this.MOVE_FILE_TO()
       })
@@ -497,7 +497,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_RENAME () {
+    LISTEN_FOR_RENAME() {
       window.electron.ipcRenderer.on('mt::editor-rename-file', () => {
         this.RESPONSE_FOR_RENAME()
       })
@@ -506,7 +506,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    RESPONSE_FOR_RENAME () {
+    RESPONSE_FOR_RENAME() {
       const projectStore = useProjectStore()
       const { id, filename, pathname, markdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
@@ -529,7 +529,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // ask for main process to rename this file to a new name `newFilename`
-    RENAME (newFilename) {
+    RENAME(newFilename) {
       const { id, pathname, filename } = this.currentFile
       if (typeof filename === 'string' && filename !== newFilename) {
         const newPathname = window.path.join(window.path.dirname(pathname), newFilename)
@@ -542,7 +542,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    UPDATE_CURRENT_FILE (currentFile) {
+    UPDATE_CURRENT_FILE(currentFile) {
       const oldCurrentFile = this.currentFile
       if (!oldCurrentFile.id || oldCurrentFile.id !== currentFile.id) {
         const { id, markdown, cursor, history, pathname, scrollTop, blocks } = currentFile
@@ -566,7 +566,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // This events are only used during window creation.
-    LISTEN_FOR_BOOTSTRAP_WINDOW () {
+    LISTEN_FOR_BOOTSTRAP_WINDOW() {
       const preferencesStore = usePreferencesStore()
       const layoutStore = useLayoutStore()
       const projectStore = useProjectStore()
@@ -629,7 +629,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // Open a new tab, optionally with content.
-    LISTEN_FOR_NEW_TAB () {
+    LISTEN_FOR_NEW_TAB() {
       window.electron.ipcRenderer.on(
         'mt::open-new-tab',
         (_, markdownDocument, options = {}, selected = true) => {
@@ -655,7 +655,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    CLOSE_TAB (file = null) {
+    CLOSE_TAB(file = null) {
       if (!file) {
         file = this.currentFile
       }
@@ -668,7 +668,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    LISTEN_FOR_CLOSE_TAB () {
+    LISTEN_FOR_CLOSE_TAB() {
       window.electron.ipcRenderer.on('mt::editor-close-tab', () => {
         this.CLOSE_TAB()
       })
@@ -677,7 +677,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_TAB_CYCLE () {
+    LISTEN_FOR_TAB_CYCLE() {
       window.electron.ipcRenderer.on('mt::tabs-cycle-left', () => {
         this.CYCLE_TABS(false)
       })
@@ -692,13 +692,13 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_SWITCH_TABS () {
+    LISTEN_FOR_SWITCH_TABS() {
       window.electron.ipcRenderer.on('mt::switch-tab-by-index', (_, index) => {
         this.SWITCH_TAB_BY_INDEX(index)
       })
     },
 
-    FORCE_CLOSE_TAB (file) {
+    FORCE_CLOSE_TAB(file) {
       const { tabs, currentFile } = this
       const index = tabs.findIndex((t) => t.id === file.id)
       if (index > -1) {
@@ -742,7 +742,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    CLOSE_UNSAVED_TAB (file) {
+    CLOSE_UNSAVED_TAB(file) {
       const { id, pathname, filename, markdown } = file
       const options = getOptionsFromState(file)
       window.electron.ipcRenderer.send('mt::save-and-close-tabs', [
@@ -750,7 +750,7 @@ export const useEditorStore = defineStore('editor', {
       ])
     },
 
-    CLOSE_OTHER_TABS (file) {
+    CLOSE_OTHER_TABS(file) {
       this.tabs
         .filter((f) => f.id !== file.id)
         .forEach((tab) => {
@@ -758,7 +758,7 @@ export const useEditorStore = defineStore('editor', {
         })
     },
 
-    CLOSE_SAVED_TABS () {
+    CLOSE_SAVED_TABS() {
       this.tabs
         .filter((f) => f.isSaved)
         .forEach((tab) => {
@@ -766,13 +766,13 @@ export const useEditorStore = defineStore('editor', {
         })
     },
 
-    CLOSE_ALL_TABS () {
+    CLOSE_ALL_TABS() {
       this.tabs.slice().forEach((tab) => {
         this.CLOSE_TAB(tab)
       })
     },
 
-    CLOSE_TABS (tabIdList) {
+    CLOSE_TABS(tabIdList) {
       if (!tabIdList || tabIdList.length === 0) return
 
       let tabIndex = 0
@@ -819,7 +819,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    EXCHANGE_TABS_BY_ID (tabIDs) {
+    EXCHANGE_TABS_BY_ID(tabIDs) {
       const { fromId, toId } = tabIDs
       const { tabs } = this
       const moveItem = (arr, from, to) => {
@@ -845,13 +845,13 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    RENAME_FILE (file) {
+    RENAME_FILE(file) {
       this.UPDATE_CURRENT_FILE(file)
       bus.emit('rename')
     },
 
     // Direction is a boolean where false is left and true right.
-    CYCLE_TABS (direction) {
+    CYCLE_TABS(direction) {
       const { tabs, currentFile } = this
       if (tabs.length <= 1) {
         return
@@ -881,7 +881,7 @@ export const useEditorStore = defineStore('editor', {
       this.UPDATE_CURRENT_FILE(nextTab)
     },
 
-    SWITCH_TAB_BY_INDEX (nextTabIndex) {
+    SWITCH_TAB_BY_INDEX(nextTabIndex) {
       const { tabs, currentFile } = this
       if (nextTabIndex < 0 || nextTabIndex >= tabs.length) {
         console.warn('Invalid tab index:', nextTabIndex)
@@ -909,7 +909,7 @@ export const useEditorStore = defineStore('editor', {
      * @param {{markdown?: string, selected?: boolean}} obj Optional markdown string
      * and whether the tab should become the selected tab (true if not set).
      */
-    NEW_UNTITLED_TAB ({ markdown: markdownString, selected }) {
+    NEW_UNTITLED_TAB({ markdown: markdownString, selected }) {
       if (selected == null) {
         selected = true
       }
@@ -936,7 +936,7 @@ export const useEditorStore = defineStore('editor', {
      * @param {{markdownDocument: IMarkdownDocumentRaw, selected?: boolean}} obj The markdown document
      * and optional whether the tab should become the selected tab (true if not set).
      */
-    NEW_TAB_WITH_CONTENT ({ markdownDocument, options = {}, selected }) {
+    NEW_TAB_WITH_CONTENT({ markdownDocument, options = {}, selected }) {
       if (!markdownDocument) {
         console.warn('Cannot create a file tab without a markdown document!')
         this.NEW_UNTITLED_TAB({})
@@ -991,7 +991,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    SHOW_TAB_VIEW (always) {
+    SHOW_TAB_VIEW(always) {
       const { tabs } = this
       const layoutStore = useLayoutStore()
       if (always || tabs.length === 1) {
@@ -1000,7 +1000,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    SET_SAVE_STATUS_WHEN_REMOVE ({ pathname }) {
+    SET_SAVE_STATUS_WHEN_REMOVE({ pathname }) {
       this.tabs.forEach((f) => {
         if (f.pathname === pathname) {
           f.isSaved = false
@@ -1009,7 +1009,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     // Content change from realtime preview editor and source code editor
-    LISTEN_FOR_CONTENT_CHANGE ({
+    LISTEN_FOR_CONTENT_CHANGE({
       id,
       markdown,
       wordCount,
@@ -1077,7 +1077,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    HANDLE_AUTO_SAVE ({ id, filename, pathname, markdown, options }) {
+    HANDLE_AUTO_SAVE({ id, filename, pathname, markdown, options }) {
       if (!id || !pathname) {
         throw new Error('HANDLE_AUTO_SAVE: Invalid tab.')
       }
@@ -1112,7 +1112,7 @@ export const useEditorStore = defineStore('editor', {
       autoSaveTimers.set(id, timer)
     },
 
-    SELECTION_CHANGE (changes) {
+    SELECTION_CHANGE(changes) {
       const { start, end } = changes
       if (start.key === end.key && start.block.text) {
         const value = start.block.text.substring(start.offset, end.offset)
@@ -1131,7 +1131,7 @@ export const useEditorStore = defineStore('editor', {
       )
     },
 
-    SELECTION_FORMATS (formats) {
+    SELECTION_FORMATS(formats) {
       const { windowId } = global.marktext.env
       window.electron.ipcRenderer.send(
         'mt::update-format-menu',
@@ -1140,7 +1140,7 @@ export const useEditorStore = defineStore('editor', {
       )
     },
 
-    EXPORT ({ type, content, pageOptions }) {
+    EXPORT({ type, content, pageOptions }) {
       if (!hasKeys(this.currentFile)) return
 
       let title = ''
@@ -1169,7 +1169,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LINTEN_FOR_EXPORT_SUCCESS () {
+    LINTEN_FOR_EXPORT_SUCCESS() {
       window.electron.ipcRenderer.on('mt::export-success', (_, { filePath }) => {
         notice
           .notify({
@@ -1185,17 +1185,17 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    PRINT_RESPONSE () {
+    PRINT_RESPONSE() {
       window.electron.ipcRenderer.send('mt::response-print')
     },
 
-    LINTEN_FOR_PRINT_SERVICE_CLEARUP () {
+    LINTEN_FOR_PRINT_SERVICE_CLEARUP() {
       window.electron.ipcRenderer.on('mt::print-service-clearup', () => {
         bus.emit('print-service-clearup')
       })
     },
 
-    SET_LINE_ENDING (lineEnding) {
+    SET_LINE_ENDING(lineEnding) {
       const { lineEnding: oldLineEnding } = this.currentFile
       if (lineEnding !== oldLineEnding) {
         this.currentFile.lineEnding = lineEnding
@@ -1205,7 +1205,7 @@ export const useEditorStore = defineStore('editor', {
       }
     },
 
-    LINTEN_FOR_SET_LINE_ENDING () {
+    LINTEN_FOR_SET_LINE_ENDING() {
       window.electron.ipcRenderer.on('mt::set-line-ending', (_, lineEnding) => {
         this.SET_LINE_ENDING(lineEnding)
       })
@@ -1214,7 +1214,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LINTEN_FOR_SET_ENCODING () {
+    LINTEN_FOR_SET_ENCODING() {
       bus.on('mt::set-file-encoding', (encodingName) => {
         const { encoding } = this.currentFile.encoding
         if (encoding !== encodingName) {
@@ -1225,7 +1225,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LINTEN_FOR_SET_FINAL_NEWLINE () {
+    LINTEN_FOR_SET_FINAL_NEWLINE() {
       bus.on('mt::set-final-newline', (value) => {
         const { trimTrailingNewline } = this.currentFile
         if (trimTrailingNewline !== value) {
@@ -1235,7 +1235,7 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_FILE_CHANGE () {
+    LISTEN_FOR_FILE_CHANGE() {
       const preferencesStore = usePreferencesStore()
       window.electron.ipcRenderer.on('mt::update-file', (_, { type, change }) => {
         const { tabs } = this
@@ -1294,11 +1294,11 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    ASK_FOR_IMAGE_PATH () {
+    ASK_FOR_IMAGE_PATH() {
       return window.electron.ipcRenderer.sendSync('mt::ask-for-image-path')
     },
 
-    EDIT_ZOOM (zoomFactor) {
+    EDIT_ZOOM(zoomFactor) {
       const preferencesStore = usePreferencesStore()
       zoomFactor = Number.parseFloat(zoomFactor.toFixed(3))
       const { zoom } = preferencesStore
@@ -1308,7 +1308,7 @@ export const useEditorStore = defineStore('editor', {
       window.electron.webFrame.setZoomFactor(zoomFactor)
     },
 
-    LISTEN_WINDOW_ZOOM () {
+    LISTEN_WINDOW_ZOOM() {
       window.electron.ipcRenderer.on('mt::window-zoom', (_, zoomFactor) => {
         this.EDIT_ZOOM(zoomFactor)
       })
@@ -1317,13 +1317,13 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
-    LISTEN_FOR_RELOAD_IMAGES () {
+    LISTEN_FOR_RELOAD_IMAGES() {
       window.electron.ipcRenderer.on('mt::invalidate-image-cache', () => {
         bus.emit('invalidate-image-cache')
       })
     },
 
-    LISTEN_FOR_CONTEXT_MENU () {
+    LISTEN_FOR_CONTEXT_MENU() {
       // General context menu
       window.electron.ipcRenderer.on('mt::cm-copy-as-markdown', () => {
         bus.emit('copyAsMarkdown', 'copyAsMarkdown')

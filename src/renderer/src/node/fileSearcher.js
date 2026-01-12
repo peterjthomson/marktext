@@ -48,15 +48,15 @@ class FileSearcher extends RipgrepDirectorySearcher {
           resolve()
         }
       })
-      child.on('error', err => {
+      child.on('error', (err) => {
         reject(err)
       })
 
-      child.stderr.on('data', chunk => {
+      child.stderr.on('data', (chunk) => {
         bufferError += chunk
       })
 
-      child.stdout.on('data', chunk => {
+      child.stdout.on('data', (chunk) => {
         if (cancelled) {
           return
         }

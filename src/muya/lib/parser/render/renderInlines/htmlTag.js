@@ -4,20 +4,21 @@ import sanitize, { isValidAttribute } from '../../../utils/dompurify'
 
 export default function htmlTag(h, cursor, block, token, outerClass) {
   const { tag, openTag, closeTag, children, attrs } = token
-  const className = children ? this.getClassName(outerClass, block, token, cursor) : CLASS_OR_ID.AG_GRAY
+  const className = children
+    ? this.getClassName(outerClass, block, token, cursor)
+    : CLASS_OR_ID.AG_GRAY
   const tagClassName = className === CLASS_OR_ID.AG_HIDE ? className : CLASS_OR_ID.AG_HTML_TAG
   const { start, end } = token.range
   const openContent = this.highlight(h, block, start, start + openTag.length, token)
-  const closeContent = closeTag
-    ? this.highlight(h, block, end - closeTag.length, end, token)
-    : ''
+  const closeContent = closeTag ? this.highlight(h, block, end - closeTag.length, end, token) : ''
 
-  const anchor = Array.isArray(children) && tag !== 'ruby' // important
-    ? children.reduce((acc, to) => {
-      const chunk = this[snakeToCamel(to.type)](h, cursor, block, to, className)
-      return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk]
-    }, [])
-    : ''
+  const anchor =
+    Array.isArray(children) && tag !== 'ruby' // important
+      ? children.reduce((acc, to) => {
+        const chunk = this[snakeToCamel(to.type)](h, cursor, block, to, className)
+        return Array.isArray(chunk) ? [...acc, ...chunk] : [...acc, chunk]
+      }, [])
+      : ''
 
   switch (tag) {
     // Handle html img.
@@ -74,17 +75,25 @@ export default function htmlTag(h, cursor, block, token, outerClass) {
         }
 
         return [
-          h(`span.${tagClassName}.${CLASS_OR_ID.AG_OUTPUT_REMOVE}`, {
-            attrs: {
-              spellcheck: 'false'
-            }
-          }, openContent),
+          h(
+            `span.${tagClassName}.${CLASS_OR_ID.AG_OUTPUT_REMOVE}`,
+            {
+              attrs: {
+                spellcheck: 'false'
+              }
+            },
+            openContent
+          ),
           h(`${selector}`, data, anchor),
-          h(`span.${tagClassName}.${CLASS_OR_ID.AG_OUTPUT_REMOVE}`, {
-            attrs: {
-              spellcheck: 'false'
-            }
-          }, closeContent)
+          h(
+            `span.${tagClassName}.${CLASS_OR_ID.AG_OUTPUT_REMOVE}`,
+            {
+              attrs: {
+                spellcheck: 'false'
+              }
+            },
+            closeContent
+          )
         ]
       }
   }

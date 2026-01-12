@@ -9,7 +9,7 @@ function replaceChar(tableIn, tableOut, char) {
 }
 
 function maketrans(tableIn, tableOut, value) {
-  return [...value].map(i => replaceChar(tableIn, tableOut, i)).join('')
+  return [...value].map((i) => replaceChar(tableIn, tableOut, i)).join('')
 }
 
 export default class Diagram {
@@ -33,10 +33,8 @@ export default class Diagram {
    * 3. Reencoded in ASCII using a transformation close to base64
    */
   static encode(value) {
-    const tableIn =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    const tableOut =
-      '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
+    const tableIn = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    const tableOut = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
 
     const utf8Value = decodeURIComponent(encodeURIComponent(value))
     const compressedValue = zlib.deflateSync(utf8Value, { level: 3 })
@@ -45,9 +43,7 @@ export default class Diagram {
   }
 
   insertImgElement(container) {
-    const div = typeof container === 'string'
-      ? document.getElementById(container)
-      : container
+    const div = typeof container === 'string' ? document.getElementById(container) : container
     if (div === null || !div.tagName) {
       throw new Error('Invalid container: ' + container)
     }

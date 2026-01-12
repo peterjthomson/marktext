@@ -1,5 +1,5 @@
 .ag-tooltip {
-  transition: opacity .2s ease-in;
+  transition: opacity 0.2s ease-in;
   position: absolute;
   font-size: 12px;
   padding: 5px 7px;

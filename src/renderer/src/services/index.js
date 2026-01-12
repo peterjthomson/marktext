@@ -1,5 +1,3 @@
 import notification from './notification'
 
-export default [
-  notification
-]
+export default [notification]

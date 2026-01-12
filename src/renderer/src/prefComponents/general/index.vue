@@ -113,7 +113,8 @@
               label="folder"
               style="margin-bottom: 10px"
             >
-              {{ t('preferences.general.startup.openDefaultDirectory') }}<span>: {{ defaultDirectoryToOpen }}</span>
+              {{ t('preferences.general.startup.openDefaultDirectory')
+              }}<span>: {{ defaultDirectoryToOpen }}</span>
             </el-radio>
             <el-button
               size="small"
@@ -159,7 +160,12 @@ import Bool from '../common/bool/index.vue'
 import textBox from '../common/textBox/index.vue'
 import { isOsx } from '@/util'
 
-import { getTitleBarStyleOptions, zoomOptions, getFileSortByOptions, getLanguageOptions } from './config'
+import {
+  getTitleBarStyleOptions,
+  zoomOptions,
+  getFileSortByOptions,
+  getLanguageOptions
+} from './config'
 
 const { t } = useI18n()
 const preferenceStore = usePreferencesStore()
