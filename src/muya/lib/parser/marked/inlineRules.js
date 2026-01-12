@@ -18,8 +18,9 @@ const inline = {
     '|^<![a-zA-Z]+\\s[\\s\\S]*?>' + // declaration, e.g. <!DOCTYPE html>
     '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>', // CDATA section
   link: /^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/,
-  reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-  nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
+  // CVE-2022-21681 fix: use (ref) placeholder to avoid ReDoS in reflinkSearch
+  reflink: /^!?\[(label)\]\[(ref)\]/,
+  nolink: /^!?\[(ref)\](?:\[\])?/,
   strong: /^__([^\s_])__(?!_)|^\*\*([^\s*])\*\*(?!\*)|^__([^\s][\s\S]*?[^\s])__(?!_)|^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)/,
   em: /^_([^\s_])_(?!_)|^\*([^\s*<\[])\*(?!\*)|^_([^\s<][\s\S]*?[^\s_])_(?!_|[^\spunctuation])|^_([^\s_<][\s\S]*?[^\s])_(?!_|[^\spunctuation])|^\*([^\s<"][\s\S]*?[^\s\*])\*(?!\*|[^\spunctuation])|^\*([^\s*"<\[][\s\S]*?[^\s])\*(?!\*)/,
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
@@ -82,6 +83,12 @@ inline.link = edit(inline.link)
 
 inline.reflink = edit(inline.reflink)
   .replace('label', inline._label)
+  .replace('ref', block._label)
+  .getRegex()
+
+// CVE-2022-21681 fix: nolink also needs ref replacement
+inline.nolink = edit(inline.nolink)
+  .replace('ref', block._label)
   .getRegex()
 
 /**

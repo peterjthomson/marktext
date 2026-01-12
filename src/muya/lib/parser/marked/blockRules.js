@@ -40,7 +40,8 @@ export const block = {
   footnote: /^\[\^([^\^\[\]\s]+?)(?<!\\)\]:[\s\S]+?(?=\n *\n {0,3}[^ ]+|$)/
 }
 
-block._label = /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/
+// CVE-2022-21680 fix: changed from (?:\\[\[\]]|[^\[\]])+ to prevent ReDoS
+block._label = /(?!\s*\])(?:\\.|[^\[\]\\])+/
 block._title = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/
 block.def = edit(block.def)
   .replace('label', block._label)
