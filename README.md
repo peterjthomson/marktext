@@ -1,17 +1,6 @@
 <p align="center"><img src="static/logo-small.png" alt="MarkText" width="100" height="100"></p>
 
 <h1 align="center">MarkText</h1>
-<div align="center">
-  Translations also available in:
-  <a href="docs/i18n/README-zh_cn.md">CN</a>
-  <a href="docs/i18n/README-zh_tw.md">TW</a>
-  <a href="docs/i18n/README-de.md">DE</a>
-  <a href="docs/i18n/README-es.md">ES</a>
-  <a href="docs/i18n/README-fr.md">FR</a>
-  <a href="docs/i18n/README-jp.md">JP</a>
-  <a href="docs/i18n/README-kr.md">KR</a>
-  <a href="docs/i18n/README-pt.md">PT</a>
-</div>
 
 ---
 
@@ -35,23 +24,15 @@
   </a>
 </div>
 
-- [MarkText](https://github.com/marktext/marktext) is a free and open source markdown editor originally written by [Jocs](https://github.com/Jocs) and [contributors](https://github.com/marktext/marktext/graphs/contributors).
+- [MarkText](https://github.com/marktext/marktext) is a free and open source markdown editor originally written by [Jocs](https://github.com/Jocs) and [contributors](https://github.com/marktext/marktext/graphs/contributors). 
 
-- Sadly, the core repository became unmaintained since about 3 years ago, but various Quality of Life issues remained that I noticed in my daily usage.
+- Sadly, the core repository became unmaintained since about 3 years ago, but various Quality of Life issues remained that I noticed in daily usage. This repository serves as an attempt at modernising my favourite Markdown Editor, and is a fork based off [Jacob Whall's Fork](https://github.com/jacobwhall/marktext). 
 
-- This repository serves as an attempt at modernising my favourite Markdown Editor, and is a fork based off [Jacob Whall's Fork](https://github.com/jacobwhall/marktext)
-  
-  - See [my motivation below](#1-soo-is-this-fork-any-different-from-the-countless-others)
-
-- You can read more about my motivation below
-
-# 1. Installing
-
-> ⚠️ These releases are still in **beta** (since I do not know how much stuff I might have broken during the migration). Please report any bugs in the [issue tracker](https://github.com/Tkaixiang/marktext/issues)
+- The fork by [Tkaixiang](https://github.com/Tkaixiang/marktext) is highly recommended as a starting point for anyone looking to use MarkText on a modern Mac or to build the app locally for themselves. See [Tkaixiang's motivation for his fork](#1-soo-is-this-fork-any-different-from-the-countless-others)
 
 ## Windows
 
-- Simply check out the [Releases Page](https://github.com/Tkaixiang/marktext/releases)!
+- Simply check out the [Releases Page](https://github.com/Tkaixiang/marktext/releases).
 
 - Tested on:
   
@@ -83,19 +64,7 @@
 
 # 3. ✨Features ⭐
 
-- 🆕 Now available in **9 languages** from the `Preferences` editor (Special thanks to [@hubo1989](https://github.com/hubo1989))
-  
-  - `English` 🇺🇸
-  - `简体中文` 🇨🇳
-  - `繁體中文` 🇹🇼
-  - `Deutsch` 🇩🇪
-  - `Español` 🇪🇸
-  - `Français` 🇫🇷
-  - `日本語` 🇯🇵
-  - `한국어` 🇰🇷
-  - `Português` 🇵🇹
-
-- Realtime preview (WYSIWYG) and a clean and simple interface to get a distraction-free writing experience.
+- Realtime preview (WYSIWYG) and a clean and simple interface to get a distraction-free writing experience. (Importantly, this is an in-line in-editor preview not a split pane preview.)
 
 - Support [CommonMark Spec](https://spec.commonmark.org/0.29/), [GitHub Flavored Markdown Spec](https://github.github.com/gfm/) and selective support [Pandoc markdown](https://pandoc.org/MANUAL.html#pandocs-markdown).
 
