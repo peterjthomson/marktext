@@ -8,7 +8,7 @@ import './index.css'
 class ImageSelector extends BaseFloat {
   static pluginName = 'imageSelector'
 
-  constructor(muya, options) {
+  constructor (muya, options) {
     const name = 'ag-image-selector'
     options = Object.assign(options, {
       placement: 'bottom',
@@ -38,7 +38,7 @@ class ImageSelector extends BaseFloat {
     this.listen()
   }
 
-  listen() {
+  listen () {
     super.listen()
     const { eventCenter } = this.muya
     eventCenter.subscribe('muya-image-selector', ({ reference, cb, imageInfo }) => {
@@ -79,30 +79,30 @@ class ImageSelector extends BaseFloat {
     })
   }
 
-  tabClick(event, tab) {
+  tabClick (event, tab) {
     const { value } = tab
     this.tab = value
     return this.render()
   }
 
-  toggleMode() {
+  toggleMode () {
     this.isFullMode = !this.isFullMode
     return this.render()
   }
 
-  inputHandler(event, type) {
+  inputHandler (event, type) {
     const value = event.target.value
     this.state[type] = value
   }
 
-  handleKeyDown(event) {
+  handleKeyDown (event) {
     if (event.key === EVENT_KEYS.Enter) {
       event.stopPropagation()
       this.handleLinkButtonClick()
     }
   }
 
-  srcInputKeyDown(event) {
+  srcInputKeyDown (event) {
     const { imagePathPicker } = this.muya
     if (!imagePathPicker.status) {
       if (event.key === EVENT_KEYS.Enter) {
@@ -130,7 +130,7 @@ class ImageSelector extends BaseFloat {
     }
   }
 
-  async handleKeyUp(event) {
+  async handleKeyUp (event) {
     const { key } = event
     if (
       key === EVENT_KEYS.ArrowUp ||
@@ -169,11 +169,11 @@ class ImageSelector extends BaseFloat {
     eventCenter.dispatch('muya-image-picker', { reference, list, cb })
   }
 
-  handleLinkButtonClick() {
+  handleLinkButtonClick () {
     return this.replaceImageAsync(this.state)
   }
 
-  replaceImageAsync = async ({ alt, src, title }) => {
+  replaceImageAsync = async({ alt, src, title }) => {
     if (!this.muya.options.imageAction || URL_REG.test(src)) {
       const { alt: oldAlt, src: oldSrc, title: oldTitle } = this.imageInfo.token.attrs
       if (alt !== oldAlt || src !== oldSrc || title !== oldTitle) {
@@ -217,7 +217,7 @@ class ImageSelector extends BaseFloat {
     this.muya.eventCenter.dispatch('stateChange')
   }
 
-  async handleSelectButtonClick() {
+  async handleSelectButtonClick () {
     if (!this.muya.options.imagePathPicker) {
       console.warn('You need to add a imagePathPicker option')
       return
@@ -232,8 +232,8 @@ class ImageSelector extends BaseFloat {
     })
   }
 
-  renderHeader() {
-    const t = this.muya?.options?.t || ((k)=>k)
+  renderHeader () {
+    const t = this.muya?.options?.t || ((k) => k)
     const tabs = [
       {
         label: t('editor.image.selector.tab.select'),
@@ -268,7 +268,7 @@ class ImageSelector extends BaseFloat {
 
   renderBody = () => {
     const { tab, state, isFullMode } = this
-    const t = this.muya?.options?.t || ((k)=>k)
+    const t = this.muya?.options?.t || ((k) => k)
     const { alt, title, src } = state
     let bodyContent = null
     if (tab === 'select') {
@@ -377,7 +377,7 @@ class ImageSelector extends BaseFloat {
     return h('div.image-select-body', bodyContent)
   }
 
-  render() {
+  render () {
     const { oldVnode, imageSelectorContainer } = this
     const selector = 'div'
     const vnode = h(selector, [this.renderHeader(), this.renderBody()])

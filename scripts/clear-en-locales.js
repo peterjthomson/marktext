@@ -21,16 +21,16 @@ const TARGETS = [
   'pt.json'
 ]
 
-function readJson(filePath) {
+function readJson (filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'))
 }
 
-function writeJson(filePath, data) {
+function writeJson (filePath, data) {
   const content = JSON.stringify(data, null, 4) + '\n'
   fs.writeFileSync(filePath, content, 'utf8')
 }
 
-function clearSameValues(enNode, targetNode) {
+function clearSameValues (enNode, targetNode) {
   if (typeof enNode !== 'object' || enNode === null) return false
   if (typeof targetNode !== 'object' || targetNode === null) return false
 
@@ -57,7 +57,7 @@ function clearSameValues(enNode, targetNode) {
   return changed
 }
 
-function main() {
+function main () {
   const enPath = path.join(LOCALES_DIR, SOURCE_LOCALE)
   if (!fs.existsSync(enPath)) {
     console.error('Missing source locale:', enPath)
@@ -89,9 +89,3 @@ function main() {
 }
 
 main()
-
-
-
-
-
-

@@ -8,6 +8,18 @@ import babelParser from '@babel/eslint-parser'
 const { configs: js } = eslintJs
 
 export default [
+  // Global ignores (must be first)
+  {
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'out/**',
+      'src/muya/dist/**',
+      'src/muya/webpack.config.js',
+      'static/locales/*.min.json'
+    ]
+  },
+
   // 0. ESLint core recommended rules
 
   js.recommended,
@@ -29,9 +41,42 @@ export default [
         sourceType: 'module'
       },
       globals: {
+        // MarkText globals
         MARKTEXT_VERSION_STRING: 'readonly',
         MARKTEXT_VERSION: 'readonly',
-        __static: 'readonly'
+        __static: 'readonly',
+        // Browser globals for renderer process
+        localStorage: 'readonly',
+        FileReader: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
+        navigator: 'readonly',
+        Image: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly',
+        FormData: 'readonly',
+        fetch: 'readonly',
+        atob: 'readonly',
+        btoa: 'readonly',
+        MutationObserver: 'readonly',
+        ResizeObserver: 'readonly',
+        IntersectionObserver: 'readonly',
+        CustomEvent: 'readonly',
+        HTMLElement: 'readonly',
+        Element: 'readonly',
+        Node: 'readonly',
+        NodeList: 'readonly',
+        getComputedStyle: 'readonly',
+        matchMedia: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        queueMicrotask: 'readonly',
+        performance: 'readonly'
       }
     },
     rules: {
@@ -48,8 +93,7 @@ export default [
       'no-mixed-operators': 'off',
       'no-prototype-builtins': 'off',
       'space-before-function-paren': ['error', 'never']
-    },
-    ignores: ['node_modules', 'src/muya/dist/**/*', 'src/muya/webpack.config.js']
+    }
   },
 
   // 4. JSON files basic validation
