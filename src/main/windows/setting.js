@@ -1,6 +1,6 @@
 import path from 'path'
 import { BrowserWindow, ipcMain } from 'electron'
-import { enable as remoteEnable } from '@electron/remote/main'
+import { enable as remoteEnable } from '@electron/remote/main/index.js'
 import { electronLocalshortcut } from '@hfelix/electron-localshortcut'
 import BaseWindow, { WindowLifecycle, WindowType } from './base'
 import { centerWindowOptions } from './utils'

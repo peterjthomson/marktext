@@ -1,4 +1,5 @@
-import { autoUpdater } from 'electron-updater'
+import electronUpdater from 'electron-updater'
+const { autoUpdater } = electronUpdater
 import { BrowserWindow, Menu, ipcMain } from 'electron'
 import { COMMANDS } from '../../commands'
 import { isOsx } from '../../config'

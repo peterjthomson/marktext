@@ -2,7 +2,7 @@
   "name": "marktext",
   "version": "1.0.1",
   "description": "MarkText",
-  "main": "./out/main/index.js",
+  "main": "./out/main/index.cjs",
   "type": "module",
   "author": "Marktext Contributors (PeterJThomson fork)",
   "homepage": "https://github.com/peterjthomson/marktext",
@@ -17,7 +17,14 @@
     "build:unpack": "npm run minify-locales && npm run build && electron-builder --dir",
     "build:win": "npm run minify-locales && npx @electron/rebuild && npm run build && electron-builder --win --publish never",
     "build:mac": "npm run minify-locales && npx @electron/rebuild && npm run build && electron-builder --mac --publish never",
-    "build:linux": "npm run minify-locales && npx @electron/rebuild && npm run build && electron-builder --linux --publish never"
+    "build:linux": "npm run minify-locales && npx @electron/rebuild && npm run build && electron-builder --linux --publish never",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "npm run build && npx playwright test",
+    "test:e2e:headed": "npm run build && npx playwright test --headed",
+    "test:all": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -78,11 +85,13 @@
     "@babel/eslint-parser": "^7.28.5",
     "@electron-toolkit/eslint-config": "^2.1.0",
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
+    "@playwright/test": "^1.57.0",
     "@types/source-map-support": "^0.5.10",
     "@vitejs/plugin-vue": "^6.0.3",
     "cross-env": "^10.1.0",
     "electron": "^39.2.7",
     "electron-builder": "^26.4.0",
+    "electron-playwright-helpers": "^2.1.0",
     "electron-vite": "^5.0.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
@@ -98,6 +107,7 @@
     "vite": "^7.3.0",
     "vite-plugin-electron-renderer": "^0.14.6",
     "vite-svg-loader": "^5.1.0",
+    "vitest": "^4.0.16",
     "vue": "^3.5.26",
     "vue-eslint-parser": "^10.2.0"
   }

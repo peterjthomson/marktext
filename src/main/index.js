@@ -3,7 +3,7 @@ import path from 'path'
 import { app, dialog, crashReporter } from 'electron'
 import log from 'electron-log'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { initialize as remoteInitializeServer } from '@electron/remote/main'
+import { initialize as remoteInitializeServer } from '@electron/remote/main/index.js'
 
 import cli from './cli'
 import setupExceptionHandler, { initExceptionLogger } from './exceptionHandler'

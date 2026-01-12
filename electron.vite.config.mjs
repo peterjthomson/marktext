@@ -17,6 +17,12 @@ export default defineConfig({
     // electron-vite still builds the main and preload processes into commonJS
     // hence, we need to "exclude" (in order to NOT externalise) ESonly modules so that they can be converted to commonJS and can be required() afterwards correctly
     build: {
+      rollupOptions: {
+        output: {
+          format: 'cjs',
+          entryFileNames: '[name].cjs'
+        }
+      },
       externalizeDeps: {
         exclude: ['electron-store']
       }
@@ -37,6 +43,14 @@ export default defineConfig({
   },
   preload: {
     // --> Bundled as CommonJS
+    build: {
+      rollupOptions: {
+        output: {
+          format: 'cjs',
+          entryFileNames: '[name].js'
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src/renderer/src'),
