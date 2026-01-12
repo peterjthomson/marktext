@@ -565,8 +565,8 @@
           "rtl": "Right to Left"
         },
         "hideQuickInsertHint": "Hide quick insert hint",
-        "metaTransparency": "Meta symbol transparency",
-        "metaTransparencyNotes": "Controls the visibility of formatting symbols (e.g., #, *, **, ~~) when editing",
+        "metaTransparency": "Meta symbol visibility",
+        "metaTransparencyNotes": "How visible formatting symbols (#, *, ~~) are when editing. Lower = more subtle.",
         "hideLinkPopup": "Hide link popup",
         "autoCheck": "Auto check",
         "wrapCodeBlocks": "Wrap code blocks"

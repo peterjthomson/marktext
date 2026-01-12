@@ -154,24 +154,24 @@ export const setMetaTransparency = (value) => {
   const META_TRANSPARENCY_STYLE_ID = 'meta-transparency'
   let result = ''
 
-  // value is 0-100, where 0 = completely hidden, 100 = fully visible
-  if (value > 0) {
-    const opacity = value / 100
-    // Override the .ag-hide class to show meta symbols with the specified opacity
-    // The default .ag-hide uses width:0, height:0, overflow:hidden to hide
-    // We need to make them visible again with the specified opacity
-    result = `
-.ag-hide:not(.ag-math):not(.ag-ruby),
-.ag-hide:not(.ag-math):not(.ag-ruby) .ag-highlight,
-.ag-hide:not(.ag-math):not(.ag-ruby) .ag-selection {
-  width: auto !important;
-  height: auto !important;
-  overflow: visible !important;
-  opacity: ${opacity};
-  color: var(--editorColor50);
+  // value is 0-100, where 100 = fully visible (default), 0 = completely transparent
+  // This controls how visible meta symbols are when they ARE shown (on active lines)
+  const opacity = value / 100
+  result = `
+/* Control opacity of visible meta/format symbols on active lines */
+.ag-gray,
+.ag-paragraph.ag-active .ag-hide:not(.ag-math):not(.ag-ruby),
+.ag-paragraph.ag-active span[class*="ag-"] .ag-hide:not(.ag-math):not(.ag-ruby) {
+  opacity: ${opacity} !important;
+}
+
+/* Also apply to code fence delimiters and front matter markers */
+pre.ag-active::before,
+pre.ag-active::after,
+pre.ag-active .ag-language-input {
+  opacity: ${opacity} !important;
 }
 `
-  }
 
   let styleEle = document.querySelector(`#${META_TRANSPARENCY_STYLE_ID}`)
   if (!styleEle) {
