@@ -7,7 +7,5 @@ export default function hardLineBreak(h, cursor, block, token, outerClass) {
     selector += `.${CLASS_OR_ID.AG_LINE_END}`
   }
 
-  return [
-    h(selector, lineBreak)
-  ]
+  return [h(selector, lineBreak)]
 }

@@ -17,6 +17,7 @@ MarkText provides real-time preview as you type. Unlike split-pane editors, the 
 #### CommonMark
 
 Full [CommonMark 0.29](https://spec.commonmark.org/0.29/) specification support:
+
 - Headings (ATX and Setext)
 - Paragraphs and line breaks
 - Emphasis and strong emphasis
@@ -30,6 +31,7 @@ Full [CommonMark 0.29](https://spec.commonmark.org/0.29/) specification support:
 #### GitHub Flavored Markdown (GFM)
 
 [GFM](https://github.github.com/gfm/) extensions:
+
 - Tables
 - Task lists (checkboxes)
 - Strikethrough
@@ -39,6 +41,7 @@ Full [CommonMark 0.29](https://spec.commonmark.org/0.29/) specification support:
 #### Extended Markdown
 
 Additional features:
+
 - **KaTeX Math**: Inline `$...$` and block `$$...$$` math expressions
 - **Front Matter**: YAML/TOML/JSON metadata blocks
 - **Emojis**: `:emoji_name:` syntax with picker
@@ -51,16 +54,19 @@ Additional features:
 ### Edit Modes
 
 #### Source Code Mode
+
 - Plain text editing with syntax highlighting
 - Powered by CodeMirror
 - Full access to raw markdown
 
 #### Typewriter Mode
+
 - Current line stays centered
 - Reduces eye movement
 - Ideal for long-form writing
 
 #### Focus Mode
+
 - Dims non-active paragraphs
 - Highlights current block
 - Minimizes distractions
@@ -77,17 +83,20 @@ Additional features:
 ### Sidebar
 
 #### File Tree
+
 - Open folders as projects
 - Create, rename, delete files/folders
 - Sort by name, created, or modified date
 - Search within project (ripgrep-powered)
 
 #### Table of Contents
+
 - Auto-generated from headings
 - Click to navigate
 - Word wrap option
 
 #### Search Panel
+
 - Global search with ripgrep
 - Search and replace
 - Regex support
@@ -96,6 +105,7 @@ Additional features:
 ### Command Palette
 
 Quick access to all commands via `Ctrl/Cmd + Shift + P`:
+
 - File operations
 - Edit commands
 - View toggles
@@ -105,13 +115,14 @@ Quick access to all commands via `Ctrl/Cmd + Shift + P`:
 
 Six built-in themes:
 
-| Light Themes | Dark Themes |
-|--------------|-------------|
-| Cadmium Light | Dark |
+| Light Themes   | Dark Themes   |
+| -------------- | ------------- |
+| Cadmium Light  | Dark          |
 | Graphite Light | Material Dark |
-| Ulysses Light | One Dark |
+| Ulysses Light  | One Dark      |
 
 Theme affects:
+
 - Editor background and text
 - Syntax highlighting
 - UI components
@@ -145,6 +156,7 @@ Theme affects:
 #### Image Upload
 
 Supported uploaders:
+
 - GitHub repository
 - SM.MS
 - PicGo CLI
@@ -169,11 +181,13 @@ Supported uploaders:
 ### Supported Formats
 
 **Input:**
+
 - `.md`, `.markdown`
 - `.mmd`, `.mdown`
 - `.mdtxt`, `.mdtext`
 
 **Output:**
+
 - Markdown (`.md`)
 - HTML (`.html`)
 - PDF (via print dialog)
@@ -197,42 +211,43 @@ Supported uploaders:
 
 ### General Settings
 
-| Setting | Description |
-|---------|-------------|
-| Auto Save | Save automatically after changes |
-| Auto Save Delay | Time before auto-save (default 5s) |
-| Title Bar Style | Custom or native (Win/Linux) |
-| Language | UI language (9 options) |
-| Zoom | 50% - 200% |
-| Startup Action | Blank, last state, or specific folder |
-| File Sort | By name, created, or modified |
+| Setting         | Description                           |
+| --------------- | ------------------------------------- |
+| Auto Save       | Save automatically after changes      |
+| Auto Save Delay | Time before auto-save (default 5s)    |
+| Title Bar Style | Custom or native (Win/Linux)          |
+| Language        | UI language (9 options)               |
+| Zoom            | 50% - 200%                            |
+| Startup Action  | Blank, last state, or specific folder |
+| File Sort       | By name, created, or modified         |
 
 ### Editor Settings
 
-| Setting | Description |
-|---------|-------------|
-| Font Family | Editor typeface |
-| Font Size | 12px - 32px |
-| Line Height | 1.2 - 2.0 |
-| Line Width | Maximum line width |
-| Code Font | Monospace font for code |
-| Code Font Size | Separate size for code |
+| Setting        | Description             |
+| -------------- | ----------------------- |
+| Font Family    | Editor typeface         |
+| Font Size      | 12px - 32px             |
+| Line Height    | 1.2 - 2.0               |
+| Line Width     | Maximum line width      |
+| Code Font      | Monospace font for code |
+| Code Font Size | Separate size for code  |
 
 ### Markdown Settings
 
-| Setting | Description |
-|---------|-------------|
-| Prefer Loose List | Use loose list items |
-| Bullet List Marker | `-`, `*`, or `+` |
-| Order List Delimiter | `.` or `)` |
-| Front Matter Type | YAML, TOML, or JSON |
+| Setting               | Description              |
+| --------------------- | ------------------------ |
+| Prefer Loose List     | Use loose list items     |
+| Bullet List Marker    | `-`, `*`, or `+`         |
+| Order List Delimiter  | `.` or `)`               |
+| Front Matter Type     | YAML, TOML, or JSON      |
 | Superscript/Subscript | Enable `^super^` `~sub~` |
-| Footnotes | Enable footnote syntax |
-| HTML | Allow raw HTML |
+| Footnotes             | Enable footnote syntax   |
+| HTML                  | Allow raw HTML           |
 
 ### Keybindings
 
 Fully customizable keyboard shortcuts:
+
 - Platform-specific defaults (macOS vs Windows/Linux)
 - Conflict detection
 - Reset to defaults
@@ -283,6 +298,7 @@ Fully customizable keyboard shortcuts:
 ### Pandoc Integration
 
 When [Pandoc](https://pandoc.org/) is installed, export to:
+
 - Microsoft Word (.docx)
 - OpenDocument (.odt)
 - LaTeX (.tex)

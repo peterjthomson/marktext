@@ -3,18 +3,18 @@
 }
 
 .footnotes {
-  font-size: .85em;
-  opacity: .8;
+  font-size: 0.85em;
+  opacity: 0.8;
 }
 
-.footnotes li[role="doc-endnote"] {
+.footnotes li[role='doc-endnote'] {
   position: relative;
 }
 
 .footnotes .footnote-back {
   position: absolute;
   font-family: initial;
-  top: .2em;
+  top: 0.2em;
   right: 1em;
   text-decoration: none;
 }
@@ -45,7 +45,7 @@
 }
 
 .toc-container ul li span {
-  display : flex;
+  display: flex;
 }
 
 .toc-container ul li span a {

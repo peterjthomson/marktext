@@ -9,10 +9,14 @@ export default function codeFense(h, cursor, block, token, outerClass) {
 
   return [
     h(`span.${CLASS_OR_ID.AG_GRAY}`, markerContent),
-    h(`span.${CLASS_OR_ID.AG_LANGUAGE}`, {
-      attrs: {
-        spellcheck: 'false'
-      }
-    }, content)
+    h(
+      `span.${CLASS_OR_ID.AG_LANGUAGE}`,
+      {
+        attrs: {
+          spellcheck: 'false'
+        }
+      },
+      content
+    )
   ]
 }

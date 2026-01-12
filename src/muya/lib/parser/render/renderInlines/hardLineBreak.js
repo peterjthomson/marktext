@@ -10,8 +10,6 @@ export default function softLineBreak(h, cursor, block, token, outerClass) {
       h(`span.${CLASS_OR_ID.AG_LINE_END}`, lineBreak)
     ]
   } else {
-    return [
-      h(`span.${className}`, [h(`span.${spaceClass}`, spaces), lineBreak])
-    ]
+    return [h(`span.${className}`, [h(`span.${spaceClass}`, spaces), lineBreak])]
   }
 }

@@ -13,7 +13,7 @@ const WRAP_PAIRS = {
   $: '$'
 }
 
-const wrapSelectionCtrl = ContentState => {
+const wrapSelectionCtrl = (ContentState) => {
   /**
    * Check if we should wrap the selected text with the given character.
    * Returns true if text is selected and character is a wrap pair opener.
@@ -21,7 +21,7 @@ const wrapSelectionCtrl = ContentState => {
    * @param {string} char The character pressed
    * @returns {boolean} Whether wrap selection should be applied
    */
-  ContentState.prototype.shouldWrapSelection = function(char) {
+  ContentState.prototype.shouldWrapSelection = function (char) {
     if (!WRAP_PAIRS[char]) {
       return false
     }
@@ -57,7 +57,7 @@ const wrapSelectionCtrl = ContentState => {
    * @param {string} openChar The opening character
    * @returns {boolean} True if wrap was applied, false otherwise
    */
-  ContentState.prototype.wrapSelection = function(openChar) {
+  ContentState.prototype.wrapSelection = function (openChar) {
     const closeChar = WRAP_PAIRS[openChar]
     if (!closeChar) {
       return false
@@ -84,7 +84,7 @@ const wrapSelectionCtrl = ContentState => {
 
     // Ensure start comes before end
     if (startOffset > endOffset) {
-      [startOffset, endOffset] = [endOffset, startOffset]
+      ;[startOffset, endOffset] = [endOffset, startOffset]
     }
 
     const block = this.getBlock(startKey)
@@ -96,8 +96,11 @@ const wrapSelectionCtrl = ContentState => {
     const selectedText = text.substring(startOffset, endOffset)
 
     // Build the new text with wrapped selection
-    const newText = text.substring(0, startOffset) +
-      openChar + selectedText + closeChar +
+    const newText =
+      text.substring(0, startOffset) +
+      openChar +
+      selectedText +
+      closeChar +
       text.substring(endOffset)
 
     block.text = newText
@@ -127,7 +130,7 @@ const wrapSelectionCtrl = ContentState => {
    * @param {KeyboardEvent} event The keyboard event
    * @returns {boolean} True if the event was handled, false otherwise
    */
-  ContentState.prototype.handleWrapSelectionKeydown = function(event) {
+  ContentState.prototype.handleWrapSelectionKeydown = function (event) {
     // Don't handle if modifier keys are pressed (except shift for some chars)
     if (event.ctrlKey || event.metaKey || event.altKey) {
       return false

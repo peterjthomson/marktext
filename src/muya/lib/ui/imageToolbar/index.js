@@ -26,7 +26,7 @@ class ImageToolbar extends BaseFloat {
     this.options = opts
     this.icons = getIcons(muya?.options?.t)
     this.reference = null
-    const toolbarContainer = this.toolbarContainer = document.createElement('div')
+    const toolbarContainer = (this.toolbarContainer = document.createElement('div'))
     this.container.appendChild(toolbarContainer)
     this.floatBox.classList.add('ag-image-toolbar-container')
     this.listen()
@@ -54,35 +54,46 @@ class ImageToolbar extends BaseFloat {
     const icons = getIcons(muya?.options?.t)
     const { attrs } = imageInfo.token
     const dataAlign = attrs['data-align']
-    const children = icons.map(i => {
+    const children = icons.map((i) => {
       let icon
       let iconWrapperSelector
       if (i.icon) {
         // SVG icon Asset
         iconWrapperSelector = 'div.icon-wrapper'
-        icon = h('i.icon', h('i.icon-inner', {
-          style: {
-            background: `url(${i.icon}) no-repeat`,
-            'background-size': '100%'
-          }
-        }, ''))
+        icon = h(
+          'i.icon',
+          h(
+            'i.icon-inner',
+            {
+              style: {
+                background: `url(${i.icon}) no-repeat`,
+                'background-size': '100%'
+              }
+            },
+            ''
+          )
+        )
       }
       const iconWrapper = h(iconWrapperSelector, icon)
       let itemSelector = `li.item.${i.type}`
 
-      if (i.type === dataAlign || !dataAlign && i.type === 'inline') {
+      if (i.type === dataAlign || (!dataAlign && i.type === 'inline')) {
         itemSelector += '.active'
       }
-      return h(itemSelector, {
-        dataset: {
-          tip: i.tooltip
-        },
-        on: {
-          click: event => {
-            this.selectItem(event, i)
+      return h(
+        itemSelector,
+        {
+          dataset: {
+            tip: i.tooltip
+          },
+          on: {
+            click: (event) => {
+              this.selectItem(event, i)
+            }
           }
-        }
-      }, [h('div.tooltip', i.tooltip), iconWrapper])
+        },
+        [h('div.tooltip', i.tooltip), iconWrapper]
+      )
     })
 
     const vnode = h('ul', children)

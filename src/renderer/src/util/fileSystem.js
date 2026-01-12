@@ -99,9 +99,9 @@ export const uploadImage = async (pathname, image, preferences) => {
   const isPath = typeof image === 'string'
   const MAX_SIZE = 5 * 1024 * 1024
   let resolvePromise, rejectPromise
-  const promise = new Promise((res, rej) => {
-    resolvePromise = res
-    rejectPromise = rej
+  const promise = new Promise((resolve, reject) => {
+    resolvePromise = resolve
+    rejectPromise = reject
   })
 
   if (currentUploader === 'none') {
@@ -139,14 +139,14 @@ export const uploadImage = async (pathname, image, preferences) => {
       process.platform === 'win32'
         ? ['picgo', 'picgo.exe']
         : [
-            'picgo',
-            '/opt/homebrew/bin/picgo',
-            '/usr/local/bin/picgo',
-            '/usr/bin/picgo',
+          'picgo',
+          '/opt/homebrew/bin/picgo',
+          '/usr/local/bin/picgo',
+          '/usr/bin/picgo',
           `${process.env.HOME}/.npm-global/bin/picgo`,
           `${process.env.HOME}/.npm/bin/picgo`,
           '/usr/local/lib/node_modules/.bin/picgo'
-          ]
+        ]
     for (const c of candidates) {
       try {
         if (window.commandExists?.exists && window.commandExists.exists(c)) return c
@@ -154,7 +154,9 @@ export const uploadImage = async (pathname, image, preferences) => {
           c.startsWith('/') &&
           window.fileUtils?.pathExistsSync &&
           window.fileUtils.pathExistsSync(c)
-        ) { return c }
+        ) {
+          return c
+        }
       } catch {}
     }
     return null
@@ -162,6 +164,7 @@ export const uploadImage = async (pathname, image, preferences) => {
 
   const parsePicgoOutput = (text) => {
     const raw = String(text || '')
+    // eslint-disable-next-line no-control-regex
     const cleaned = raw.replace(/\u001b\[[0-9;]*m/g, '') // strip ANSI colors
     try {
       const lines = cleaned
@@ -178,7 +181,9 @@ export const uploadImage = async (pathname, image, preferences) => {
             if (obj) {
               // 仅在明确成功时返回 URL
               if (obj.success === true && typeof obj.imgUrl === 'string') return obj.imgUrl
-              if (obj.success === true && Array.isArray(obj.result) && obj.result.length > 0) { return String(obj.result[obj.result.length - 1]) }
+              if (obj.success === true && Array.isArray(obj.result) && obj.result.length > 0) {
+                return String(obj.result[obj.result.length - 1])
+              }
               if (obj.success === true && typeof obj.url === 'string') return obj.url
             }
           } catch {}

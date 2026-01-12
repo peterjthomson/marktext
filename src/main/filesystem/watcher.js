@@ -18,7 +18,7 @@ const EVENT_NAME = {
   file: 'mt::update-file'
 }
 
-const add = async(win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
+const add = async (win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
   const stats = await fsPromises.stat(pathname)
   const birthTime = stats.birthtime
   const isMarkdown = hasMarkdownExtension(pathname)
@@ -66,7 +66,7 @@ const unlink = (win, pathname, type) => {
   })
 }
 
-const change = async(win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
+const change = async (win, pathname, type, endOfLine, autoGuessEncoding, trimTrailingNewline) => {
   // No need to update the tree view if the file content has changed.
   if (type === 'dir') return
 
@@ -143,7 +143,7 @@ class Watcher {
   }
 
   // Watch a file or directory and return a unwatch function.
-  watch(win, watchPath, type = 'dir'/* file or dir */) {
+  watch(win, watchPath, type = 'dir' /* file or dir */) {
     // TODO: Is it needed to set `watcherUsePolling` ? because macOS need to set to true.
     const usePolling = isOsx ? true : this._preferences.getItem('watcherUsePolling')
 
@@ -160,7 +160,9 @@ class Watcher {
           return true
         }
 
-        if (checkPathExcludePattern(pathname, this._preferences.getItem('treePathExcludePatterns'))) {
+        if (
+          checkPathExcludePattern(pathname, this._preferences.getItem('treePathExcludePatterns'))
+        ) {
           return true
         }
         if (fileInfo.isDirectory()) {
@@ -190,25 +192,25 @@ class Watcher {
     let renameTimer = null
 
     watcher
-      .on('add', async pathname => {
-        if (!await this._shouldIgnoreEvent(win.id, pathname, type, usePolling)) {
+      .on('add', async (pathname) => {
+        if (!(await this._shouldIgnoreEvent(win.id, pathname, type, usePolling))) {
           const { _preferences } = this
           const eol = _preferences.getPreferredEol()
           const { autoGuessEncoding, trimTrailingNewline } = _preferences.getAll()
           add(win, pathname, type, eol, autoGuessEncoding, trimTrailingNewline)
         }
       })
-      .on('change', async pathname => {
-        if (!await this._shouldIgnoreEvent(win.id, pathname, type, usePolling)) {
+      .on('change', async (pathname) => {
+        if (!(await this._shouldIgnoreEvent(win.id, pathname, type, usePolling))) {
           const { _preferences } = this
           const eol = _preferences.getPreferredEol()
           const { autoGuessEncoding, trimTrailingNewline } = _preferences.getAll()
           change(win, pathname, type, eol, autoGuessEncoding, trimTrailingNewline)
         }
       })
-      .on('unlink', pathname => unlink(win, pathname, type))
-      .on('addDir', pathname => addDir(win, pathname, type))
-      .on('unlinkDir', pathname => unlinkDir(win, pathname, type))
+      .on('unlink', (pathname) => unlink(win, pathname, type))
+      .on('addDir', (pathname) => addDir(win, pathname, type))
+      .on('unlinkDir', (pathname) => unlinkDir(win, pathname, type))
       .on('raw', (event, subpath, details) => {
         if (global.MARKTEXT_DEBUG_VERBOSE >= 3) {
           console.log('watcher: ', event, subpath, details)
@@ -221,7 +223,7 @@ class Watcher {
           if (renameTimer) {
             clearTimeout(renameTimer)
           }
-          renameTimer = setTimeout(async() => {
+          renameTimer = setTimeout(async () => {
             renameTimer = null
             if (disposed) {
               return
@@ -236,7 +238,7 @@ class Watcher {
           }, 150)
         }
       })
-      .on('error', error => {
+      .on('error', (error) => {
         // Check if too many file descriptors are opened and notify the user about this issue.
         if (error.code === 'ENOSPC') {
           if (!enospcReached) {
@@ -246,7 +248,8 @@ class Watcher {
             win.webContents.send('mt::show-notification', {
               title: 'inotify limit reached',
               type: 'warning',
-              message: 'Cannot watch all files and file changes because too many file descriptors are opened.'
+              message:
+                'Cannot watch all files and file changes because too many file descriptors are opened.'
             })
           }
         } else {
@@ -283,11 +286,7 @@ class Watcher {
   unwatch(win, watchPath, type = 'dir') {
     for (const id of Object.keys(this.watchers)) {
       const w = this.watchers[id]
-      if (
-        w.win === win &&
-        w.pathname === watchPath &&
-        w.type === type
-      ) {
+      if (w.win === win && w.pathname === watchPath && w.type === type) {
         w.watcher.close()
         delete this.watchers[id]
         break
@@ -307,13 +306,13 @@ class Watcher {
       }
     }
     if (watchers.length) {
-      watchIds.forEach(id => delete this.watchers[id])
-      watchers.forEach(watcher => watcher.close())
+      watchIds.forEach((id) => delete this.watchers[id])
+      watchers.forEach((watcher) => watcher.close())
     }
   }
 
   close() {
-    Object.keys(this.watchers).forEach(id => this.watchers[id].close())
+    Object.keys(this.watchers).forEach((id) => this.watchers[id].close())
     this.watchers = {}
     this._ignoreChangeEvents = []
   }
@@ -327,7 +326,11 @@ class Watcher {
    * @param {string} pathname The path to ignore.
    * @param {number} [duration] The duration in ms to ignore the changed event.
    */
-  ignoreChangedEvent(windowId, pathname, duration = WATCHER_STABILITY_THRESHOLD + (WATCHER_STABILITY_POLL_INTERVAL * 2)) {
+  ignoreChangedEvent(
+    windowId,
+    pathname,
+    duration = WATCHER_STABILITY_THRESHOLD + WATCHER_STABILITY_POLL_INTERVAL * 2
+  ) {
     this._ignoreChangeEvents.push({ windowId, pathname, duration, start: new Date() })
   }
 
@@ -360,7 +363,9 @@ class Watcher {
               const fileInfo = await fsPromises.stat(pathname)
               if (fileInfo.mtime - start < duration) {
                 if (global.MARKTEXT_DEBUG_VERBOSE >= 3) {
-                  console.log(`Ignoring file event after "stat": current="${currentTime}", start="${start}", file="${fileInfo.mtime}".`)
+                  console.log(
+                    `Ignoring file event after "stat": current="${currentTime}", start="${start}", file="${fileInfo.mtime}".`
+                  )
                 }
                 return true
               }

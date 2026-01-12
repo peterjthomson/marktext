@@ -19,8 +19,9 @@ export const usePluginAddRules = (turndownService, keeps) => {
   turndownService.addRule('paragraph', {
     filter: 'p',
 
-    replacement: function(content, node) {
-      const isTaskListItemParagraph = node.previousElementSibling && node.previousElementSibling.tagName === 'INPUT'
+    replacement: function (content, node) {
+      const isTaskListItemParagraph =
+        node.previousElementSibling && node.previousElementSibling.tagName === 'INPUT'
 
       return isTaskListItemParagraph ? content + '\n\n' : '\n\n' + content + '\n\n'
     }
@@ -29,7 +30,7 @@ export const usePluginAddRules = (turndownService, keeps) => {
   turndownService.addRule('listItem', {
     filter: 'li',
 
-    replacement: function(content, node, options) {
+    replacement: function (content, node, options) {
       content = content
         .replace(/^\n+/, '') // remove leading newlines
         .replace(/\n+$/, '\n') // replace trailing newlines with just a single one
@@ -42,9 +43,7 @@ export const usePluginAddRules = (turndownService, keeps) => {
         const index = Array.prototype.indexOf.call(parent.children, node)
         prefix = (start ? Number(start) + index : index + 1) + '. '
       }
-      return (
-        prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
-      )
+      return prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '')
     }
   })
 

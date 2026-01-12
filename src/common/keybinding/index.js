@@ -1,7 +1,8 @@
 const isOsx = process.platform === 'darwin'
 
-const _normalizeAccelerator = accelerator => {
-  return accelerator.toLowerCase()
+const _normalizeAccelerator = (accelerator) => {
+  return accelerator
+    .toLowerCase()
     .replace('commandorcontrol', isOsx ? 'cmd' : 'ctrl')
     .replace('cmdorctrl', isOsx ? 'cmd' : 'ctrl')
     .replace('control', 'ctrl')

@@ -74,9 +74,7 @@
             type="primary"
             @click="handleDialogTableConfirm"
           >
-            {{
-              t('common.ok')
-            }}
+            {{ t('common.ok') }}
           </el-button>
         </div>
       </template>
@@ -486,7 +484,7 @@ const jumpClick = (linkInfo) => {
   editorStore.FORMAT_LINK_CLICK({ data: { href }, dirname: window.DIRNAME })
 }
 
-const imagePathAutoComplete = async(src) => {
+const imagePathAutoComplete = async (src) => {
   const files = await editorStore.ASK_FOR_IMAGE_AUTO_PATH(src)
   return files.map((f) => {
     const iconClass = f.type === 'directory' ? 'icon-folder' : 'icon-image'
@@ -494,7 +492,7 @@ const imagePathAutoComplete = async(src) => {
   })
 }
 
-const imageAction = async(image, id, alt = '') => {
+const imageAction = async (image, id, alt = '') => {
   // TODO(Refactor): Refactor this method.
   const { filename, pathname: currentPathname } = currentFile.value
 
@@ -517,9 +515,7 @@ const imageAction = async(image, id, alt = '') => {
 
   const getResolvedImagePath = (imagePath) => {
     // Filename w/o extension
-    const replacement = isTabSavedOnDisk
-      ? filename.replace(/\.[^/.]+$/, '')
-      : ''
+    const replacement = isTabSavedOnDisk ? filename.replace(/\.[^/.]+$/, '') : ''
     return imagePath.replace(/\${filename}/g, replacement)
   }
 
@@ -762,7 +758,7 @@ const handleFindAction = (action) => {
   scrollToHighlight()
 }
 
-const handleExport = async(options) => {
+const handleExport = async (options) => {
   const { type, header, footer, headerFooterStyled, htmlTitle } = options
 
   if (!/^pdf|print|styledHtml$/.test(type)) {

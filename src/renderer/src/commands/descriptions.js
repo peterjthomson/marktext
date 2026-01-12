@@ -231,7 +231,7 @@ const getCommandDescriptions = () => {
  * @param {string} id - 命令ID，格式如 'file.save', 'edit.copy' 等
  * @returns {string} 返回国际化后的命令描述文本，如果找不到对应描述则返回原ID用于调试
  */
-export default id => {
+export default (id) => {
   // 每次调用都重新获取命令描述，以支持动态语言切换
   const commandDescriptions = getCommandDescriptions()
   const description = commandDescriptions[id]

@@ -3,14 +3,14 @@
  * Triggered by Option+ArrowUp / Option+ArrowDown (Alt+ArrowUp / Alt+ArrowDown on Windows/Linux)
  */
 
-const moveLineCtrl = ContentState => {
+const moveLineCtrl = (ContentState) => {
   /**
    * Get the movable block for the current cursor position.
    * This finds the appropriate block to move - either a list item, paragraph, heading, etc.
    *
    * @returns {Object|null} The block to move, or null if not movable
    */
-  ContentState.prototype.getMovableBlock = function() {
+  ContentState.prototype.getMovableBlock = function () {
     const { start } = this.cursor
     if (!start) return null
 
@@ -35,9 +35,18 @@ const moveLineCtrl = ContentState => {
       }
 
       // If we're in a paragraph, heading, or other top-level content block
-      if (['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'blockquote', 'pre', 'figure'].includes(movableBlock.type)) {
+      if (
+        ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'blockquote', 'pre', 'figure'].includes(
+          movableBlock.type
+        )
+      ) {
         // But only if the parent is the root (blocks array) or another container
-        if (!parent || parent.type === 'ul' || parent.type === 'ol' || parent.type === 'blockquote') {
+        if (
+          !parent ||
+          parent.type === 'ul' ||
+          parent.type === 'ol' ||
+          parent.type === 'blockquote'
+        ) {
           // If parent is a list or blockquote, we need to go up one more level
           if (parent && (parent.type === 'ul' || parent.type === 'ol')) {
             // We're inside a list, find the li
@@ -68,7 +77,7 @@ const moveLineCtrl = ContentState => {
    * @param {Object} block1 First block
    * @param {Object} block2 Second block (should be adjacent sibling)
    */
-  ContentState.prototype.swapBlocks = function(block1, block2) {
+  ContentState.prototype.swapBlocks = function (block1, block2) {
     if (!block1 || !block2) return false
 
     const parent = this.getParent(block1)
@@ -118,7 +127,7 @@ const moveLineCtrl = ContentState => {
    *
    * @returns {boolean} True if the move was successful
    */
-  ContentState.prototype.moveLineUp = function() {
+  ContentState.prototype.moveLineUp = function () {
     const movableBlock = this.getMovableBlock()
     if (!movableBlock) return false
 
@@ -145,7 +154,7 @@ const moveLineCtrl = ContentState => {
    *
    * @returns {boolean} True if the move was successful
    */
-  ContentState.prototype.moveLineDown = function() {
+  ContentState.prototype.moveLineDown = function () {
     const movableBlock = this.getMovableBlock()
     if (!movableBlock) return false
 
@@ -174,7 +183,7 @@ const moveLineCtrl = ContentState => {
    * @param {KeyboardEvent} event The keyboard event
    * @returns {boolean} True if the event was handled
    */
-  ContentState.prototype.handleMoveLineKeydown = function(event) {
+  ContentState.prototype.handleMoveLineKeydown = function (event) {
     // Check for Alt/Option + Arrow Up/Down
     if (!event.altKey) return false
     if (event.ctrlKey || event.metaKey || event.shiftKey) return false

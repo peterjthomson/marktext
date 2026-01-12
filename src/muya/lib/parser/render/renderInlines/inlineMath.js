@@ -7,9 +7,10 @@ import 'katex/dist/katex.min.css'
 
 export default function displayMath(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor)
-  const mathSelector = className === CLASS_OR_ID.AG_HIDE
-    ? `span.${className}.${CLASS_OR_ID.AG_MATH}`
-    : `span.${CLASS_OR_ID.AG_MATH}`
+  const mathSelector =
+    className === CLASS_OR_ID.AG_HIDE
+      ? `span.${className}.${CLASS_OR_ID.AG_MATH}`
+      : `span.${CLASS_OR_ID.AG_MATH}`
 
   const { start, end } = token.range
   const { marker } = token
@@ -44,12 +45,20 @@ export default function displayMath(h, cursor, block, token, outerClass) {
   return [
     h(`span.${className}.${CLASS_OR_ID.AG_MATH_MARKER}`, startMarker),
     h(mathSelector, [
-      h(`span.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_MATH_TEXT}`, {
-        attrs: { spellcheck: 'false' }
-      }, content),
-      h(previewSelector, {
-        attrs: { contenteditable: 'false' }
-      }, mathVnode)
+      h(
+        `span.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_MATH_TEXT}`,
+        {
+          attrs: { spellcheck: 'false' }
+        },
+        content
+      ),
+      h(
+        previewSelector,
+        {
+          attrs: { contenteditable: 'false' }
+        },
+        mathVnode
+      )
     ]),
     h(`span.${className}.${CLASS_OR_ID.AG_MATH_MARKER}`, endMarker)
   ]

@@ -472,7 +472,7 @@ const loadThemesFromDisk = () => {
 
   // Search for dictionaries on filesystem.
   if (window.fileUtils.isDirectory(themeDir)) {
-    fs.readdirSync(themeDir).forEach(async(filename) => {
+    fs.readdirSync(themeDir).forEach(async (filename) => {
       const fullname = window.path.join(themeDir, filename)
       if (/.+\.css$/i.test(filename) && window.fileUtils.isFile(fullname)) {
         try {

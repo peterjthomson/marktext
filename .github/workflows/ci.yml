@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci --no-audit --no-fund --ignore-scripts
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Run Format Check
+        run: npm run format -- --check
+
+  build-test:
+    needs: lint
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Install python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Linux Build Dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            icnsutils \
+            graphicsmagick \
+            xz-utils \
+            libx11-dev \
+            libxkbfile-dev \
+            gnome-keyring \
+            libsecret-1-dev \
+            libfontconfig-dev \
+            rpm
+
+      - name: Install Dependencies
+        run: npm ci --no-audit --no-fund --ignore-scripts --loglevel verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set C++20 for MacOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "CXXFLAGS=-std=gnu++20 -stdlib=libc++" >> $GITHUB_ENV
+
+      - name: Rebuild native modules (MacOS + Windows)
+        if: matrix.os != 'ubuntu-22.04'
+        run: npx @electron/rebuild -f
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebuild native modules (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: USE_ELECTRON_CLANG=0 npx @electron/rebuild -f
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build unpacked only (faster for CI)
+      - name: Build Application
+        run: npm run build
+
+      # Dry-run build (--dir flag for unpacked output)
+      - name: Build Distribution (Dry Run)
+        run: npm run build:unpack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

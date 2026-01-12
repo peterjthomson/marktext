@@ -30,7 +30,7 @@ class EventCenter {
    */
   detachDOMEvent(eventId) {
     if (!eventId) return false
-    const index = this.events.findIndex(e => e.eventId === eventId)
+    const index = this.events.findIndex((e) => e.eventId === eventId)
     if (index > -1) {
       const { target, event, listener, capture } = this.events[index]
       target.removeEventListener(event, listener, capture)
@@ -42,7 +42,7 @@ class EventCenter {
    * [detachAllDomEvents remove all the DOM events handler]
    */
   detachAllDomEvents() {
-    this.events.forEach(event => this.detachDOMEvent(event.eventId))
+    this.events.forEach((event) => this.detachDOMEvent(event.eventId))
   }
 
   /**
@@ -70,8 +70,8 @@ class EventCenter {
    */
   unsubscribe(event, listener) {
     const listeners = this.listeners[event]
-    if (Array.isArray(listeners) && listeners.find(l => l.listener === listener)) {
-      const index = listeners.findIndex(l => l.listener === listener)
+    if (Array.isArray(listeners) && listeners.find((l) => l.listener === listener)) {
+      const index = listeners.findIndex((l) => l.listener === listener)
       listeners.splice(index, 1)
     }
   }
@@ -101,7 +101,12 @@ class EventCenter {
   // Determine whether the event has been bind
   checkHasBind(cTarget, cEvent, cListener, cCapture) {
     for (const { target, event, listener, capture } of this.events) {
-      if (target === cTarget && event === cEvent && listener === cListener && capture === cCapture) {
+      if (
+        target === cTarget &&
+        event === cEvent &&
+        listener === cListener &&
+        capture === cCapture
+      ) {
         return true
       }
     }

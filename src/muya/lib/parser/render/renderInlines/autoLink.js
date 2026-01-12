@@ -14,15 +14,19 @@ export default function autoLink(h, cursor, block, token, outerClass) {
   const hyperlink = isLink ? encodeURI(href) : `mailto:${email}`
   return [
     h(`span.${className}`, startMarker),
-    h(`a.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_AUTO_LINK}`, {
-      attrs: {
-        spellcheck: 'false'
+    h(
+      `a.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_AUTO_LINK}`,
+      {
+        attrs: {
+          spellcheck: 'false'
+        },
+        props: {
+          href: sanitizeHyperlink(hyperlink),
+          target: '_blank'
+        }
       },
-      props: {
-        href: sanitizeHyperlink(hyperlink),
-        target: '_blank'
-      }
-    }, content),
+      content
+    ),
     h(`span.${className}`, endMarker)
   ]
 }

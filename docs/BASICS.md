@@ -22,7 +22,7 @@ MarkText can be used as a single editor but opens all files in a separate tab. T
 
 **Want to use tabs without showing them?**
 
-You can hide tabs and use key bindings such as <kbd>CmdOrCtrl</kbd>+<kbd>Tab</kbd> to cycle through tabs or the sidebar *opened files* panel.
+You can hide tabs and use key bindings such as <kbd>CmdOrCtrl</kbd>+<kbd>Tab</kbd> to cycle through tabs or the sidebar _opened files_ panel.
 
 ![](assets/marktext-interface-1.png)
 
@@ -42,11 +42,11 @@ You can use the menu `File -> Open File` or press <kbd>CmdOrCtrl</kbd>+<kbd>O</k
 
 ### Save your edited file
 
-After some modifications you can save your file via <kbd>CmdOrCtrl</kbd>+<kbd>S</kbd> or use *save as* to use a different file name.
+After some modifications you can save your file via <kbd>CmdOrCtrl</kbd>+<kbd>S</kbd> or use _save as_ to use a different file name.
 
 ### Open a directory
 
-MarkText also has support to open a directory via <kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> or the sidebar button *Open Folder*. After opening a directory all files and directories are shown in the sidebar tree view. The tree view allows you to open further files, browse and modify files or directories inside the opened root directory. Above the tree view are all opened files located. You can also use quick open (<kbd>CmdOrCtrl</kbd>+<kbd>P</kbd>) to quickly open a file from the opened root directory or editor and navigate via arrow keys or select a file via mouse. To view another sidebar panel like find in files click on the left sidebar icons.
+MarkText also has support to open a directory via <kbd>CmdOrCtrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> or the sidebar button _Open Folder_. After opening a directory all files and directories are shown in the sidebar tree view. The tree view allows you to open further files, browse and modify files or directories inside the opened root directory. Above the tree view are all opened files located. You can also use quick open (<kbd>CmdOrCtrl</kbd>+<kbd>P</kbd>) to quickly open a file from the opened root directory or editor and navigate via arrow keys or select a file via mouse. To view another sidebar panel like find in files click on the left sidebar icons.
 
 ![](assets/marktext-interface-2.png)
 

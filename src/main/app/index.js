@@ -24,7 +24,7 @@ class App {
    * @param {Accessor} accessor The application accessor for application instances.
    * @param {arg.Result} args Parsed application arguments.
    */
-  constructor (accessor, args) {
+  constructor(accessor, args) {
     this._accessor = accessor
     this._args = args || { _: [] }
     this._openFilesCache = []
@@ -43,7 +43,7 @@ class App {
   /**
    * The entry point into the application.
    */
-  init () {
+  init() {
     // Enable these features to use `backdrop-filter` css rules!
     if (isOsx) {
       app.commandLine.appendSwitch('enable-experimental-web-platform-features', 'true')
@@ -123,7 +123,7 @@ class App {
   /**
    * Initialize main process language from preferences
    */
-  async _initializeLanguage () {
+  async _initializeLanguage() {
     try {
       let currentLanguage = this._accessor.preferences.getItem('language')
 
@@ -133,7 +133,18 @@ class App {
         console.log(`System language detected: ${systemLanguage}`)
 
         // 支持的语言列表（根据项目实际支持的语言）
-        const supportedLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'pt', 'ru']
+        const supportedLanguages = [
+          'en',
+          'zh-CN',
+          'zh-TW',
+          'ja',
+          'ko',
+          'fr',
+          'de',
+          'es',
+          'pt',
+          'ru'
+        ]
 
         // 语言映射：系统语言代码 -> 应用语言代码
         const languageMap = {
@@ -181,7 +192,7 @@ class App {
     }
   }
 
-  async getScreenshotFileName () {
+  async getScreenshotFileName() {
     const screenshotFolderPath = await this._accessor.dataCenter.getItem('screenshotFolderPath')
     const fileName = `${dayjs().format('YYYY-MM-DD-HH-mm-ss')}-screenshot.png`
     return path.join(screenshotFolderPath, fileName)
@@ -211,7 +222,14 @@ class App {
       }
     }
 
-    const { startUpAction, defaultDirectoryToOpen, followSystemTheme, lightModeTheme, darkModeTheme, theme } = preferences.getAll()
+    const {
+      startUpAction,
+      defaultDirectoryToOpen,
+      followSystemTheme,
+      lightModeTheme,
+      darkModeTheme,
+      theme
+    } = preferences.getAll()
 
     if (startUpAction === 'folder' && defaultDirectoryToOpen) {
       const info = normalizeMarkdownPath(defaultDirectoryToOpen)
@@ -230,7 +248,9 @@ class App {
 
     if (followSystemTheme && isDarkTheme !== systemIsDark) {
       const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
-      log.info(`Following system theme at startup: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+      log.info(
+        `Following system theme at startup: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`
+      )
       selectTheme(newTheme)
     }
 
@@ -241,12 +261,17 @@ class App {
         const { lightModeTheme, darkModeTheme } = preferences.getAll()
         const newTheme = systemIsDark ? darkModeTheme : lightModeTheme
 
-        log.info(`followSystemTheme enabled, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+        log.info(
+          `followSystemTheme enabled, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`
+        )
         selectTheme(newTheme)
         preferences.setItem('theme', newTheme)
       }
       // When light/dark mode theme preferences change, apply immediately if following system
-      if (preferences.getItem('followSystemTheme') && (change.lightModeTheme || change.darkModeTheme)) {
+      if (
+        preferences.getItem('followSystemTheme') &&
+        (change.lightModeTheme || change.darkModeTheme)
+      ) {
         const systemIsDark = nativeTheme.shouldUseDarkColors
 
         // Get current values, but prefer the NEW values from the change event
@@ -280,7 +305,9 @@ class App {
 
           // Only switch if the theme actually needs to change
           if (newTheme !== currentTheme) {
-            log.info(`System theme changed, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`)
+            log.info(
+              `System theme changed, switching to: ${newTheme} (system ${systemIsDark ? 'dark' : 'light'})`
+            )
             selectTheme(newTheme)
             preferences.setItem('theme', newTheme)
           }
@@ -392,7 +419,7 @@ class App {
    * @param {*} [options] The BrowserWindow options.
    * @returns {EditorWindow} The created editor window.
    */
-  _createEditorWindow (rootDirectory = null, fileList = [], markdownList = [], options = {}) {
+  _createEditorWindow(rootDirectory = null, fileList = [], markdownList = [], options = {}) {
     const editor = new EditorWindow(this._accessor)
     editor.createWindow(rootDirectory, fileList, markdownList, options)
     this._windowManager.add(editor)
@@ -405,7 +432,7 @@ class App {
   /**
    * Create a new setting window.
    */
-  _createSettingWindow (category) {
+  _createSettingWindow(category) {
     const setting = new SettingWindow(this._accessor)
     setting.createWindow(category)
     this._windowManager.add(setting)
@@ -414,7 +441,7 @@ class App {
     }
   }
 
-  _openFilesToOpen () {
+  _openFilesToOpen() {
     this._openPathList(this._openFilesCache, false)
   }
 
@@ -425,7 +452,7 @@ class App {
    * @param {boolean} openFilesInSameWindow Open all files in the same window with
    * the first directory and discard other directories.
    */
-  _openPathList (pathsToOpen, openFilesInSameWindow = false) {
+  _openPathList(pathsToOpen, openFilesInSameWindow = false) {
     const { _windowManager } = this
     const openFilesInNewWindow = this._accessor.preferences.getItem('openFilesInNewWindow')
 
@@ -546,7 +573,7 @@ class App {
     pathsToOpen.length = 0
   }
 
-  _openSettingsWindow (category) {
+  _openSettingsWindow(category) {
     const settingWins = this._windowManager.getWindowsByType(WindowType.SETTINGS)
     if (settingWins.length >= 1) {
       // A setting window is already created
@@ -562,7 +589,7 @@ class App {
     this._createSettingWindow(category)
   }
 
-  _listenForIpcMain () {
+  _listenForIpcMain() {
     registerKeyboardListeners()
     registerSpellcheckerListeners()
 
@@ -576,11 +603,11 @@ class App {
       this._createEditorWindow()
     })
 
-    ipcMain.on('screen-capture', async(win) => {
+    ipcMain.on('screen-capture', async (win) => {
       if (isOsx) {
         // Use macOs `screencapture` command line when in macOs system.
         const screenshotFileName = await this.getScreenshotFileName()
-        exec('screencapture -i -c', async(err) => {
+        exec('screencapture -i -c', async (err) => {
           if (err) {
             log.error(err)
             return
@@ -679,7 +706,7 @@ class App {
       }
     })
 
-    ipcMain.on('mt::select-default-directory-to-open', async(e) => {
+    ipcMain.on('mt::select-default-directory-to-open', async (e) => {
       const { preferences } = this._accessor
       const { defaultDirectoryToOpen } = preferences.getAll()
       const win = BrowserWindow.fromWebContents(e.sender)
@@ -721,12 +748,12 @@ class App {
       return { defaultKeybindings, userKeybindings }
     })
 
-    ipcMain.handle('mt::keybinding-save-user-keybindings', async(event, userKeybindings) => {
+    ipcMain.handle('mt::keybinding-save-user-keybindings', async (event, userKeybindings) => {
       const { keybindings } = this._accessor
       return keybindings.setUserKeybindings(userKeybindings)
     })
 
-    ipcMain.handle('mt::fs-trash-item', async(event, fullPath) => {
+    ipcMain.handle('mt::fs-trash-item', async (event, fullPath) => {
       return shell.trashItem(fullPath)
     })
   }

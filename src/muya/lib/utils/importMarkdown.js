@@ -67,7 +67,7 @@ const turnSoftBreakToSpan = (html) => {
 
 const importRegister = (ContentState) => {
   // turn markdown to blocks
-  ContentState.prototype.markdownToState = function(markdown) {
+  ContentState.prototype.markdownToState = function (markdown) {
     // mock a root block...
     const rootState = {
       key: null,
@@ -424,7 +424,7 @@ const importRegister = (ContentState) => {
     return rootState.children.length ? rootState.children : [this.createBlockP()]
   }
 
-  ContentState.prototype.htmlToMarkdown = function(html, keeps = []) {
+  ContentState.prototype.htmlToMarkdown = function (html, keeps = []) {
     // turn html to markdown
     const { turndownConfig } = this
     const turndownService = new TurndownService(turndownConfig)
@@ -440,7 +440,7 @@ const importRegister = (ContentState) => {
   }
 
   // turn html to blocks
-  ContentState.prototype.html2State = function(html) {
+  ContentState.prototype.html2State = function (html) {
     const markdown = this.htmlToMarkdown(html, ['ruby', 'rt', 'u', 'br'])
     return this.markdownToState(markdown)
   }
@@ -450,7 +450,7 @@ const importRegister = (ContentState) => {
    * @returns { anchor: { line: 0, ch: 0 }, focus: { line: 0, ch: 0 } }
    * Get the cursor position in muya index.
    */
-  ContentState.prototype.getMuyaIndexCursor = function() {
+  ContentState.prototype.getMuyaIndexCursor = function () {
     const blocks = this.getBlocks()
     const { anchor, focus } = this.cursor
     const anchorBlock = this.getBlock(anchor.key)
@@ -520,7 +520,7 @@ const importRegister = (ContentState) => {
     return cursor
   }
 
-  ContentState.prototype.addCursorToMarkdown = function(markdown, cursor) {
+  ContentState.prototype.addCursorToMarkdown = function (markdown, cursor) {
     const { anchor, focus } = cursor
     if (!anchor || !focus) {
       return
@@ -559,7 +559,7 @@ const importRegister = (ContentState) => {
     }
   }
 
-  ContentState.prototype.convertMuyaIndexCursortoCursor = function(muyaIndexCursor) {
+  ContentState.prototype.convertMuyaIndexCursortoCursor = function (muyaIndexCursor) {
     if (!muyaIndexCursor || !muyaIndexCursor.anchor || !muyaIndexCursor.focus) {
       return null
     }
@@ -608,7 +608,7 @@ const importRegister = (ContentState) => {
     return cursor
   }
 
-  ContentState.prototype.importCursor = function(cursor) {
+  ContentState.prototype.importCursor = function (cursor) {
     // set cursor
 
     if (!cursor) {
@@ -623,11 +623,11 @@ const importRegister = (ContentState) => {
     this.cursor = cursor
   }
 
-  ContentState.prototype.importMarkdown = function(markdown) {
+  ContentState.prototype.importMarkdown = function (markdown) {
     this.blocks = this.markdownToState(markdown)
   }
 
-  ContentState.prototype.extractImages = function(markdown) {
+  ContentState.prototype.extractImages = function (markdown) {
     const results = new Set()
     const blocks = this.markdownToState(markdown)
     const render = new StateRender(this.muya)

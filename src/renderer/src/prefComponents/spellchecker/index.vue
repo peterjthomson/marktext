@@ -106,7 +106,7 @@ const preferenceStore = usePreferencesStore()
 const { spellcheckerEnabled, spellcheckerNoUnderline, spellcheckerLanguage } =
   storeToRefs(preferenceStore)
 
-onMounted(async() => {
+onMounted(async () => {
   if (isOsx) {
     return
   }
@@ -122,7 +122,7 @@ onMounted(async() => {
     })
 })
 
-const getAvailableDictionaries = async() => {
+const getAvailableDictionaries = async () => {
   const dictionaries = await SpellChecker.getAvailableDictionaries()
 
   return dictionaries.map((selectedItem) => {
@@ -133,7 +133,7 @@ const getAvailableDictionaries = async() => {
   })
 }
 
-const handleSpellcheckerLanguage = async(languageCode) => {
+const handleSpellcheckerLanguage = async (languageCode) => {
   onSelectChange('spellcheckerLanguage', languageCode)
 
   await window.electron.ipcRenderer.invoke('mt::spellchecker-switch-language', languageCode)

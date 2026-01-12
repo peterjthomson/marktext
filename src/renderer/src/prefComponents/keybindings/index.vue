@@ -84,7 +84,9 @@
       class="keyboard-debug"
     >
       <separator />
-      <div><strong>{{ t('preferences.keybindings.debugOptions') }}:</strong></div>
+      <div>
+        <strong>{{ t('preferences.keybindings.debugOptions') }}:</strong>
+      </div>
       <el-button
         size="medium"
         @click="dumpKeyboardInformation"

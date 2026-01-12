@@ -1,4 +1,4 @@
-const coreApi = ContentState => {
+const coreApi = (ContentState) => {
   /**
    * Replace the word range with the given replacement.
    *
@@ -10,7 +10,12 @@ const coreApi = ContentState => {
    * @param {string} replacement The replacement.
    * @param {boolean} setCursor Whether the editor cursor should be updated.
    */
-  ContentState.prototype.replaceWordInline = function(line, wordCursor, replacement, setCursor = false) {
+  ContentState.prototype.replaceWordInline = function (
+    line,
+    wordCursor,
+    replacement,
+    setCursor = false
+  ) {
     const { start: lineStart, end: lineEnd } = line
     const { start: wordStart, end: wordEnd } = wordCursor
 
@@ -20,9 +25,13 @@ const coreApi = ContentState => {
     } else if (lineStart.key !== lineEnd.key) {
       throw new Error('Expect a single line line cursor: "start.key" is not equal to "end.key".')
     } else if (wordStart.offset > wordEnd.offset) {
-      throw new Error(`Invalid word cursor offset: ${wordStart.offset} should be less ${wordEnd.offset}.`)
+      throw new Error(
+        `Invalid word cursor offset: ${wordStart.offset} should be less ${wordEnd.offset}.`
+      )
     } else if (lineStart.key !== wordEnd.key) {
-      throw new Error(`Cursor mismatch: Expect the same line but got ${lineStart.key} and ${wordEnd.key}.`)
+      throw new Error(
+        `Cursor mismatch: Expect the same line but got ${lineStart.key} and ${wordEnd.key}.`
+      )
     } else if (lineStart.block.text.length < wordEnd.offset) {
       throw new Error('Invalid cursor: Replacement length is larger than line length.')
     }

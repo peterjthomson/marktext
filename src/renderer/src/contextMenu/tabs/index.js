@@ -25,14 +25,23 @@ export const showContextMenu = (event, tab) => {
   const copyPath = getCOPY_PATH()
   const showInFolder = getSHOW_IN_FOLDER()
 
-  const CONTEXT_ITEMS = [closeThis, closeOthers, closeSaved, closeAll, SEPARATOR, rename, copyPath, showInFolder]
+  const CONTEXT_ITEMS = [
+    closeThis,
+    closeOthers,
+    closeSaved,
+    closeAll,
+    SEPARATOR,
+    rename,
+    copyPath,
+    showInFolder
+  ]
   const FILE_CONTEXT_ITEMS = [rename, copyPath, showInFolder]
 
-  FILE_CONTEXT_ITEMS.forEach(item => {
+  FILE_CONTEXT_ITEMS.forEach((item) => {
     item.enabled = !!pathname
   })
 
-  CONTEXT_ITEMS.forEach(item => {
+  CONTEXT_ITEMS.forEach((item) => {
     const menuItem = new RemoteMenuItem(item)
     menuItem._tabId = tab.id
     menu.append(menuItem)

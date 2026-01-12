@@ -5,7 +5,5 @@ export default function backlash(h, cursor, block, token, outerClass) {
   const { start, end } = token.range
   const content = this.highlight(h, block, start, end, token)
 
-  return [
-    h(`span.${className}.${CLASS_OR_ID.AG_REMOVE}`, content)
-  ]
+  return [h(`span.${className}.${CLASS_OR_ID.AG_REMOVE}`, content)]
 }

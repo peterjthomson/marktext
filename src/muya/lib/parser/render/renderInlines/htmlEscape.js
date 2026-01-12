@@ -9,10 +9,14 @@ export default function htmlEscape(h, cursor, block, token, outerClass) {
   const content = this.highlight(h, block, start, end, token)
 
   return [
-    h(`span.${className}.${CLASS_OR_ID.AG_HTML_ESCAPE}`, {
-      dataset: {
-        character: escapeCharactersMap[escapeCharacter]
-      }
-    }, content)
+    h(
+      `span.${className}.${CLASS_OR_ID.AG_HTML_ESCAPE}`,
+      {
+        dataset: {
+          character: escapeCharactersMap[escapeCharacter]
+        }
+      },
+      content
+    )
   ]
 }

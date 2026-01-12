@@ -25,7 +25,7 @@ class TableBarTools extends BaseFloat {
     this.oldVnode = null
     this.tableInfo = null
     this.floatBox.classList.add('ag-table-bar-tools')
-    const tableBarContainer = this.tableBarContainer = document.createElement('div')
+    const tableBarContainer = (this.tableBarContainer = document.createElement('div'))
     this.container.appendChild(tableBarContainer)
     this.listen()
   }
@@ -47,23 +47,27 @@ class TableBarTools extends BaseFloat {
   render() {
     const { tableInfo, oldVnode, tableBarContainer } = this
     const { muya } = this
-    const t = muya.options.t || (key => key)
+    const t = muya.options.t || ((key) => key)
     const toolList = getToolList(t)
     const renderArray = toolList[tableInfo.barType]
     const children = renderArray.map((item) => {
       const { label } = item
 
       const selector = 'li.item'
-      return h(selector, {
-        dataset: {
-          label: item.action
-        },
-        on: {
-          click: event => {
-            this.selectItem(event, item)
+      return h(
+        selector,
+        {
+          dataset: {
+            label: item.action
+          },
+          on: {
+            click: (event) => {
+              this.selectItem(event, item)
+            }
           }
-        }
-      }, label)
+        },
+        label
+      )
     })
 
     const vnode = h('ul', children)

@@ -22,7 +22,6 @@ ipcMain.on('some-event-name', (arg1, arg2) => {
   // ...
 })
 
-
 ipcMain.emit('some-event-name', 'arg 1', 'arg 2')
 // ipcMain.emit('mt::some-event-name-response', undefined, 'arg 1', 'arg 2') // crash because event is used
 ```

@@ -12,7 +12,7 @@ delete validateRules.strong
 delete validateRules.tail_header
 delete validateRules.backlash
 
-const correctUrl = token => {
+const correctUrl = (token) => {
   if (token && typeof token[4] === 'string') {
     const lastParenIndex = findClosingBracket(token[4], '()')
 
@@ -165,7 +165,15 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
             range,
             marker,
             parent: tokens,
-            children: tokenizerFac(to[2], undefined, inlineRules, pos + to[1].length, false, labels, options),
+            children: tokenizerFac(
+              to[2],
+              undefined,
+              inlineRules,
+              pos + to[1].length,
+              false,
+              labels,
+              options
+            ),
             backlash: to[3]
           })
           src = src.substring(to[0].length)
@@ -206,7 +214,15 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
             range,
             marker,
             parent: tokens,
-            children: tokenizerFac(to[2], undefined, inlineRules, pos + to[1].length, false, labels, options),
+            children: tokenizerFac(
+              to[2],
+              undefined,
+              inlineRules,
+              pos + to[1].length,
+              false,
+              labels,
+              options
+            ),
             backlash: to[3]
           })
         }
@@ -312,7 +328,15 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
           start: pos,
           end: pos + linkTo[0].length
         },
-        children: tokenizerFac(linkTo[2], undefined, inlineRules, pos + linkTo[1].length, false, labels, options),
+        children: tokenizerFac(
+          linkTo[2],
+          undefined,
+          inlineRules,
+          pos + linkTo[1].length,
+          false,
+          labels,
+          options
+        ),
         backlash: {
           first: linkTo[3],
           second: linkTo[5]
@@ -325,7 +349,12 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
     }
 
     const rLinkTo = inlineRules.reference_link.exec(src)
-    if (rLinkTo && labels.has(rLinkTo[3] || rLinkTo[1]) && isLengthEven(rLinkTo[2]) && isLengthEven(rLinkTo[4])) {
+    if (
+      rLinkTo &&
+      labels.has(rLinkTo[3] || rLinkTo[1]) &&
+      isLengthEven(rLinkTo[2]) &&
+      isLengthEven(rLinkTo[4])
+    ) {
       pushPending()
       tokens.push({
         type: 'reference_link',
@@ -351,7 +380,12 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
     }
 
     const rImageTo = inlineRules.reference_image.exec(src)
-    if (rImageTo && labels.has(rImageTo[3] || rImageTo[1]) && isLengthEven(rImageTo[2]) && isLengthEven(rImageTo[4])) {
+    if (
+      rImageTo &&
+      labels.has(rImageTo[3] || rImageTo[1]) &&
+      isLengthEven(rImageTo[2]) &&
+      isLengthEven(rImageTo[4])
+    ) {
       pushPending()
 
       tokens.push({
@@ -406,7 +440,7 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
         www: autoLinkExtTo[1],
         url: autoLinkExtTo[2],
         email: autoLinkExtTo[3],
-        linkType: autoLinkExtTo[1] ? 'www' : (autoLinkExtTo[2] ? 'url' : 'email'),
+        linkType: autoLinkExtTo[1] ? 'www' : autoLinkExtTo[2] ? 'url' : 'email',
         parent: tokens,
         range: {
           start: pos,
@@ -462,7 +496,7 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
       src = src.substring(len)
       pos = pos + len
       continue
-    } else if (htmlTo && !(disallowedHtmlTag.test(htmlTo[3])) && (attrs = getAttributes(htmlTo[0]))) {
+    } else if (htmlTo && !disallowedHtmlTag.test(htmlTo[3]) && (attrs = getAttributes(htmlTo[0]))) {
       const tag = htmlTo[3]
       const html = htmlTo[0]
       const len = htmlTo[0].length
@@ -477,7 +511,17 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
         parent: tokens,
         attrs,
         content: htmlTo[4],
-        children: htmlTo[4] ? tokenizerFac(htmlTo[4], undefined, inlineRules, pos + htmlTo[2].length, false, labels, options) : '',
+        children: htmlTo[4]
+          ? tokenizerFac(
+            htmlTo[4],
+            undefined,
+            inlineRules,
+            pos + htmlTo[2].length,
+            false,
+            labels,
+            options
+          )
+          : '',
         range: {
           start: pos,
           end: pos + len
@@ -559,16 +603,22 @@ const tokenizerFac = (src, beginRules, inlineRules, pos = 0, top, labels, option
   return tokens
 }
 
-export const tokenizer = (src, {
-  highlights = [],
-  hasBeginRules = true,
-  labels = new Map(),
-  options = {}
-} = {}) => {
+export const tokenizer = (
+  src,
+  { highlights = [], hasBeginRules = true, labels = new Map(), options = {} } = {}
+) => {
   const rules = Object.assign({}, inlineRules, inlineExtensionRules)
-  const tokens = tokenizerFac(src, hasBeginRules ? beginRules : null, rules, 0, true, labels, options)
+  const tokens = tokenizerFac(
+    src,
+    hasBeginRules ? beginRules : null,
+    rules,
+    0,
+    true,
+    labels,
+    options
+  )
 
-  const postTokenizer = tokens => {
+  const postTokenizer = (tokens) => {
     for (const token of tokens) {
       for (const light of highlights) {
         const highlight = union(token.range, light)
@@ -594,7 +644,7 @@ export const tokenizer = (src, {
 
 // transform `tokens` to text ignore the range of token
 // the opposite of tokenizer
-export const generator = tokens => {
+export const generator = (tokens) => {
   let result = ''
   for (const token of tokens) {
     result += token.raw

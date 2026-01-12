@@ -9,12 +9,14 @@ import { edit, noop } from './utils'
 export const block = {
   newline: /^\n+/,
   code: /^( {4}[^\n]+\n*)+/,
-  fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
+  fences:
+    /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?:\n+|$)|$)/,
   hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( {0,3})(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
-  html: '^ {0,3}(?:' + // optional indentation
+  html:
+    '^ {0,3}(?:' + // optional indentation
     '<(script|pre|style)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' + // (1)
     '|comment[^\\n]*(\\n+|$)' + // (2)
     '|<\\?[\\s\\S]*?(?:\\?>\\n*|$)' + // (3)
@@ -34,7 +36,8 @@ export const block = {
   text: /^[^\n]+/,
 
   // extra
-  frontmatter: /^(?:(?:---\n([\s\S]+?)---)|(?:\+\+\+\n([\s\S]+?)\+\+\+)|(?:;;;\n([\s\S]+?);;;)|(?:\{\n([\s\S]+?)\}))(?:\n{2,}|\n{1,2}$)/,
+  frontmatter:
+    /^(?:(?:---\n([\s\S]+?)---)|(?:\+\+\+\n([\s\S]+?)\+\+\+)|(?:;;;\n([\s\S]+?);;;)|(?:\{\n([\s\S]+?)\}))(?:\n{2,}|\n{1,2}$)/,
   multiplemath: /^\$\$\n([\s\S]+?)\n\$\$(?:\n+|$)/,
   multiplemathGitlab: /^ {0,3}(`{3,})math\n(?:(|[\s\S]*?)\n)(?: {0,3}\1`* *(?:\n+|$)|$)/, // Math inside a code block (GitLab display math)
   footnote: /^\[\^([^\^\[\]\s]+?)(?<!\\)\]:[\s\S]+?(?=\n *\n {0,3}[^ ]+|$)/
@@ -43,19 +46,15 @@ export const block = {
 // CVE-2022-21680 fix: changed from (?:\\[\[\]]|[^\[\]])+ to prevent ReDoS
 block._label = /(?!\s*\])(?:\\.|[^\[\]\\])+/
 block._title = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/
-block.def = edit(block.def)
-  .replace('label', block._label)
-  .replace('title', block._title)
-  .getRegex()
+block.def = edit(block.def).replace('label', block._label).replace('title', block._title).getRegex()
 
 block.checkbox = /^\[([ xX])\] +/
 block.bullet = /(?:[*+-]|\d{1,9}(?:\.|\)))/ // patched: support "(" as ordered list delimiter too
 // patched: fix https://github.com/marktext/marktext/issues/831#issuecomment-477719256
 // block.item = /^( *)(bull) ?[^\n]*(?:\n(?!\1bull ?)[^\n]*)*/
-block.item = /^(( {0,3})(bull) [^\n]*(?:\n(?!(\2bull |\2bull\n))[^\n]*)*|( {0,3})(bull)(?:\n(?!(\2bull |\2bull\n)))*)/ // eslint-disable-line no-useless-backreference
-block.item = edit(block.item, 'gm')
-  .replace(/bull/g, block.bullet)
-  .getRegex()
+block.item =
+  /^(( {0,3})(bull) [^\n]*(?:\n(?!(\2bull |\2bull\n))[^\n]*)*|( {0,3})(bull)(?:\n(?!(\2bull |\2bull\n)))*)/ // eslint-disable-line no-useless-backreference
+block.item = edit(block.item, 'gm').replace(/bull/g, block.bullet).getRegex()
 
 block.list = edit(block.list)
   .replace(/bull/g, block.bullet)
@@ -63,7 +62,8 @@ block.list = edit(block.list)
   .replace('def', '\\n+(?=' + block.def.source + ')')
   .getRegex()
 
-block._tag = 'address|article|aside|base|basefont|blockquote|body|caption' +
+block._tag =
+  'address|article|aside|base|basefont|blockquote|body|caption' +
   '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption' +
   '|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe' +
   '|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option' +
@@ -87,9 +87,7 @@ block.paragraph = edit(block._paragraph)
   .replace('tag', block._tag) // pars can be interrupted by type (6) html blocks
   .getRegex()
 
-block.blockquote = edit(block.blockquote)
-  .replace('paragraph', block.paragraph)
-  .getRegex()
+block.blockquote = edit(block.blockquote).replace('paragraph', block.paragraph).getRegex()
 
 /**
  * Normal Block Grammar
@@ -102,10 +100,12 @@ export const normal = Object.assign({}, block)
  */
 
 export const gfm = Object.assign({}, normal, {
-  nptable: '^ *([^|\\n ].*\\|.*)\\n' + // Header
+  nptable:
+    '^ *([^|\\n ].*\\|.*)\\n' + // Header
     ' {0,3}([-:]+ *\\|[-| :]*)' + // Align
     '(?:\\n((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)', // Cells
-  table: '^ *\\|(.+)\\n' + // Header
+  table:
+    '^ *\\|(.+)\\n' + // Header
     ' {0,3}\\|?( *[-:]+[-| :]*)' + // Align
     '(?:\\n *((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
 })
@@ -139,13 +139,17 @@ gfm.table = edit(gfm.table)
 export const pedantic = Object.assign({}, normal, {
   html: edit(
     '^ *(?:comment *(?:\\n|\\s*$)' +
-    '|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)' + // closed tag
-    '|<tag(?:"[^"]*"|\'[^\']*\'|\\s[^\'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))')
+      '|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)' + // closed tag
+      '|<tag(?:"[^"]*"|\'[^\']*\'|\\s[^\'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))'
+  )
     .replace('comment', block._comment)
-    .replace(/tag/g, '(?!(?:' +
-      'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub' +
-      '|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)' +
-      '\\b)\\w+(?!:|[^\\w\\s@]*@)\\b')
+    .replace(
+      /tag/g,
+      '(?!(?:' +
+        'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub' +
+        '|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)' +
+        '\\b)\\w+(?!:|[^\\w\\s@]*@)\\b'
+    )
     .getRegex(),
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
   heading: /^(#{1,6})(.*)(?:\n+|$)/,

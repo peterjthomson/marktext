@@ -10,20 +10,18 @@ export default function backlashInToken(h, backlashes, outerClass, start, token)
 
   for (i = 0; i < len; i++) {
     const chunk = chunks[i]
-    const light = highlights.filter(light => union({ start: start + i, end: start + i + 1 }, light))
+    const light = highlights.filter((light) =>
+      union({ start: start + i, end: start + i + 1 }, light)
+    )
     let selector = 'span'
     if (light.length) {
       const className = this.getHighlightClassName(light[0].active)
       selector += `.${className}`
     }
     if (isEven(i)) {
-      result.push(
-        h(`${selector}.${outerClass}`, chunk)
-      )
+      result.push(h(`${selector}.${outerClass}`, chunk))
     } else {
-      result.push(
-        h(`${selector}.${CLASS_OR_ID.AG_BACKLASH}`, chunk)
-      )
+      result.push(h(`${selector}.${CLASS_OR_ID.AG_BACKLASH}`, chunk))
     }
   }
 

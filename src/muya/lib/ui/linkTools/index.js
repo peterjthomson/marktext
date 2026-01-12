@@ -26,7 +26,7 @@ class LinkTools extends BaseFloat {
     this.options = opts
     this.icons = icons
     this.hideTimer = null
-    const linkContainer = this.linkContainer = document.createElement('div')
+    const linkContainer = (this.linkContainer = document.createElement('div'))
     this.container.appendChild(linkContainer)
     this.listen()
   }
@@ -67,29 +67,40 @@ class LinkTools extends BaseFloat {
 
   render() {
     const { icons, oldVnode, linkContainer } = this
-    const children = icons.map(i => {
+    const children = icons.map((i) => {
       let icon
       let iconWrapperSelector
       if (i.icon) {
         // SVG icon Asset
         iconWrapperSelector = 'div.icon-wrapper'
-        icon = h('i.icon', h('i.icon-inner', {
-          style: {
-            background: `url(${i.icon}) no-repeat`,
-            'background-size': '100%'
-          }
-        }, ''))
+        icon = h(
+          'i.icon',
+          h(
+            'i.icon-inner',
+            {
+              style: {
+                background: `url(${i.icon}) no-repeat`,
+                'background-size': '100%'
+              }
+            },
+            ''
+          )
+        )
       }
       const iconWrapper = h(iconWrapperSelector, icon)
       let itemSelector = `li.item.${i.type}`
 
-      return h(itemSelector, {
-        on: {
-          click: event => {
-            this.selectItem(event, i)
+      return h(
+        itemSelector,
+        {
+          on: {
+            click: (event) => {
+              this.selectItem(event, i)
+            }
           }
-        }
-      }, iconWrapper)
+        },
+        iconWrapper
+      )
     })
 
     const vnode = h('ul', children)

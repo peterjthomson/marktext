@@ -3,7 +3,6 @@
 ##### 1. span
 
 - functionType
-
   - languageInput
 
   - footnoteInput
@@ -19,7 +18,6 @@
   - paragraphContent (defaultValue use in paragraph and setext heading)
 
 - lang - only when it's functionType is `codeContent`
-
   - All prismjs support language or empty string
 
 ##### 2. div
@@ -27,7 +25,6 @@
 used for preview `block math`, `mermaid`, `flowchart`, `vega-lite`, `sequence`, `plantuml` and `html block`.
 
 - functionType
-
   - multiplemath
 
   - mermaid
@@ -47,7 +44,6 @@ used for preview `block math`, `mermaid`, `flowchart`, `vega-lite`, `sequence`, 
 The container block of `table`, `html`, `block math`, `mermaid`,`flowchart`,`vega-lite`,`sequence`,`plantuml`.
 
 - functionType
-
   - table
 
   - footnote
@@ -71,7 +67,6 @@ The container block of `table`, `html`, `block math`, `mermaid`,`flowchart`,`veg
 Used for `html`,`block math`,`mermaid`,`flowchart`,`vega-lite`,`sequence`, `plantuml`, `code block`.
 
 - functionType
-
   - html
 
   - multiplemath
@@ -93,19 +88,16 @@ Used for `html`,`block math`,`mermaid`,`flowchart`,`vega-lite`,`sequence`, `plan
   - frontmatter
 
 - lang
-
   - all prismjs support language or empty string
 
 ##### 5. code
 
 - lang
-
   - all prismjs support language or empty string
 
 ##### ul
 
 - listType
-
   - bullet
 
   - task
@@ -113,17 +105,14 @@ Used for `html`,`block math`,`mermaid`,`flowchart`,`vega-lite`,`sequence`, `plan
 ##### ol
 
 - listType
-
   - order
 
 - start
-
   - 0-999999999
 
 ##### li
 
 - listItemType
-
   - order
 
   - bullet
@@ -131,21 +120,18 @@ Used for `html`,`block math`,`mermaid`,`flowchart`,`vega-lite`,`sequence`, `plan
   - task
 
 - isLooseListItem
-
   - true
 
   - false
 
 - bulletMarkerOrDelimiter
-
   - bulletMarker：`-`, `+`, `*`
 
-  - Delimiter：  `)`, `.`
+  - Delimiter： `)`, `.`
 
 ##### h1~6
 
 - headingStyle
-
   - atx
 
   - setext
@@ -155,7 +141,6 @@ Used for `html`,`block math`,`mermaid`,`flowchart`,`vega-lite`,`sequence`, `plan
 ##### input
 
 - checked
-
   - true
 
   - false

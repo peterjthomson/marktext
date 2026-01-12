@@ -13,13 +13,13 @@ function Slugger() {
  * Convert string to unique id
  */
 
-Slugger.prototype.slug = function(value) {
+Slugger.prototype.slug = function (value) {
   let slug = this.downcodeUnicode ? downcode(value) : value
   slug = slug
     .toLowerCase()
     .trim()
     // remove html tags
-    .replace(/<[!\/a-z].*?>/ig, '') // eslint-disable-line no-useless-escape
+    .replace(/<[!\/a-z].*?>/gi, '') // eslint-disable-line no-useless-escape
     // remove unwanted chars
     .replace(/[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,./:;<=>?@[\]^`{|}~]/g, '')
     .replace(/\s/g, '-')

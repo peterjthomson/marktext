@@ -4,7 +4,7 @@ import { loadTabCommands } from './tab'
 
 export const COMMANDS = COMMAND_CONSTANTS
 
-export const loadDefaultCommands = commandManager => {
+export const loadDefaultCommands = (commandManager) => {
   loadFileCommands(commandManager)
   loadTabCommands(commandManager)
 }
@@ -40,7 +40,7 @@ class CommandManager {
 
   __verifyDefaultCommands() {
     const { _commands } = this
-    Object.keys(COMMANDS).forEach(propertyName => {
+    Object.keys(COMMANDS).forEach((propertyName) => {
       const id = COMMANDS[propertyName]
       if (!_commands.has(id)) {
         console.error(`[DEBUG] Default command with id="${id}" isn't available!`)

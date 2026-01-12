@@ -12,9 +12,10 @@ class ClickEvent {
 
   contextClickBingding() {
     const { container, eventCenter, contentState } = this.muya
-    const handler = event => {
+    const handler = (event) => {
       // Allow native context menu in MarkText.
-      if (!global || !global.marktext) { // __MARKTEXT_PATCH__
+      if (!global || !global.marktext) {
+        // __MARKTEXT_PATCH__
         event.preventDefault()
         event.stopPropagation()
       }
@@ -35,7 +36,8 @@ class ClickEvent {
       const startBlock = contentState.getBlock(start.key)
       const nextTextBlock = contentState.findNextBlockInLocation(startBlock)
       if (
-        nextTextBlock && nextTextBlock.key === end.key &&
+        nextTextBlock &&
+        nextTextBlock.key === end.key &&
         end.offset === 0 &&
         start.offset === startBlock.text.length
       ) {
@@ -64,7 +66,7 @@ class ClickEvent {
 
   clickBinding() {
     const { container, eventCenter, contentState } = this.muya
-    const handler = event => {
+    const handler = (event) => {
       const { target } = event
       // handler table click
       const toolItem = getToolItem(target)
@@ -105,7 +107,8 @@ class ClickEvent {
       const imageWrapper = target.closest(`.${CLASS_OR_ID.AG_INLINE_IMAGE}`)
       const codeCopy = target.closest('.ag-code-copy')
       const footnoteBackLink = target.closest('.ag-footnote-backlink')
-      const imageDelete = target.closest('.ag-image-icon-delete') || target.closest('.ag-image-icon-close')
+      const imageDelete =
+        target.closest('.ag-image-icon-delete') || target.closest('.ag-image-icon-close')
       const mathText = mathRender && mathRender.previousElementSibling
       const rubyText = rubyRender && rubyRender.previousElementSibling
       if (markedImageText && markedImageText.classList.contains(CLASS_OR_ID.AG_IMAGE_MARKED_TEXT)) {
@@ -170,9 +173,10 @@ class ClickEvent {
         })
         contentState.selectImage(imageInfo)
         // Handle show image transformer
-        const imageSelector = imageInfo.imageId.indexOf('_') > -1
-          ? `#${imageInfo.imageId}`
-          : `#${imageInfo.key}_${imageInfo.imageId}_${imageInfo.token.range.start}`
+        const imageSelector =
+          imageInfo.imageId.indexOf('_') > -1
+            ? `#${imageInfo.imageId}`
+            : `#${imageInfo.key}_${imageInfo.imageId}_${imageInfo.token.range.start}`
 
         const imageContainer = document.querySelector(`${imageSelector} .ag-image-container`)
 
@@ -185,11 +189,9 @@ class ClickEvent {
 
       // Handle click imagewrapper when it's empty or image load failed.
       if (
-        (imageWrapper &&
-        (
-          imageWrapper.classList.contains('ag-empty-image') ||
-          imageWrapper.classList.contains('ag-image-fail')
-        ))
+        imageWrapper &&
+        (imageWrapper.classList.contains('ag-empty-image') ||
+          imageWrapper.classList.contains('ag-image-fail'))
       ) {
         const rect = imageWrapper.getBoundingClientRect()
         const reference = {
@@ -227,7 +229,10 @@ class ClickEvent {
       }
 
       // handler to-do checkbox click
-      if (target.tagName === 'INPUT' && target.classList.contains(CLASS_OR_ID.AG_TASK_LIST_ITEM_CHECKBOX)) {
+      if (
+        target.tagName === 'INPUT' &&
+        target.classList.contains(CLASS_OR_ID.AG_TASK_LIST_ITEM_CHECKBOX)
+      ) {
         contentState.listItemCheckBoxClick(target)
       }
       contentState.clickHandler(event)
@@ -245,10 +250,13 @@ function selectionText(node) {
   const textLen = node.textContent.length
   operateClassName(node, 'remove', CLASS_OR_ID.AG_HIDE)
   operateClassName(node, 'add', CLASS_OR_ID.AG_GRAY)
-  selection.importSelection({
-    start: textLen,
-    end: textLen
-  }, node)
+  selection.importSelection(
+    {
+      start: textLen,
+      end: textLen
+    },
+    node
+  )
 }
 
 export default ClickEvent

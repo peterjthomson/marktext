@@ -33,7 +33,7 @@ export const showContextMenu = (event, hasPathCache) => {
 
   contextItems[5].enabled = hasPathCache // PASTE item
 
-  contextItems.forEach(item => {
+  contextItems.forEach((item) => {
     menu.append(new RemoteMenuItem(item))
   })
   menu.popup([{ window: win, x: event.clientX, y: event.clientY }])

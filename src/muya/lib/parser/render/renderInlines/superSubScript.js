@@ -12,11 +12,15 @@ export default function superSubScript(h, cursor, block, token, outerClass) {
 
   return [
     h(`span.${className}.${CLASS_OR_ID.AG_REMOVE}`, startMarker),
-    h(`${tagName}.${CLASS_OR_ID.AG_INLINE_RULE}`, {
-      attrs: {
-        spellcheck: 'false'
-      }
-    }, content),
+    h(
+      `${tagName}.${CLASS_OR_ID.AG_INLINE_RULE}`,
+      {
+        attrs: {
+          spellcheck: 'false'
+        }
+      },
+      content
+    ),
     h(`span.${className}.${CLASS_OR_ID.AG_REMOVE}`, endMarker)
   ]
 }

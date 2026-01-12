@@ -6,38 +6,38 @@ This document provides a comprehensive overview of MarkText's architecture, tech
 
 ### Core Frameworks
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Electron | 39.x | Desktop application framework |
-| Vue 3 | 3.5.x | UI framework (Composition API) |
-| Pinia | 3.0.x | State management |
-| Vue Router | 4.6.x | Client-side routing |
-| Vue i18n | 11.x | Internationalization |
-| Element Plus | 2.13.x | UI component library |
+| Technology   | Version | Purpose                        |
+| ------------ | ------- | ------------------------------ |
+| Electron     | 39.x    | Desktop application framework  |
+| Vue 3        | 3.5.x   | UI framework (Composition API) |
+| Pinia        | 3.0.x   | State management               |
+| Vue Router   | 4.6.x   | Client-side routing            |
+| Vue i18n     | 11.x    | Internationalization           |
+| Element Plus | 2.13.x  | UI component library           |
 
 ### Build Tools
 
-| Tool | Purpose |
-|------|---------|
-| electron-vite | Vite-based bundler for Electron |
-| electron-builder | Application packaging |
-| ESLint + Prettier | Code quality |
+| Tool              | Purpose                         |
+| ----------------- | ------------------------------- |
+| electron-vite     | Vite-based bundler for Electron |
+| electron-builder  | Application packaging           |
+| ESLint + Prettier | Code quality                    |
 
 ### Key Libraries
 
-| Library | Purpose |
-|---------|---------|
+| Library         | Purpose                        |
+| --------------- | ------------------------------ |
 | Muya (internal) | WYSIWYG markdown editor engine |
-| marked.js | Markdown parsing |
-| Prism.js | Syntax highlighting |
-| KaTeX | Math rendering |
-| Mermaid | Diagram rendering |
-| CodeMirror 5 | Source code mode editing |
-| snabbdom | Virtual DOM for Muya |
-| Turndown | HTML to Markdown conversion |
-| electron-store | Persistent settings storage |
-| chokidar | File system watching |
-| @vscode/ripgrep | Fast text search |
+| marked.js       | Markdown parsing               |
+| Prism.js        | Syntax highlighting            |
+| KaTeX           | Math rendering                 |
+| Mermaid         | Diagram rendering              |
+| CodeMirror 5    | Source code mode editing       |
+| snabbdom        | Virtual DOM for Muya           |
+| Turndown        | HTML to Markdown conversion    |
+| electron-store  | Persistent settings storage    |
+| chokidar        | File system watching           |
+| @vscode/ripgrep | Fast text search               |
 
 ## Process Architecture
 
@@ -96,6 +96,7 @@ The main process runs in Node.js and handles:
 - **IPC Communication**: Receiving commands from renderer
 
 Key files:
+
 - `index.js` - Entry point
 - `app/index.js` - Main App class with Accessor pattern
 - `windows/editor.js` - Editor window class
@@ -111,6 +112,7 @@ The renderer process runs in Chromium and handles:
 - **Muya Integration**: Hosting the markdown editor
 
 Key files:
+
 - `main.js` - Vue app initialization
 - `pages/app.vue` - Main editor page
 - `pages/preference.vue` - Settings page
@@ -128,9 +130,9 @@ window.electron = {
   clipboard,
   webUtils
 }
-window.nodePath   // Node.js path module
-window.nodeFs     // fs-extra wrapper
-window.rgPath     // ripgrep binary path
+window.nodePath // Node.js path module
+window.nodeFs // fs-extra wrapper
+window.rgPath // ripgrep binary path
 ```
 
 ## Data Flow
@@ -185,12 +187,12 @@ Renderer: Update tab state (saved)
 
 ## Module System
 
-| Context | Module Type | Reason |
-|---------|-------------|--------|
-| Main Process | CommonJS | Electron main requires CJS |
-| Preload | CommonJS | Electron preload requires CJS |
-| Renderer | ES Modules | Modern Vue 3 + Vite |
-| Muya | Mixed (CJS-like) | Legacy, uses bundled deps |
+| Context      | Module Type      | Reason                        |
+| ------------ | ---------------- | ----------------------------- |
+| Main Process | CommonJS         | Electron main requires CJS    |
+| Preload      | CommonJS         | Electron preload requires CJS |
+| Renderer     | ES Modules       | Modern Vue 3 + Vite           |
+| Muya         | Mixed (CJS-like) | Legacy, uses bundled deps     |
 
 ## State Management
 
@@ -271,6 +273,7 @@ muya.setContent(markdown)
 Schema: `src/main/preferences/schema.json`
 
 Categories:
+
 - **General**: Auto-save, language, zoom, startup behavior
 - **Editor**: Fonts, line height, code blocks
 - **Markdown**: Extensions, parsing options
@@ -287,6 +290,7 @@ Categories:
 ## Internationalization
 
 9 languages supported:
+
 - English (en)
 - Simplified Chinese (zh-CN)
 - Traditional Chinese (zh-TW)
@@ -300,9 +304,14 @@ Categories:
 Translation files: `static/locales/*.json`
 
 Usage:
+
 ```javascript
 // Vue component
-{{ $t('menu.file.open') }}
+{
+  {
+    $t('menu.file.open')
+  }
+}
 
 // Main process
 import { t } from './i18n'

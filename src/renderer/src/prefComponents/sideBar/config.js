@@ -56,18 +56,7 @@ export const getCategory = () => [
 
 // 创建响应式的翻译映射函数
 export const getTranslatedSearchContent = () => {
-  // 检查当前语言设置
-  let currentLanguage = 'en'
-  try {
-    if (window.__VUE_I18N__) {
-      const g = typeof window.__VUE_I18N__.global === 'function'
-        ? window.__VUE_I18N__.global()
-        : window.__VUE_I18N__.global
-      if (g && g.locale) currentLanguage = g.locale.value || g.locale || 'en'
-    }
-  } catch (e) {
-    console.warn('⚠️ 无法获取当前语言设置:', e)
-  }
+  // Language detection intentionally left for future i18n enhancement
 
   const result = Object.keys(preferences)
     .map((k) => {
@@ -93,7 +82,15 @@ export const getTranslatedSearchContent = () => {
 
       // 计算用于路由跳转的分类（仅允许已存在的路由，否则回退到 general）
       let routeCategory = mappedCategory
-      const validRoutes = ['general', 'editor', 'markdown', 'spelling', 'theme', 'image', 'keybindings']
+      const validRoutes = [
+        'general',
+        'editor',
+        'markdown',
+        'spelling',
+        'theme',
+        'image',
+        'keybindings'
+      ]
       if (!validRoutes.includes(routeCategory)) routeCategory = 'general'
 
       // 尝试翻译分类和项目
@@ -147,7 +144,18 @@ export const getTranslatedSearchContent = () => {
     })
     .filter((item) => {
       // 过滤掉不需要显示的项目
-      const filterResult = !['customCss', 'sideBarVisibility', 'tabBarVisibility', 'sourceCodeModeEnabled', 'searchExclusions', 'searchMaxFileSize', 'searchIncludeHidden', 'searchNoIgnore', 'searchFollowSymlinks', 'watcherUsePolling'].includes(item.key)
+      const filterResult = ![
+        'customCss',
+        'sideBarVisibility',
+        'tabBarVisibility',
+        'sourceCodeModeEnabled',
+        'searchExclusions',
+        'searchMaxFileSize',
+        'searchIncludeHidden',
+        'searchNoIgnore',
+        'searchFollowSymlinks',
+        'watcherUsePolling'
+      ].includes(item.key)
       return filterResult
     })
   return result
@@ -160,15 +168,18 @@ export const setupLanguageChangeListener = () => {
     // 触发搜索内容刷新
     if (window.__VUE_I18N__) {
       try {
-        const g = typeof window.__VUE_I18N__.global === 'function'
-          ? window.__VUE_I18N__.global()
-          : window.__VUE_I18N__.global
-        const currentLanguage = g && g.locale ? (g.locale.value || g.locale) : 'en'
+        const g =
+          typeof window.__VUE_I18N__.global === 'function'
+            ? window.__VUE_I18N__.global()
+            : window.__VUE_I18N__.global
+        const currentLanguage = g && g.locale ? g.locale.value || g.locale : 'en'
 
         // 这里可以触发一个自定义事件，通知搜索组件刷新
-        window.dispatchEvent(new CustomEvent('languageChanged', {
-          detail: { language: currentLanguage }
-        }))
+        window.dispatchEvent(
+          new CustomEvent('languageChanged', {
+            detail: { language: currentLanguage }
+          })
+        )
       } catch (e) {
         console.warn('⚠️ 无法获取更新后的语言设置:', e)
       }
@@ -193,10 +204,11 @@ export const setupLanguageChangeListener = () => {
   setInterval(() => {
     try {
       if (window.__VUE_I18N__) {
-        const g = typeof window.__VUE_I18N__.global === 'function'
-          ? window.__VUE_I18N__.global()
-          : window.__VUE_I18N__.global
-        const currentLanguage = g && g.locale ? (g.locale.value || g.locale) : 'en'
+        const g =
+          typeof window.__VUE_I18N__.global === 'function'
+            ? window.__VUE_I18N__.global()
+            : window.__VUE_I18N__.global
+        const currentLanguage = g && g.locale ? g.locale.value || g.locale : 'en'
         if (currentLanguage !== getTranslatedSearchContent.lastLanguage) {
           getTranslatedSearchContent.lastLanguage = currentLanguage
           handleLanguageChange()
@@ -210,10 +222,11 @@ export const setupLanguageChangeListener = () => {
   // 记录初始语言
   try {
     if (window.__VUE_I18N__) {
-      const g = typeof window.__VUE_I18N__.global === 'function'
-        ? window.__VUE_I18N__.global()
-        : window.__VUE_I18N__.global
-      getTranslatedSearchContent.lastLanguage = g && g.locale ? (g.locale.value || g.locale) : 'en'
+      const g =
+        typeof window.__VUE_I18N__.global === 'function'
+          ? window.__VUE_I18N__.global()
+          : window.__VUE_I18N__.global
+      getTranslatedSearchContent.lastLanguage = g && g.locale ? g.locale.value || g.locale : 'en'
     }
   } catch (e) {
     getTranslatedSearchContent.lastLanguage = 'en'
@@ -231,9 +244,11 @@ export const refreshSearchContent = () => {
   }
 
   // 触发语言变化事件
-  window.dispatchEvent(new CustomEvent('languageChanged', {
-    detail: { language: 'force-refresh' }
-  }))
+  window.dispatchEvent(
+    new CustomEvent('languageChanged', {
+      detail: { language: 'force-refresh' }
+    })
+  )
 
   return getTranslatedSearchContent()
 }
@@ -408,7 +423,9 @@ export const debugLanguageState = () => {
 
           // 测试翻译
           try {
-            const testTranslation = i18nInstance.t('preferences.general.window.titleBarStyle.custom')
+            const testTranslation = i18nInstance.t(
+              'preferences.general.window.titleBarStyle.custom'
+            )
             debugInfo += `<p><strong>🔄 测试翻译:</strong> ${testTranslation}</p>`
           } catch (e) {
             debugInfo += `<p style="color:red;"><strong>🔄 测试翻译失败:</strong> ${e.message}</p>`

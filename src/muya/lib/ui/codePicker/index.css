@@ -29,7 +29,7 @@
 
 .ag-list-picker .item:hover,
 .ag-list-picker .item.active {
- background-color: var(--floatHoverColor);
+  background-color: var(--floatHoverColor);
 }
 
 .ag-list-picker .item .icon-wrapper {

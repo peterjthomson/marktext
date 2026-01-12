@@ -7,9 +7,10 @@ export default function emoji(h, cursor, block, token, outerClass) {
   const className = this.getClassName(outerClass, block, token, cursor)
   const validation = validEmoji(token.content)
   const finalClass = validation ? className : CLASS_OR_ID.AG_WARN
-  const contentSelector = finalClass !== CLASS_OR_ID.AG_GRAY
-    ? `span.${finalClass}.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_EMOJI_MARKED_TEXT}`
-    : `span.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_EMOJI_MARKED_TEXT}`
+  const contentSelector =
+    finalClass !== CLASS_OR_ID.AG_GRAY
+      ? `span.${finalClass}.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_EMOJI_MARKED_TEXT}`
+      : `span.${CLASS_OR_ID.AG_INLINE_RULE}.${CLASS_OR_ID.AG_EMOJI_MARKED_TEXT}`
 
   let startMarkerSelector = `span.${finalClass}.${CLASS_OR_ID.AG_EMOJI_MARKER}`
   let endMarkerSelector = startMarkerSelector
@@ -43,19 +44,19 @@ export default function emoji(h, cursor, block, token, outerClass) {
   }
 
   const emojiVdom = validation
-    ? h(contentSelector, {
-      attrs: {
-        spellcheck: 'false'
+    ? h(
+      contentSelector,
+      {
+        attrs: {
+          spellcheck: 'false'
+        },
+        dataset: {
+          emoji: validation.emoji
+        }
       },
-      dataset: {
-        emoji: validation.emoji
-      }
-    }, content)
+      content
+    )
     : h(contentSelector, content)
 
-  return [
-    h(startMarkerSelector, token.marker),
-    emojiVdom,
-    h(endMarkerSelector, token.marker)
-  ]
+  return [h(startMarkerSelector, token.marker), emojiVdom, h(endMarkerSelector, token.marker)]
 }

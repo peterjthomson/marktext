@@ -81,8 +81,10 @@ const createFilter = (queryString) => {
       restaurant.category,
       restaurant.preferenceEn,
       restaurant.categoryEn
-    ].filter(Boolean).map(s => String(s).toLowerCase())
-    return fields.some(f => f.indexOf(q) >= 0)
+    ]
+      .filter(Boolean)
+      .map((s) => String(s).toLowerCase())
+    return fields.some((f) => f.indexOf(q) >= 0)
   }
 }
 
@@ -90,7 +92,8 @@ const loadAll = () => getTranslatedSearchContent()
 
 const handleSelect = (item) => {
   // 使用安全的 routeCategory，避免不合法分类导致白屏
-  const target = (item && item.routeCategory) ? item.routeCategory : (item?.category || 'general').toLowerCase()
+  const target =
+    item && item.routeCategory ? item.routeCategory : (item?.category || 'general').toLowerCase()
   router.push({ path: `/preference/${target}` }).catch(() => {})
 }
 
@@ -119,7 +122,9 @@ onMounted(() => {
   }
   window.electron.ipcRenderer.on('settings::change-tab', onIpcCategoryChange)
   // 监听语言变化，刷新搜索索引
-  const languageChanged = () => { restaurants.value = loadAll() }
+  const languageChanged = () => {
+    restaurants.value = loadAll()
+  }
   window.addEventListener('languageChanged', languageChanged)
   // 卸载时移除监听
   onUnmounted(() => window.removeEventListener('languageChanged', languageChanged))

@@ -16,57 +16,57 @@ const format = (win, type) => {
   }
 }
 
-export const clearFormat = win => {
+export const clearFormat = (win) => {
   format(win, 'clear')
 }
 
-export const emphasis = win => {
+export const emphasis = (win) => {
   format(win, 'em')
 }
 
-export const highlight = win => {
+export const highlight = (win) => {
   format(win, 'mark')
 }
 
-export const hyperlink = win => {
+export const hyperlink = (win) => {
   format(win, 'link')
 }
 
-export const image = win => {
+export const image = (win) => {
   format(win, 'image')
 }
 
-export const inlineCode = win => {
+export const inlineCode = (win) => {
   format(win, 'inline_code')
 }
 
-export const inlineMath = win => {
+export const inlineMath = (win) => {
   format(win, 'inline_math')
 }
 
-export const strikethrough = win => {
+export const strikethrough = (win) => {
   format(win, 'del')
 }
 
-export const strong = win => {
+export const strong = (win) => {
   format(win, 'strong')
 }
 
-export const subscript = win => {
+export const subscript = (win) => {
   format(win, 'sub')
 }
 
-export const superscript = win => {
+export const superscript = (win) => {
   format(win, 'sup')
 }
 
-export const underline = win => {
+export const underline = (win) => {
   format(win, 'u')
 }
 
 // --- Commands -------------------------------------------------------------
 
-export const loadFormatCommands = commandManager => {
+export const loadFormatCommands = (commandManager) => {
   commandManager.add(COMMANDS.FORMAT_CLEAR_FORMAT, clearFormat)
   commandManager.add(COMMANDS.FORMAT_EMPHASIS, emphasis)
   commandManager.add(COMMANDS.FORMAT_HIGHLIGHT, highlight)
@@ -94,11 +94,10 @@ export const loadFormatCommands = commandManager => {
  */
 export const updateFormatMenu = (applicationMenu, formats) => {
   const formatMenuItem = applicationMenu.getMenuItemById('formatMenuItem')
-  formatMenuItem.submenu.items.forEach(item => (item.checked = false))
-  formatMenuItem.submenu.items
-    .forEach(item => {
-      if (item.id && formats[MENU_ID_FORMAT_MAP[item.id]]) {
-        item.checked = true
-      }
-    })
+  formatMenuItem.submenu.items.forEach((item) => (item.checked = false))
+  formatMenuItem.submenu.items.forEach((item) => {
+    if (item.id && formats[MENU_ID_FORMAT_MAP[item.id]]) {
+      item.checked = true
+    }
+  })
 }

@@ -5,7 +5,8 @@ let envId = 0
 
 const patchEnvPath = () => {
   if (process.platform === 'darwin') {
-    process.env.PATH += (process.env.PATH.endsWith(path.delimiter) ? '' : path.delimiter) + '/Library/TeX/texbin'
+    process.env.PATH +=
+      (process.env.PATH.endsWith(path.delimiter) ? '' : path.delimiter) + '/Library/TeX/texbin'
   }
 }
 
@@ -78,11 +79,12 @@ export class AppEnvironment {
  * @param {arg.Result} args The parsed application arguments.
  * @returns {AppEnvironment} The current (global) environment.
  */
-const setupEnvironment = args => {
+const setupEnvironment = (args) => {
   patchEnvPath()
 
   const isDevMode = process.env.NODE_ENV !== 'production'
-  const debug = args['--debug'] || !!process.env.MARKTEXT_DEBUG || process.env.NODE_ENV !== 'production'
+  const debug =
+    args['--debug'] || !!process.env.MARKTEXT_DEBUG || process.env.NODE_ENV !== 'production'
   const verbose = args['--verbose'] || 0
   const safeMode = args['--safe']
   const userDataPath = args['--user-data-dir'] // or null (= default user data path)

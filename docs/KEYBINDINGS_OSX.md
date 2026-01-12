@@ -16,7 +16,7 @@ MarkText key bindings for macOS. Please see [general key bindings](KEYBINDINGS.m
 #### File menu
 
 | Id                     | Default                                          | Description                           |
-|:---------------------- | ------------------------------------------------ | ------------------------------------- |
+| :--------------------- | ------------------------------------------------ | ------------------------------------- |
 | `file.new-window`      | <kbd>Command</kbd>+<kbd>N</kbd>                  | New window                            |
 | `file.new-tab`         | <kbd>Command</kbd>+<kbd>T</kbd>                  | New tab                               |
 | `file.open-file`       | <kbd>Command</kbd>+<kbd>O</kbd>                  | Open markdown file                    |
@@ -33,7 +33,7 @@ MarkText key bindings for macOS. Please see [general key bindings](KEYBINDINGS.m
 #### Edit menu
 
 | Id                        | Default                                           | Description                                     |
-|:------------------------- | ------------------------------------------------- | ----------------------------------------------- |
+| :------------------------ | ------------------------------------------------- | ----------------------------------------------- |
 | `edit.undo`               | <kbd>Command</kbd>+<kbd>Z</kbd>                   | Undo last operation                             |
 | `edit.redo`               | <kbd>Command</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>  | Redo last operation                             |
 | `edit.cut`                | <kbd>Command</kbd>+<kbd>X</kbd>                   | Cut selected text                               |
@@ -101,8 +101,8 @@ MarkText key bindings for macOS. Please see [general key bindings](KEYBINDINGS.m
 | ----------------------------- | ----------------------------------------------- | ------------------------- |
 | `window.minimize`             | <kbd>Command</kbd>+<kbd>M</kbd>                 | Minimize the window       |
 | `window.toggle-always-on-top` | -                                               | Toogle always on top mode |
-| `window.zoomIn`              | -                                               | Zoom in                   |
-| `window.zoomOut`             | -                                               | Zoom out                  |
+| `window.zoomIn`               | -                                               | Zoom in                   |
+| `window.zoomOut`              | -                                               | Zoom out                  |
 | `window.toggle-full-screen`   | <kbd>Ctrl</kbd>+<kbd>Command</kbd>+<kbd>F</kbd> | Toggle fullscreen mode    |
 
 #### View menu
@@ -124,10 +124,10 @@ MarkText key bindings for macOS. Please see [general key bindings](KEYBINDINGS.m
 
 #### Tabs
 
-| Id                       | Default                                         | Description                  |
-| ------------------------ | ----------------------------------------------- | ---------------------------- |
-| `tabs.cycle-forward`     | <kbd>Ctrl</kbd>+<kbd>Tab</kbd>                  | Cycle through tabs           |
-| `tabs.cycle-backward`    | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | Cycle backwards through tabs |
+| Id                     | Default                                         | Description                  |
+| ---------------------- | ----------------------------------------------- | ---------------------------- |
+| `tabs.cycle-forward`   | <kbd>Ctrl</kbd>+<kbd>Tab</kbd>                  | Cycle through tabs           |
+| `tabs.cycle-backward`  | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Tab</kbd> | Cycle backwards through tabs |
 | `tabs.switchToleft`    | <kbd>Command</kbd>+<kbd>PageUp</kbd>            | Switch tab to the left       |
 | `tabs.switchToright`   | <kbd>Command</kbd>+<kbd>PageDown</kbd>          | Switch tab to the right      |
 | `tabs.switchTofirst`   | <kbd>Ctrl</kbd>+<kbd>1</kbd>                    | Switch tab to the 1st        |

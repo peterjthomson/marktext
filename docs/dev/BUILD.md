@@ -13,6 +13,7 @@ git clone https://github.com/marktext/marktext.git
 The Marktext build process currently relies on an old version of node.
 The easiest way to build Marktext for Linux right now is from inside a container.
 Here are the steps for doing so:
+
 ```sh
 # cd to marktext repository
 

@@ -158,7 +158,7 @@ const { t } = useI18n()
 
 const props = defineProps({
   projectTree: {
-    validator: function(value) {
+    validator: function (value) {
       return typeof value === 'object'
     },
     required: true

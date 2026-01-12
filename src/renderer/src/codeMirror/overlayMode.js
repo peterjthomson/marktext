@@ -10,8 +10,8 @@
 // or state.overlay.combineTokens was true, in which case the styles are
 // combined.
 
-const overlayMode = CodeMirror => {
-  CodeMirror.overlayMode = function(base, overlay, combine) {
+const overlayMode = (CodeMirror) => {
+  CodeMirror.overlayMode = function (base, overlay, combine) {
     return {
       startState() {
         return {
@@ -37,8 +37,10 @@ const overlayMode = CodeMirror => {
       },
 
       token(stream, state) {
-        if (stream !== state.streamSeen ||
-          Math.min(state.basePos, state.overlayPos) < stream.start) {
+        if (
+          stream !== state.streamSeen ||
+          Math.min(state.basePos, state.overlayPos) < stream.start
+        ) {
           state.streamSeen = stream
           state.basePos = state.overlayPos = stream.start
         }
@@ -61,17 +63,18 @@ const overlayMode = CodeMirror => {
         if (state.overlayCur === null) {
           return state.baseCur
         } else if (
-          (state.baseCur !== null &&
-          state.overlay.combineTokens) ||
+          (state.baseCur !== null && state.overlay.combineTokens) ||
           (combine && state.overlay.combineTokens === null)
         ) {
           return state.baseCur + ' ' + state.overlayCur
         } else return state.overlayCur
       },
 
-      indent: base.indent && function(state, textAfter) {
-        return base.indent(state.base, textAfter)
-      },
+      indent:
+        base.indent &&
+        function (state, textAfter) {
+          return base.indent(state.base, textAfter)
+        },
 
       electricChars: base.electricChars,
 
@@ -90,7 +93,9 @@ const overlayMode = CodeMirror => {
 
         return overlayToken == null
           ? baseToken
-          : (combine && baseToken != null ? baseToken + ' ' + overlayToken : overlayToken)
+          : combine && baseToken != null
+            ? baseToken + ' ' + overlayToken
+            : overlayToken
       }
     }
   }

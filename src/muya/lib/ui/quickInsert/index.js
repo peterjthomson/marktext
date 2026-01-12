@@ -31,7 +31,7 @@ class QuickInsert extends BaseScrollFloat {
   set renderObj(obj) {
     this._renderObj = obj
     const renderArray = []
-    Object.keys(obj).forEach(key => {
+    Object.keys(obj).forEach((key) => {
       renderArray.push(...obj[key])
     })
     this.renderArray = renderArray
@@ -44,37 +44,52 @@ class QuickInsert extends BaseScrollFloat {
 
   render() {
     const { scrollElement, activeItem, _renderObj } = this
-    let children = Object.keys(_renderObj).filter(key => {
-      return _renderObj[key].length !== 0
-    })
-      .map(key => {
+    let children = Object.keys(_renderObj)
+      .filter((key) => {
+        return _renderObj[key].length !== 0
+      })
+      .map((key) => {
         const titleVnode = h('div.title', key.toUpperCase())
         const items = []
         for (const item of _renderObj[key]) {
           const { title, subTitle, label, icon, shortCut } = item
-          const iconVnode = h('div.icon-container', h('i.icon', h(`i.icon-${label.replace(/\s/g, '-')}`, {
-            style: {
-              background: `url(${icon}) no-repeat`,
-              'background-size': '100%'
-            }
-          }, '')))
+          const iconVnode = h(
+            'div.icon-container',
+            h(
+              'i.icon',
+              h(
+                `i.icon-${label.replace(/\s/g, '-')}`,
+                {
+                  style: {
+                    background: `url(${icon}) no-repeat`,
+                    'background-size': '100%'
+                  }
+                },
+                ''
+              )
+            )
+          )
 
           const description = h('div.description', [
             h('div.big-title', title),
             h('div.sub-title', subTitle)
           ])
-          const shortCutVnode = h('div.short-cut', [
-            h('span', shortCut)
-          ])
+          const shortCutVnode = h('div.short-cut', [h('span', shortCut)])
           const selector = activeItem.label === label ? 'div.item.active' : 'div.item'
-          items.push(h(selector, {
-            dataset: { label },
-            on: {
-              click: () => {
-                this.selectItem(item)
-              }
-            }
-          }, [iconVnode, description, shortCutVnode]))
+          items.push(
+            h(
+              selector,
+              {
+                dataset: { label },
+                on: {
+                  click: () => {
+                    this.selectItem(item)
+                  }
+                }
+              },
+              [iconVnode, description, shortCutVnode]
+            )
+          )
         }
 
         return h('section', [titleVnode, ...items])
@@ -113,13 +128,15 @@ class QuickInsert extends BaseScrollFloat {
     const obj = deepCopy(this.renderObj)
     if (!canInserFrontMatter) {
       // 查找包含 front-matter 的基础块分组
-      const basicBlockKey = Object.keys(obj).find(key => {
+      const basicBlockKey = Object.keys(obj).find((key) => {
         const items = obj[key]
-        return Array.isArray(items) && items.some(item => item.label === 'front-matter')
+        return Array.isArray(items) && items.some((item) => item.label === 'front-matter')
       })
       if (basicBlockKey && obj[basicBlockKey]) {
         // 找到 front-matter 项的索引并移除
-        const frontMatterIndex = obj[basicBlockKey].findIndex(item => item.label === 'front-matter')
+        const frontMatterIndex = obj[basicBlockKey].findIndex(
+          (item) => item.label === 'front-matter'
+        )
         if (frontMatterIndex !== -1) {
           obj[basicBlockKey].splice(frontMatterIndex, 1)
         }
@@ -128,7 +145,7 @@ class QuickInsert extends BaseScrollFloat {
     let result = obj
     if (text !== '') {
       result = {}
-      Object.keys(obj).forEach(key => {
+      Object.keys(obj).forEach((key) => {
         result[key] = filter(obj[key], text, { key: 'title' })
       })
     }

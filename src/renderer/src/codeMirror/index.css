@@ -2,6 +2,8 @@
   background: transparent;
   height: auto;
 }
-.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection {
+.CodeMirror-line::selection,
+.CodeMirror-line > span::selection,
+.CodeMirror-line > span > span::selection {
   background: rgb(178, 215, 254);
 }

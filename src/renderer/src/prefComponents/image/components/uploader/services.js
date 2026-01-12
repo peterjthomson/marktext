@@ -1,7 +1,7 @@
 // TODO: Remove information from other vue source files into this file.
 import { t } from '../../../../i18n'
 
-export const isValidService = name => {
+export const isValidService = (name) => {
   return name !== 'none' && getServices().hasOwnProperty(name)
 }
 
