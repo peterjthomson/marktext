@@ -53,7 +53,7 @@
   "sequenceTheme": "hand",
 
   "theme": "light",
-  "followSystemTheme": true,
+  "followSystemTheme": false,
   "lightModeTheme": "light",
   "darkModeTheme": "dark",
   "customCss": "",
