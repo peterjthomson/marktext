@@ -192,6 +192,11 @@
     "default": 2,
     "enum": [0, 1, 2, 3]
   },
+  "lightTouch": {
+    "description": "Editor--When enabled, preserves original whitespace (trailing spaces, blank lines) if no semantic changes were made. Useful for Git workflows.",
+    "type": "boolean",
+    "default": true
+  },
   "textDirection": {
     "description": "Editor--The writing text direction",
     "enum": ["ltr", "rtl"],

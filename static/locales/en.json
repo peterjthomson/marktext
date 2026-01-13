@@ -554,7 +554,9 @@
           "default": "Default",
           "crlf": "CRLF(Windows)",
           "lf": "LF(Linux/Mac)"
-        }
+        },
+        "lightTouch": "Light Touch mode",
+        "lightTouchNotes": "When enabled, preserves original whitespace (trailing spaces, blank lines) if no semantic changes were made. Useful for Git workflows."
       },
       "misc": {
         "title": "Miscellaneous",

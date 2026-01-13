@@ -274,10 +274,15 @@ export const useEditorStore = defineStore('editor', {
 
     FILE_SAVE() {
       const projectStore = useProjectStore()
-      const { id, filename, pathname, markdown } = this.currentFile
+      const preferencesStore = usePreferencesStore()
+      const { id, filename, pathname, markdown, originalMarkdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
       const defaultPath = getRootFolderFromState(projectStore)
+      const { lightTouch } = preferencesStore
       if (id) {
+        // Apply Light Touch mode: use original markdown if no semantic changes
+        const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+
         // Show save spinner for manual saves
         // Record start time to ensure minimum display duration
         this._saveStartTime = Date.now()
@@ -287,7 +292,7 @@ export const useEditorStore = defineStore('editor', {
           id,
           filename,
           pathname,
-          markdown,
+          markdownToSave,
           deepClone(options),
           defaultPath
         )
@@ -362,6 +367,8 @@ export const useEditorStore = defineStore('editor', {
         }
         if (tab) {
           Object.assign(tab, { filename, pathname, isSaved: true })
+          // Update originalMarkdown after successful save for Light Touch mode
+          tab.originalMarkdown = tab.markdown
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -371,6 +378,8 @@ export const useEditorStore = defineStore('editor', {
         const tab = this.tabs.find((f) => f.id === tabId)
         if (tab) {
           tab.isSaved = true
+          // Update originalMarkdown after successful save for Light Touch mode
+          tab.originalMarkdown = tab.markdown
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -403,17 +412,21 @@ export const useEditorStore = defineStore('editor', {
 
     LISTEN_FOR_CLOSE() {
       const projectStore = useProjectStore()
+      const preferencesStore = usePreferencesStore()
       window.electron.ipcRenderer.on('mt::ask-for-close', () => {
+        const { lightTouch } = preferencesStore
         const unsavedFiles = this.tabs
           .filter((file) => !file.isSaved)
           .map((file) => {
-            const { id, filename, pathname, markdown } = file
+            const { id, filename, pathname, markdown, originalMarkdown } = file
             const options = getOptionsFromState(file)
+            // Apply Light Touch mode: use original markdown if no semantic changes
+            const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
             return {
               id,
               filename,
               pathname,
-              markdown,
+              markdown: markdownToSave,
               options,
               defaultPath: getRootFolderFromState(projectStore)
             }
@@ -438,16 +451,20 @@ export const useEditorStore = defineStore('editor', {
     ASK_FOR_SAVE_ALL(closeTabs) {
       const { tabs } = this
       const projectStore = useProjectStore()
+      const preferencesStore = usePreferencesStore()
+      const { lightTouch } = preferencesStore
       const unsavedFiles = tabs
         .filter((file) => !(file.isSaved && /[^\n]/.test(file.markdown)))
         .map((file) => {
-          const { id, filename, pathname, markdown } = file
+          const { id, filename, pathname, markdown, originalMarkdown } = file
           const options = getOptionsFromState(file)
+          // Apply Light Touch mode: use original markdown if no semantic changes
+          const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
           return {
             id,
             filename,
             pathname,
-            markdown,
+            markdown: markdownToSave,
             options,
             defaultPath: getRootFolderFromState(projectStore)
           }
@@ -1084,7 +1101,7 @@ export const useEditorStore = defineStore('editor', {
 
       const preferencesStore = usePreferencesStore()
       const projectStore = useProjectStore()
-      const { autoSaveDelay } = preferencesStore
+      const { autoSaveDelay, lightTouch } = preferencesStore
 
       if (autoSaveTimers.has(id)) {
         const timer = autoSaveTimers.get(id)
@@ -1098,12 +1115,14 @@ export const useEditorStore = defineStore('editor', {
         const tab = this.tabs.find((t) => t.id === id)
         if (tab && !tab.isSaved) {
           const defaultPath = getRootFolderFromState(projectStore)
+          // Apply Light Touch mode: use original markdown if no semantic changes
+          const markdownToSave = getMarkdownForSave(markdown, tab.originalMarkdown, lightTouch)
           window.electron.ipcRenderer.send(
             'mt::response-file-save',
             id,
             filename,
             pathname,
-            markdown,
+            markdownToSave,
             deepClone(options),
             defaultPath
           )
@@ -1415,6 +1434,54 @@ const adjustTrailingNewlines = (markdown, trimTrailingNewlineOption) => {
  */
 const trimTrailingNewlines = (text) => {
   return text.replace(/[\r?\n]+$/, '')
+}
+
+/**
+ * Normalizes markdown for semantic comparison by removing whitespace differences.
+ * Used by Light Touch mode to detect if only whitespace changed.
+ *
+ * @param {string} markdown The markdown text to normalize.
+ * @returns {string} Normalized markdown for comparison.
+ */
+const normalizeForComparison = (markdown) => {
+  if (!markdown) return ''
+  return markdown
+    // Normalize line endings
+    .replace(/\r\n/g, '\n')
+    // Remove trailing spaces from lines (but preserve newlines)
+    .replace(/[ \t]+$/gm, '')
+    // Collapse multiple blank lines to single blank line
+    .replace(/\n{3,}/g, '\n\n')
+    // Trim leading/trailing whitespace
+    .trim()
+}
+
+/**
+ * Determines the markdown to save based on Light Touch mode.
+ * If Light Touch is enabled and only whitespace changed, returns original.
+ *
+ * @param {string} currentMarkdown The current (regenerated) markdown.
+ * @param {string|null} originalMarkdown The original markdown from file load.
+ * @param {boolean} lightTouch Whether Light Touch mode is enabled.
+ * @returns {string} The markdown to save.
+ */
+const getMarkdownForSave = (currentMarkdown, originalMarkdown, lightTouch) => {
+  // If Light Touch is disabled or no original exists, use current
+  if (!lightTouch || !originalMarkdown) {
+    return currentMarkdown
+  }
+
+  // Compare normalized versions to check for semantic equivalence
+  const normalizedCurrent = normalizeForComparison(currentMarkdown)
+  const normalizedOriginal = normalizeForComparison(originalMarkdown)
+
+  // If semantically the same, use original to preserve whitespace
+  if (normalizedCurrent === normalizedOriginal) {
+    return originalMarkdown
+  }
+
+  // Real changes detected, use current (regenerated) markdown
+  return currentMarkdown
 }
 
 /**
