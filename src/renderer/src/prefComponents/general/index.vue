@@ -109,22 +109,23 @@
               Hide "lastState" for now (#2064).
             <el-radio class="ag-underdevelop" label="lastState">Restore last editor session</el-radio>
             -->
-            <el-radio
-              label="folder"
-              style="margin-bottom: 10px"
-            >
-              {{ t('preferences.general.startup.openDefaultDirectory')
-              }}<span>: {{ defaultDirectoryToOpen }}</span>
-            </el-radio>
-            <el-button
-              size="small"
-              @click="selectDefaultDirectoryToOpen"
-            >
-              {{ t('preferences.general.startup.selectFolder') }}
-            </el-button>
-            <el-radio label="blank">
-              {{ t('preferences.general.startup.openBlankPage') }}
-            </el-radio>
+            <div class="startup-option">
+              <el-radio label="folder">
+                {{ t('preferences.general.startup.openDefaultDirectory') }}
+              </el-radio>
+              <el-button
+                size="small"
+                @click="selectDefaultDirectoryToOpen"
+              >
+                {{ t('preferences.general.startup.selectFolder') }}
+              </el-button>
+              <span v-if="defaultDirectoryToOpen" class="directory-path">{{ defaultDirectoryToOpen }}</span>
+            </div>
+            <div class="startup-option">
+              <el-radio label="blank">
+                {{ t('preferences.general.startup.openBlankPage') }}
+              </el-radio>
+            </div>
           </el-radio-group>
         </section>
       </template>
@@ -209,12 +210,19 @@ const selectDefaultDirectoryToOpen = () => {
   color: var(--editorColor);
 }
 
-.pref-general .startup-action-ctrl .el-button--small {
-  margin-left: 25px;
+.pref-general .startup-action-ctrl .startup-option {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  gap: 10px;
 }
 
-.pref-general .startup-action-ctrl label {
-  display: block;
-  margin: 20px 0;
+.pref-general .startup-action-ctrl .startup-option .el-button--small {
+  margin-left: 0;
+}
+
+.pref-general .startup-action-ctrl .directory-path {
+  color: var(--editorColor50);
+  font-size: 12px;
 }
 </style>

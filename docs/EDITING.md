@@ -56,7 +56,7 @@ When you start a new line, just type `@` to show a pop up with all available mar
 
 #### Line transformer
 
-You can transform a line into another type by clicking on the highlighted icon in the image below and select `Turn Into`. Furthermore, you can duplicate the selected line, create a paragraph above the selected line or delete the line.
+You can transform a line into another type by clicking on the highlighted icon in the image below and select `Style`. Furthermore, you can create a new paragraph, duplicate the selected line, or delete the line.
 
 ![](assets/marktext-line-transformer.png)
 

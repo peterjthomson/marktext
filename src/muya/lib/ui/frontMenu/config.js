@@ -1,7 +1,7 @@
 import copyIcon from '../../assets/pngicon/copy/2.png'
-import newIcon from '../../assets/pngicon/paragraph/2.png'
+import newIcon from '../../assets/pngicon/plus/2.png'
 import deleteIcon from '../../assets/pngicon/delete/2.png'
-import turnIcon from '../../assets/pngicon/turninto/2.png'
+import turnIcon from '../../assets/pngicon/paragraph/2.png'
 import { isOsx } from '../../config'
 import { createQuickInsertObj } from '../quickInsert/config'
 
@@ -23,12 +23,6 @@ export const createMenu = (t) => {
 
   return [
     {
-      icon: copyIcon,
-      label: 'duplicate',
-      text: translate('frontMenu.duplicate'),
-      shortCut: `⇧${COMMAND_KEY}P`
-    },
-    {
       icon: turnIcon,
       label: 'turnInto',
       text: translate('frontMenu.turnInto')
@@ -38,6 +32,12 @@ export const createMenu = (t) => {
       label: 'new',
       text: translate('frontMenu.newParagraph'),
       shortCut: `⇧${COMMAND_KEY}N`
+    },
+    {
+      icon: copyIcon,
+      label: 'duplicate',
+      text: translate('frontMenu.duplicate'),
+      shortCut: `⇧${COMMAND_KEY}P`
     },
     {
       icon: deleteIcon,
