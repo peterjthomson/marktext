@@ -45,10 +45,22 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps({
-  description: String,
-  value: String,
-  onChange: Function,
-  more: String,
+  description: {
+    type: String,
+    default: ''
+  },
+  value: {
+    type: String,
+    default: ''
+  },
+  onChange: {
+    type: Function,
+    default: () => {}
+  },
+  more: {
+    type: String,
+    default: ''
+  },
   disable: {
     type: Boolean,
     default: false

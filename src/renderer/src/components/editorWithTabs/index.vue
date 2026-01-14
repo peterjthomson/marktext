@@ -42,7 +42,8 @@ defineProps({
     required: true
   },
   muyaIndexCursor: {
-    type: Object
+    type: Object,
+    default: null
   },
   sourceCode: {
     type: Boolean,

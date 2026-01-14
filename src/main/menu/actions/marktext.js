@@ -1,8 +1,9 @@
-import electronUpdater from 'electron-updater'
-const { autoUpdater } = electronUpdater
 import { BrowserWindow, Menu, ipcMain } from 'electron'
+import electronUpdater from 'electron-updater'
 import { COMMANDS } from '../../commands'
 import { isOsx } from '../../config'
+
+const { autoUpdater } = electronUpdater
 
 let runningUpdate = false
 let win = null

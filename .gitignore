@@ -1,6 +1,7 @@
 node_modules
 dist
 out
+test-results/
 .DS_Store
 .prettierignore
 .eslintcache

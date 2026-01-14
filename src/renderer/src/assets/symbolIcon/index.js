@@ -40,7 +40,7 @@
       }
       polling()
       d.onreadystatechange = function () {
-        if (d.readyState == 'complete') {
+        if (d.readyState === 'complete') {
           d.onreadystatechange = null
           init()
         }

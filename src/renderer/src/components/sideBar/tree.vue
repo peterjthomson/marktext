@@ -163,8 +163,14 @@ const props = defineProps({
     },
     required: true
   },
-  openedFiles: Array,
-  tabs: Array
+  openedFiles: {
+    type: Array,
+    default: () => []
+  },
+  tabs: {
+    type: Array,
+    default: () => []
+  }
 })
 
 const depth = 0

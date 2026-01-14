@@ -128,13 +128,22 @@ const { t } = useI18n()
 const STANDAR_Y = 320
 
 const props = defineProps({
-  markdown: String,
-  cursor: Object,
+  markdown: {
+    type: String,
+    default: ''
+  },
+  cursor: {
+    type: Object,
+    default: null
+  },
   textDirection: {
     type: String,
     required: true
   },
-  platform: String
+  platform: {
+    type: String,
+    default: ''
+  }
 })
 
 // Get stores

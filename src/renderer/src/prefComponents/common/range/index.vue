@@ -38,14 +38,38 @@ import { ref, watch } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
 
 const props = defineProps({
-  description: String,
-  value: [String, Number],
-  min: Number,
-  max: Number,
-  onChange: Function,
-  unit: String,
-  step: Number,
-  more: String,
+  description: {
+    type: String,
+    default: ''
+  },
+  value: {
+    type: [String, Number],
+    default: 0
+  },
+  min: {
+    type: Number,
+    default: 0
+  },
+  max: {
+    type: Number,
+    default: 100
+  },
+  onChange: {
+    type: Function,
+    default: () => {}
+  },
+  unit: {
+    type: String,
+    default: ''
+  },
+  step: {
+    type: Number,
+    default: 1
+  },
+  more: {
+    type: String,
+    default: ''
+  },
   disable: {
     type: Boolean,
     default: false

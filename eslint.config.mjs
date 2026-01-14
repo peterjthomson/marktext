@@ -14,6 +14,7 @@ export default [
       'node_modules/**',
       'dist/**',
       'out/**',
+      'test-results/**',
       'src/muya/dist/**',
       'src/muya/webpack.config.js',
       'static/locales/*.min.json',
