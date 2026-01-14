@@ -1450,148 +1450,134 @@ const normalizeBlock = (text) => {
     .replace(/\r\n/g, '\n')
     // Remove trailing spaces from lines
     .replace(/[ \t]+$/gm, '')
-    // Collapse multiple spaces to single space
+    // Normalize all blank line variations to single newline for comparison
+    // This treats "no blank line" and "one or more blank lines" as equivalent
+    .replace(/\n+/g, '\n')
+    // Collapse multiple spaces to single space (but not newlines)
     .replace(/[ \t]+/g, ' ')
     // Trim
     .trim()
 }
 
 /**
- * Splits markdown into logical blocks (paragraphs, headings, code blocks, etc.)
- * Each block includes its trailing blank lines to preserve document structure.
+ * Normalizes a single line for comparison (trims trailing whitespace).
  *
- * @param {string} markdown The markdown to split.
- * @returns {Array<{text: string, normalized: string}>} Array of blocks with original and normalized text.
+ * @param {string} line The line to normalize.
+ * @returns {string} Normalized line.
  */
-const splitIntoBlocks = (markdown) => {
-  if (!markdown) return []
+const normalizeLine = (line) => line.replace(/[ \t]+$/, '')
 
-  const blocks = []
-  // Split on double newlines but keep the structure
-  // This regex captures: content + trailing newlines
-  const blockRegex = /(?:^|\n\n)((?:```[\s\S]*?```|[^\n]+(?:\n(?!\n)[^\n]*)*))(\n*)/g
+/**
+ * Computes the Longest Common Subsequence (LCS) between two arrays of lines,
+ * using normalized lines for comparison. Returns an array of matching index
+ * pairs: [{ orig: i, regen: j }, ...]
+ *
+ * @param {string[]} origLines Original lines.
+ * @param {string[]} regenLines Regenerated lines.
+ * @returns {Array<{orig: number, regen: number}>} LCS index pairs.
+ */
+const computeLcs = (origLines, regenLines) => {
+  const n = origLines.length
+  const m = regenLines.length
 
-  // Handle leading content before first double newline
-  const normalized = markdown.replace(/\r\n/g, '\n')
-  let lastIndex = 0
-  let match
+  // dp[i][j] = length of LCS of orig[0..i) and regen[0..j)
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
 
-  // Simple split approach: split by blank lines, preserving code blocks
-  const lines = normalized.split('\n')
-  let currentBlock = []
-  let inCodeBlock = false
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-
-    // Track code block state
-    if (line.startsWith('```')) {
-      inCodeBlock = !inCodeBlock
-    }
-
-    // If we hit a blank line outside a code block, that's a block boundary
-    if (line === '' && !inCodeBlock && currentBlock.length > 0) {
-      // Check if next lines are also blank (preserve multiple blank lines)
-      let trailingBlanks = '\n'
-      while (i + 1 < lines.length && lines[i + 1] === '') {
-        trailingBlanks += '\n'
-        i++
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      if (normalizeLine(origLines[i - 1]) === normalizeLine(regenLines[j - 1])) {
+        dp[i][j] = dp[i - 1][j - 1] + 1
+      } else {
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1])
       }
+    }
+  }
 
-      const blockText = currentBlock.join('\n') + trailingBlanks
-      blocks.push({
-        text: blockText,
-        normalized: normalizeBlock(currentBlock.join('\n'))
-      })
-      currentBlock = []
+  // Backtrack to get matching indices
+  const matches = []
+  let i = n
+  let j = m
+  while (i > 0 && j > 0) {
+    if (normalizeLine(origLines[i - 1]) === normalizeLine(regenLines[j - 1])) {
+      matches.push({ orig: i - 1, regen: j - 1 })
+      i--
+      j--
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      i--
     } else {
-      currentBlock.push(line)
+      j--
     }
   }
 
-  // Don't forget the last block
-  if (currentBlock.length > 0) {
-    const blockText = currentBlock.join('\n')
-    blocks.push({
-      text: blockText,
-      normalized: normalizeBlock(blockText)
-    })
-  }
-
-  return blocks
+  return matches.reverse()
 }
 
 /**
- * Finds the best matching block from candidates based on normalized content.
- * Uses exact match first, then falls back to similarity matching.
- *
- * @param {string} normalizedTarget The normalized block to match.
- * @param {Array<{text: string, normalized: string, used: boolean}>} candidates Available blocks.
- * @returns {number} Index of best match, or -1 if no good match found.
- */
-const findMatchingBlock = (normalizedTarget, candidates) => {
-  // First try exact match
-  for (let i = 0; i < candidates.length; i++) {
-    if (!candidates[i].used && candidates[i].normalized === normalizedTarget) {
-      return i
-    }
-  }
-  return -1
-}
-
-/**
- * Merges regenerated markdown with original, preserving original formatting
- * for unchanged blocks. Only changed/new content uses regenerated formatting.
+ * Merges regenerated markdown with the original file by aligning unchanged
+ * lines (via LCS) and preserving their exact formatting. Changed or new lines
+ * come from the regenerated content. This keeps unrelated lines untouched
+ * even when nearby lines were edited, and avoids inserting new blank lines
+ * where the original had none.
  *
  * @param {string} regenerated The regenerated markdown from editor.
  * @param {string} original The original markdown from file.
  * @returns {string} Merged markdown with preserved formatting where possible.
  */
 const mergeWithOriginal = (regenerated, original) => {
-  const regenBlocks = splitIntoBlocks(regenerated)
-  const origBlocks = splitIntoBlocks(original).map((b) => ({ ...b, used: false }))
+  // Normalize line endings to simplify processing
+  const regenLines = regenerated.replace(/\r\n/g, '\n').split('\n')
+  const origLines = original.replace(/\r\n/g, '\n').split('\n')
 
-  if (regenBlocks.length === 0) return regenerated
-  if (origBlocks.length === 0) return regenerated
+  const matches = computeLcs(origLines, regenLines)
 
-  const resultBlocks = []
+  const resultLines = []
+  let prevOrig = -1
+  let prevRegen = -1
 
-  for (const regenBlock of regenBlocks) {
-    const matchIdx = findMatchingBlock(regenBlock.normalized, origBlocks)
-
-    if (matchIdx !== -1) {
-      // Found matching original block - use original formatting
-      resultBlocks.push(origBlocks[matchIdx].text)
-      origBlocks[matchIdx].used = true
-    } else {
-      // New or changed block - use regenerated version
-      resultBlocks.push(regenBlock.text)
+  for (const { orig: oi, regen: rj } of matches) {
+    // Anything inserted between previous regen match and this regen match
+    const inserted = regenLines.slice(prevRegen + 1, rj)
+    if (inserted.length) {
+      const onlyBlank = inserted.every((l) => normalizeLine(l) === '')
+      const origGap = oi - prevOrig - 1 // lines between previous orig match and this one
+      // If original lines were adjacent (no gap), drop purely blank insertions
+      if (!(onlyBlank && origGap === 0)) {
+        // If no orig gap, strip blank lines that piggyback on edits
+        const toInsert = origGap === 0 ? inserted.filter((l) => normalizeLine(l) !== '') : inserted
+        if (toInsert.length) {
+          resultLines.push(...toInsert)
+        }
+      }
     }
+
+    // Add the matched line from original to preserve formatting
+    resultLines.push(origLines[oi])
+    prevOrig = oi
+    prevRegen = rj
   }
 
-  // Join blocks, being careful about spacing
-  let result = ''
-  for (let i = 0; i < resultBlocks.length; i++) {
-    const block = resultBlocks[i]
-    if (i > 0 && !result.endsWith('\n\n') && !block.startsWith('\n')) {
-      // Ensure proper separation between blocks
-      result += '\n\n'
+  // Handle tail insertions after the last match
+  if (prevRegen < regenLines.length - 1) {
+    const tail = regenLines.slice(prevRegen + 1)
+    const onlyBlank = tail.every((l) => normalizeLine(l) === '')
+    if (!onlyBlank) {
+      resultLines.push(...tail.filter((l) => normalizeLine(l) !== ''))
     }
-    result += block.replace(/\n+$/, '') // Remove trailing newlines, we'll add proper separation
+    // If only blank, rely on original trailing newlines preservation below
   }
 
-  // Preserve original's trailing newline pattern
+  // Preserve original trailing newline pattern
   const originalTrailing = original.match(/\n*$/)
   const trailingNewlines = originalTrailing ? originalTrailing[0] : '\n'
-  result = result.replace(/\n*$/, trailingNewlines)
+  const result = resultLines.join('\n').replace(/\n*$/, trailingNewlines)
 
   return result
 }
 
 /**
  * Determines the markdown to save based on Light Touch mode.
- * Preserves original formatting for unchanged blocks, applies formatting
- * only to changed/new content.
+ * When no semantic changes were made, returns the original file exactly.
+ * When changes were made, returns the regenerated markdown.
  *
  * @param {string} currentMarkdown The current (regenerated) markdown.
  * @param {string|null} originalMarkdown The original markdown from file load.
@@ -1608,12 +1594,12 @@ const getMarkdownForSave = (currentMarkdown, originalMarkdown, lightTouch) => {
   const normalizedCurrent = normalizeBlock(currentMarkdown)
   const normalizedOriginal = normalizeBlock(originalMarkdown)
 
-  // If semantically identical, use original entirely
+  // If semantically identical, use original entirely (preserves all whitespace)
   if (normalizedCurrent === normalizedOriginal) {
     return originalMarkdown
   }
 
-  // Changes detected - merge block by block to preserve unchanged sections
+  // Changes were made - merge to preserve unchanged lines
   return mergeWithOriginal(currentMarkdown, originalMarkdown)
 }
 
