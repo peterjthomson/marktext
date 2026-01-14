@@ -4,9 +4,7 @@ import sanitize, { isValidAttribute } from '../../../utils/dompurify'
 
 export default function htmlTag(h, cursor, block, token, outerClass) {
   const { tag, openTag, closeTag, children, attrs } = token
-  const className = children
-    ? this.getClassName(outerClass, block, token, cursor)
-    : CLASS_OR_ID.AG_GRAY
+  const className = this.getClassName(outerClass, block, token, cursor)
   const tagClassName = className === CLASS_OR_ID.AG_HIDE ? className : CLASS_OR_ID.AG_HTML_TAG
   const { start, end } = token.range
   const openContent = this.highlight(h, block, start, start + openTag.length, token)
