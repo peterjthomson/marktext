@@ -36,6 +36,7 @@ export const usePreferencesStore = defineStore('preferences', {
     defaultEncoding: 'utf8',
     autoGuessEncoding: true,
     trimTrailingNewline: 2,
+    lightTouch: true,
     textDirection: 'ltr',
     hideQuickInsertHint: false,
     imageInsertAction: 'folder',

@@ -1,8 +1,20 @@
 import { createI18n } from 'vue-i18n'
 import bus from '../bus'
 
-// 直接导入翻译文件
-import enTranslations from '../../../../static/locales/en.json'
+// Prefer loading translations via preload so we always read the on-disk locale files.
+// Fall back to the bundled JSON for contexts where `window.i18nUtils` isn't available.
+import enTranslationsBundled from '../../../../static/locales/en.json'
+
+const enTranslations = (() => {
+  try {
+    if (typeof window !== 'undefined' && window?.i18nUtils?.loadTranslations) {
+      return window.i18nUtils.loadTranslations('en') || enTranslationsBundled
+    }
+  } catch {
+    // ignore and fall back to bundled translations
+  }
+  return enTranslationsBundled
+})()
 
 // 创建Vue i18n实例
 const i18n = createI18n({
@@ -54,14 +66,12 @@ export const t = (key, ...args) => {
 // 导出语言设置函数
 export const setLanguage = (locale) => {
   if (!locale) return
-  if (!i18n.global.availableLocales.includes[locale]) {
-    // Locale not yet available, need to get it from the main process
-    const translation = window.i18nUtils.loadTranslations(locale)
-    if (!translation) return // Failed to load locale file, error msg should be in the loadTranslations function
-
-    // Add the loaded locale to i18n instance
+  // Always (re)load locale messages from disk via preload. This avoids stale in-memory
+  // message maps (especially in dev/HMR and after editing locale JSON).
+  const translation = window.i18nUtils?.loadTranslations?.(locale)
+  if (translation) {
     i18n.global.setLocaleMessage(locale, translation)
-    console.log(`🌐 Loaded and set new locale: ${locale}`)
+    console.log(`🌐 Loaded and set locale messages: ${locale}`)
   }
   i18n.global.locale.value = locale
 }

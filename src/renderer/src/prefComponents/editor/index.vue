@@ -144,6 +144,12 @@
           :options="getTrimTrailingNewlineOptions()"
           :on-change="(value) => onSelectChange('trimTrailingNewline', value)"
         />
+        <bool
+          :description="t('preferences.editor.fileRepresentation.lightTouch')"
+          :notes="t('preferences.editor.fileRepresentation.lightTouchNotes')"
+          :bool="lightTouch"
+          :on-change="(value) => onSelectChange('lightTouch', value)"
+        />
       </template>
     </compound>
 
@@ -230,7 +236,8 @@ const {
   editorLineWidth,
   defaultEncoding,
   autoGuessEncoding,
-  trimTrailingNewline
+  trimTrailingNewline,
+  lightTouch
 } = storeToRefs(preferenceStore)
 
 const onSelectChange = (type, value) => {

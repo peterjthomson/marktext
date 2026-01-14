@@ -40,6 +40,7 @@ Preferences can be controlled and modified in the settings window or via the `pr
 | defaultEncoding                    | String  | utf8             | Default file encoding                                                                                          |
 | autoGuessEncoding                  | Boolean | true             | Try to automatically guess file encoding                                                                       |
 | trimTrailingNewline                | Number  | 2                | Trailing newline handling: `0` (trim all), `1` (ensure single), `2` (auto detect), `3` (disabled)              |
+| lightTouch                         | Boolean | true             | Preserve original whitespace formatting on save when no semantic changes were made                             |
 | textDirection                      | String  | ltr              | Writing text direction: `ltr` or `rtl`                                                                         |
 | hideQuickInsertHint                | Boolean | false            | Hide hint for quickly creating paragraphs                                                                      |
 | hideLinkPopup                      | Boolean | false            | Hide link popup when hovering                                                                                  |

@@ -552,7 +552,9 @@
           "default": "デフォルト",
           "crlf": "CRLF (Windows)",
           "lf": "LF (Linux/Mac)"
-        }
+        },
+        "lightTouch": "ライトタッチモード",
+        "lightTouchNotes": "有効にすると、意味的な変更がない場合に元の空白（行末のスペース、空行）を保持します。Git の運用に便利です。"
       },
       "misc": {
         "title": "その他",

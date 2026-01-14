@@ -13,6 +13,8 @@ export const defaultFileState = {
   pathname: '',
   filename: 'Untitled-1',
   markdown: '',
+  // Original markdown content from file load (for Light Touch mode)
+  originalMarkdown: null,
   encoding: {
     encoding: 'utf8',
     isBom: false
@@ -63,6 +65,7 @@ export const getFileStateFromData = (data) => {
   return Object.assign(fileState, {
     id,
     markdown,
+    originalMarkdown: pathname ? markdown : null, // Store original only for files from disk
     filename,
     pathname,
     encoding,
@@ -124,6 +127,7 @@ export const getSingleFileState = ({
   return Object.assign(fileState, {
     id,
     markdown,
+    originalMarkdown: pathname ? markdown : null, // Store original only for files from disk
     filename,
     pathname,
     encoding,
@@ -158,6 +162,7 @@ export const createDocumentState = (markdownDocument, id = getUniqueId()) => {
   return Object.assign(docState, {
     id,
     markdown,
+    originalMarkdown: pathname ? markdown : null, // Store original only for files from disk
     filename,
     pathname,
     encoding,

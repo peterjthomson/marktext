@@ -551,7 +551,9 @@
           "default": "Standard",
           "crlf": "CRLF (Windows)",
           "lf": "LF (Linux/Mac)"
-        }
+        },
+        "lightTouch": "Light-Touch-Modus",
+        "lightTouchNotes": "Wenn aktiviert, bleiben die ursprünglichen Leerzeichen (nachgestellte Leerzeichen, leere Zeilen) erhalten, sofern keine semantischen Änderungen vorgenommen wurden. Nützlich für Git-Workflows."
       },
       "misc": {
         "title": "Verschiedenes",

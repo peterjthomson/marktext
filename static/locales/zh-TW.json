@@ -552,7 +552,9 @@
           "default": "預設",
           "crlf": "CRLF（Windows）",
           "lf": "LF（Linux/Mac）"
-        }
+        },
+        "lightTouch": "輕觸模式",
+        "lightTouchNotes": "啟用後，若未做語意變更，將保留原始空白（行尾空格、空白行）。適合 Git 工作流程。"
       },
       "misc": {
         "title": "其他",

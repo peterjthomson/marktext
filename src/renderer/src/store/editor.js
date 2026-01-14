@@ -23,6 +23,15 @@ import { useMainStore } from '.'
 import { i18n } from '../i18n'
 
 const autoSaveTimers = new Map()
+// Tracks the exact markdown payload we asked the main process to write.
+// Used to update `originalMarkdown` after save so Light Touch doesn't drift.
+//
+// Race condition handling:
+// - When save completes, we check if tab.markdown === pendingSavedMarkdown.get(id)
+// - If they match: save was successful with no concurrent edits → mark as saved
+// - If they differ: user edited during save → keep unsaved, but update baseline
+// - If no entry exists: user canceled save dialog → keep unsaved
+const pendingSavedMarkdown = new Map()
 
 export const useEditorStore = defineStore('editor', {
   state: () => ({
@@ -274,10 +283,20 @@ export const useEditorStore = defineStore('editor', {
 
     FILE_SAVE() {
       const projectStore = useProjectStore()
-      const { id, filename, pathname, markdown } = this.currentFile
+      const preferencesStore = usePreferencesStore()
+      const { id, filename, pathname, markdown, originalMarkdown } = this.currentFile
       const options = getOptionsFromState(this.currentFile)
       const defaultPath = getRootFolderFromState(projectStore)
+      const { lightTouch } = preferencesStore
       if (id) {
+        // Apply Light Touch mode: use original markdown if no semantic changes
+        const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+        // Remember what we asked main to save so we can update baseline on success.
+        // Only track saves that won't show a file dialog (i.e. already have a pathname).
+        if (pathname) {
+          pendingSavedMarkdown.set(id, markdownToSave)
+        }
+
         // Show save spinner for manual saves
         // Record start time to ensure minimum display duration
         this._saveStartTime = Date.now()
@@ -287,7 +306,7 @@ export const useEditorStore = defineStore('editor', {
           id,
           filename,
           pathname,
-          markdown,
+          markdownToSave,
           deepClone(options),
           defaultPath
         )
@@ -361,7 +380,32 @@ export const useEditorStore = defineStore('editor', {
           window.DIRNAME = window.path.dirname(pathname)
         }
         if (tab) {
-          Object.assign(tab, { filename, pathname, isSaved: true })
+          const savedMarkdown = pendingSavedMarkdown.get(id)
+
+          // Apply pathname and filename regardless
+          Object.assign(tab, { filename, pathname })
+
+          // Race condition check: Only mark as saved if current content
+          // matches what was saved (no concurrent edits during save operation)
+          if (savedMarkdown) {
+            if (tab.markdown === savedMarkdown) {
+              // Success: what we saved matches current content
+              tab.isSaved = true
+              tab.originalMarkdown = savedMarkdown
+            } else {
+              // User edited during save - keep unsaved state
+              tab.isSaved = false
+              // Still update baseline to what was actually written to disk
+              tab.originalMarkdown = savedMarkdown
+            }
+          } else {
+            // Fallback: no pending record (shouldn't happen for set-pathname)
+            // Mark as saved with current content as baseline
+            tab.isSaved = true
+            tab.originalMarkdown = tab.markdown
+          }
+
+          pendingSavedMarkdown.delete(id)
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -370,7 +414,29 @@ export const useEditorStore = defineStore('editor', {
       window.electron.ipcRenderer.on('mt::tab-saved', (_, tabId) => {
         const tab = this.tabs.find((f) => f.id === tabId)
         if (tab) {
-          tab.isSaved = true
+          const savedMarkdown = pendingSavedMarkdown.get(tabId)
+
+          // Race condition check: Only mark as saved if:
+          // 1. We have a record of what was saved (not a cancellation)
+          // 2. Current content matches what we saved (no concurrent edits)
+          if (savedMarkdown) {
+            if (tab.markdown === savedMarkdown) {
+              // Success: what we asked to save matches current content
+              tab.isSaved = true
+              tab.originalMarkdown = savedMarkdown
+            } else {
+              // User edited during save - keep unsaved state
+              tab.isSaved = false
+              // Still update baseline to what was actually written to disk
+              tab.originalMarkdown = savedMarkdown
+            }
+          } else {
+            // No pending save record means user canceled save dialog
+            // Keep current unsaved state
+            tab.isSaved = false
+          }
+
+          pendingSavedMarkdown.delete(tabId)
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -403,17 +469,25 @@ export const useEditorStore = defineStore('editor', {
 
     LISTEN_FOR_CLOSE() {
       const projectStore = useProjectStore()
+      const preferencesStore = usePreferencesStore()
       window.electron.ipcRenderer.on('mt::ask-for-close', () => {
+        const { lightTouch } = preferencesStore
         const unsavedFiles = this.tabs
           .filter((file) => !file.isSaved)
           .map((file) => {
-            const { id, filename, pathname, markdown } = file
+            const { id, filename, pathname, markdown, originalMarkdown } = file
             const options = getOptionsFromState(file)
+            // Apply Light Touch mode: use original markdown if no semantic changes
+            const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+            // Only track baseline updates for files that already exist on disk.
+            if (id && pathname) {
+              pendingSavedMarkdown.set(id, markdownToSave)
+            }
             return {
               id,
               filename,
               pathname,
-              markdown,
+              markdown: markdownToSave,
               options,
               defaultPath: getRootFolderFromState(projectStore)
             }
@@ -438,16 +512,24 @@ export const useEditorStore = defineStore('editor', {
     ASK_FOR_SAVE_ALL(closeTabs) {
       const { tabs } = this
       const projectStore = useProjectStore()
+      const preferencesStore = usePreferencesStore()
+      const { lightTouch } = preferencesStore
       const unsavedFiles = tabs
         .filter((file) => !(file.isSaved && /[^\n]/.test(file.markdown)))
         .map((file) => {
-          const { id, filename, pathname, markdown } = file
+          const { id, filename, pathname, markdown, originalMarkdown } = file
           const options = getOptionsFromState(file)
+          // Apply Light Touch mode: use original markdown if no semantic changes
+          const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+          // Only track baseline updates for files that already exist on disk.
+          if (id && pathname) {
+            pendingSavedMarkdown.set(id, markdownToSave)
+          }
           return {
             id,
             filename,
             pathname,
-            markdown,
+            markdown: markdownToSave,
             options,
             defaultPath: getRootFolderFromState(projectStore)
           }
@@ -1084,7 +1166,7 @@ export const useEditorStore = defineStore('editor', {
 
       const preferencesStore = usePreferencesStore()
       const projectStore = useProjectStore()
-      const { autoSaveDelay } = preferencesStore
+      const { autoSaveDelay, lightTouch } = preferencesStore
 
       if (autoSaveTimers.has(id)) {
         const timer = autoSaveTimers.get(id)
@@ -1098,12 +1180,16 @@ export const useEditorStore = defineStore('editor', {
         const tab = this.tabs.find((t) => t.id === id)
         if (tab && !tab.isSaved) {
           const defaultPath = getRootFolderFromState(projectStore)
+          // Apply Light Touch mode: use original markdown if no semantic changes
+          const markdownToSave = getMarkdownForSave(markdown, tab.originalMarkdown, lightTouch)
+          // Remember what we asked main to save so we can update baseline on success.
+          pendingSavedMarkdown.set(id, markdownToSave)
           window.electron.ipcRenderer.send(
             'mt::response-file-save',
             id,
             filename,
             pathname,
-            markdown,
+            markdownToSave,
             deepClone(options),
             defaultPath
           )
@@ -1415,6 +1501,173 @@ const adjustTrailingNewlines = (markdown, trimTrailingNewlineOption) => {
  */
 const trimTrailingNewlines = (text) => {
   return text.replace(/[\r?\n]+$/, '')
+}
+
+/**
+ * Normalizes a block of text for semantic comparison.
+ * Removes whitespace differences while preserving content.
+ *
+ * @param {string} text The text to normalize.
+ * @returns {string} Normalized text for comparison.
+ */
+const normalizeBlock = (text) => {
+  if (!text) return ''
+  return text
+    // Normalize line endings
+    .replace(/\r\n/g, '\n')
+    // Remove trailing spaces from lines
+    .replace(/[ \t]+$/gm, '')
+    // Normalize all blank line variations to single newline for comparison
+    // This treats "no blank line" and "one or more blank lines" as equivalent
+    .replace(/\n+/g, '\n')
+    // Collapse multiple spaces to single space (but not newlines)
+    .replace(/[ \t]+/g, ' ')
+    // Trim
+    .trim()
+}
+
+/**
+ * Normalizes a single line for comparison (trims trailing whitespace).
+ *
+ * @param {string} line The line to normalize.
+ * @returns {string} Normalized line.
+ */
+const normalizeLine = (line) => line.replace(/[ \t]+$/, '')
+
+/**
+ * Computes the Longest Common Subsequence (LCS) between two arrays of lines,
+ * using normalized lines for comparison. Returns an array of matching index
+ * pairs: [{ orig: i, regen: j }, ...]
+ *
+ * @param {string[]} origLines Original lines.
+ * @param {string[]} regenLines Regenerated lines.
+ * @returns {Array<{orig: number, regen: number}>} LCS index pairs.
+ */
+const computeLcs = (origLines, regenLines) => {
+  const n = origLines.length
+  const m = regenLines.length
+
+  // dp[i][j] = length of LCS of orig[0..i) and regen[0..j)
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0))
+
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      if (normalizeLine(origLines[i - 1]) === normalizeLine(regenLines[j - 1])) {
+        dp[i][j] = dp[i - 1][j - 1] + 1
+      } else {
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1])
+      }
+    }
+  }
+
+  // Backtrack to get matching indices
+  const matches = []
+  let i = n
+  let j = m
+  while (i > 0 && j > 0) {
+    if (normalizeLine(origLines[i - 1]) === normalizeLine(regenLines[j - 1])) {
+      matches.push({ orig: i - 1, regen: j - 1 })
+      i--
+      j--
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      i--
+    } else {
+      j--
+    }
+  }
+
+  return matches.reverse()
+}
+
+/**
+ * Merges regenerated markdown with the original file by aligning unchanged
+ * lines (via LCS) and preserving their exact formatting. Changed or new lines
+ * come from the regenerated content. This keeps unrelated lines untouched
+ * even when nearby lines were edited, and avoids inserting new blank lines
+ * where the original had none.
+ *
+ * @param {string} regenerated The regenerated markdown from editor.
+ * @param {string} original The original markdown from file.
+ * @returns {string} Merged markdown with preserved formatting where possible.
+ */
+const mergeWithOriginal = (regenerated, original) => {
+  // Normalize line endings to simplify processing
+  const regenLines = regenerated.replace(/\r\n/g, '\n').split('\n')
+  const origLines = original.replace(/\r\n/g, '\n').split('\n')
+
+  const matches = computeLcs(origLines, regenLines)
+
+  const resultLines = []
+  let prevOrig = -1
+  let prevRegen = -1
+
+  for (const { orig: oi, regen: rj } of matches) {
+    // Anything inserted between previous regen match and this regen match
+    const inserted = regenLines.slice(prevRegen + 1, rj)
+    if (inserted.length) {
+      const onlyBlank = inserted.every((l) => normalizeLine(l) === '')
+      const origGap = oi - prevOrig - 1 // lines between previous orig match and this one
+      // If original lines were adjacent (no gap), drop purely blank insertions
+      if (!(onlyBlank && origGap === 0)) {
+        // If no orig gap, strip blank lines that piggyback on edits
+        const toInsert = origGap === 0 ? inserted.filter((l) => normalizeLine(l) !== '') : inserted
+        if (toInsert.length) {
+          resultLines.push(...toInsert)
+        }
+      }
+    }
+
+    // Add the matched line from original to preserve formatting
+    resultLines.push(origLines[oi])
+    prevOrig = oi
+    prevRegen = rj
+  }
+
+  // Handle tail insertions after the last match
+  if (prevRegen < regenLines.length - 1) {
+    const tail = regenLines.slice(prevRegen + 1)
+    const onlyBlank = tail.every((l) => normalizeLine(l) === '')
+    if (!onlyBlank) {
+      resultLines.push(...tail.filter((l) => normalizeLine(l) !== ''))
+    }
+    // If only blank, rely on original trailing newlines preservation below
+  }
+
+  // Preserve original trailing newline pattern
+  const originalTrailing = original.match(/\n*$/)
+  const trailingNewlines = originalTrailing ? originalTrailing[0] : '\n'
+  const result = resultLines.join('\n').replace(/\n*$/, trailingNewlines)
+
+  return result
+}
+
+/**
+ * Determines the markdown to save based on Light Touch mode.
+ * When no semantic changes were made, returns the original file exactly.
+ * When changes were made, returns the regenerated markdown.
+ *
+ * @param {string} currentMarkdown The current (regenerated) markdown.
+ * @param {string|null} originalMarkdown The original markdown from file load.
+ * @param {boolean} lightTouch Whether Light Touch mode is enabled.
+ * @returns {string} The markdown to save.
+ */
+const getMarkdownForSave = (currentMarkdown, originalMarkdown, lightTouch) => {
+  // If Light Touch is disabled or no original exists, use current
+  if (!lightTouch || !originalMarkdown) {
+    return currentMarkdown
+  }
+
+  // Normalize both for quick full-document comparison
+  const normalizedCurrent = normalizeBlock(currentMarkdown)
+  const normalizedOriginal = normalizeBlock(originalMarkdown)
+
+  // If semantically identical, use original entirely (preserves all whitespace)
+  if (normalizedCurrent === normalizedOriginal) {
+    return originalMarkdown
+  }
+
+  // Changes were made - merge to preserve unchanged lines
+  return mergeWithOriginal(currentMarkdown, originalMarkdown)
 }
 
 /**
