@@ -53,8 +53,8 @@ export default new Map([
   ['paragraph.heading-4', 'Command+4'],
   ['paragraph.heading-5', 'Command+5'],
   ['paragraph.heading-6', 'Command+6'],
-  ['paragraph.upgrade-heading', 'Command+Plus'],
-  ['paragraph.degrade-heading', 'Command+-'],
+  ['paragraph.upgrade-heading', 'Command+['],
+  ['paragraph.degrade-heading', 'Command+]'],
   ['paragraph.table', 'Command+Shift+T'],
   ['paragraph.code-fence', 'Command+Option+C'],
   ['paragraph.quote-block', 'Command+Option+Q'],
@@ -85,8 +85,8 @@ export default new Map([
   // Window menu
   ['window.minimize', 'Command+M'],
   ['window.toggle-always-on-top', ''],
-  ['window.zoomIn', ''],
-  ['window.zoomOut', ''],
+  ['window.zoomIn', 'Command+='],
+  ['window.zoomOut', 'Command+-'],
   ['window.toggle-full-screen', 'Ctrl+Command+F'],
 
   // View menu
