@@ -23,6 +23,9 @@ import { useMainStore } from '.'
 import { i18n } from '../i18n'
 
 const autoSaveTimers = new Map()
+// Tracks the exact markdown payload we asked the main process to write.
+// Used to update `originalMarkdown` after save so Light Touch doesn't drift.
+const pendingSavedMarkdown = new Map()
 
 export const useEditorStore = defineStore('editor', {
   state: () => ({
@@ -282,6 +285,11 @@ export const useEditorStore = defineStore('editor', {
       if (id) {
         // Apply Light Touch mode: use original markdown if no semantic changes
         const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+        // Remember what we asked main to save so we can update baseline on success.
+        // Only track saves that won't show a file dialog (i.e. already have a pathname).
+        if (pathname) {
+          pendingSavedMarkdown.set(id, markdownToSave)
+        }
 
         // Show save spinner for manual saves
         // Record start time to ensure minimum display duration
@@ -367,8 +375,9 @@ export const useEditorStore = defineStore('editor', {
         }
         if (tab) {
           Object.assign(tab, { filename, pathname, isSaved: true })
-          // Update originalMarkdown after successful save for Light Touch mode
-          tab.originalMarkdown = tab.markdown
+          // Update originalMarkdown to the *saved* markdown so Light Touch doesn't drift.
+          tab.originalMarkdown = pendingSavedMarkdown.get(id) ?? tab.markdown
+          pendingSavedMarkdown.delete(id)
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -378,8 +387,9 @@ export const useEditorStore = defineStore('editor', {
         const tab = this.tabs.find((f) => f.id === tabId)
         if (tab) {
           tab.isSaved = true
-          // Update originalMarkdown after successful save for Light Touch mode
-          tab.originalMarkdown = tab.markdown
+          // Update originalMarkdown to the *saved* markdown so Light Touch doesn't drift.
+          tab.originalMarkdown = pendingSavedMarkdown.get(tabId) ?? tab.markdown
+          pendingSavedMarkdown.delete(tabId)
         }
         // Clear the saving spinner with minimum display time
         this._clearSavingSpinner()
@@ -422,6 +432,10 @@ export const useEditorStore = defineStore('editor', {
             const options = getOptionsFromState(file)
             // Apply Light Touch mode: use original markdown if no semantic changes
             const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+            // Only track baseline updates for files that already exist on disk.
+            if (id && pathname) {
+              pendingSavedMarkdown.set(id, markdownToSave)
+            }
             return {
               id,
               filename,
@@ -460,6 +474,10 @@ export const useEditorStore = defineStore('editor', {
           const options = getOptionsFromState(file)
           // Apply Light Touch mode: use original markdown if no semantic changes
           const markdownToSave = getMarkdownForSave(markdown, originalMarkdown, lightTouch)
+          // Only track baseline updates for files that already exist on disk.
+          if (id && pathname) {
+            pendingSavedMarkdown.set(id, markdownToSave)
+          }
           return {
             id,
             filename,
@@ -1117,6 +1135,8 @@ export const useEditorStore = defineStore('editor', {
           const defaultPath = getRootFolderFromState(projectStore)
           // Apply Light Touch mode: use original markdown if no semantic changes
           const markdownToSave = getMarkdownForSave(markdown, tab.originalMarkdown, lightTouch)
+          // Remember what we asked main to save so we can update baseline on success.
+          pendingSavedMarkdown.set(id, markdownToSave)
           window.electron.ipcRenderer.send(
             'mt::response-file-save',
             id,

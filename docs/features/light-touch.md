@@ -19,42 +19,41 @@ This means that editing one paragraph could cause whitespace changes throughout 
 
 ## The Solution
 
-Light Touch mode solves this with **block-level preservation**:
+Light Touch mode minimizes diffs by trying to preserve **unchanged lines** from the original file:
 
 1. **Stores the original content** - When a file is loaded, the original markdown is preserved
-2. **Block-level comparison** - On save, the document is split into logical blocks (paragraphs, headings, code blocks, etc.)
-3. **Smart merging** - Unchanged blocks keep their original formatting; only changed blocks use regenerated formatting
+2. **Semantic comparison** - On save, MarkText compares the original and current content after normalizing whitespace
+3. **LCS-based line merge** - If changes were made, it aligns lines using Longest Common Subsequence (LCS) and keeps exact original formatting for lines that match
 
-This means if you edit one paragraph, only that paragraph gets reformatted—the rest of the file stays exactly as it was.
+This means if you edit one paragraph, the unchanged lines elsewhere can stay exactly as they were.
 
 ## How It Works
 
 ```
-Original file loaded → Split into blocks, stored
+Original file loaded → Stored as original markdown
                 ↓
 User edits paragraph 3 → Content regenerated from editor
                 ↓
-On save: Compare blocks
+On save: Normalize + compare
                 ↓
-Paragraph 1: unchanged → Use original (preserves whitespace)
-Paragraph 2: unchanged → Use original (preserves whitespace)
-Paragraph 3: CHANGED   → Use regenerated (applies formatting)
-Paragraph 4: unchanged → Use original (preserves whitespace)
+If semantically equal → Save original exactly
+Else                 → Merge, preserving unchanged lines
                 ↓
 Result: Only paragraph 3 shows in git diff!
 ```
 
 ## Block Types
 
-Light Touch recognizes these as separate blocks:
-- Paragraphs (separated by blank lines)
+Light Touch does not do a full Markdown-AST block comparison. Instead, it preserves formatting by matching and reusing unchanged **lines**, which works well for common Markdown structures such as:
+
+- Paragraphs
 - Headings
 - Code blocks (fenced with ```)
 - Lists
 - Block quotes
 - Tables
 
-Each block is compared independently, so changes to one don't affect others.
+In practice, this often means changes in one area don’t force unrelated formatting changes elsewhere.
 
 ## Configuration
 

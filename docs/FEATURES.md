@@ -200,6 +200,7 @@ Supported uploaders:
 - Encoding detection (UTF-8, etc.)
 - Line ending normalization (LF/CRLF)
 - Trailing newline option
+- Light Touch mode (preserve original whitespace to minimize diffs)
 
 ### Recent Files
 
