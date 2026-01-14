@@ -47,8 +47,8 @@
                 >{{ item.description }}</span>
                 <span class="shortcut">
                   <span
-                    v-for="(accelerator, index) of item.shortcut"
-                    :key="index"
+                    v-for="(accelerator, shortcutIndex) of item.shortcut"
+                    :key="shortcutIndex"
                     class="shortcut"
                   >
                     <kbd>{{ accelerator }}</kbd>

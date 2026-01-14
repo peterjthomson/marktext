@@ -17,8 +17,14 @@ import bus from '../../bus'
 import { oneDarkThemes, railscastsThemes } from '@/config'
 
 const props = defineProps({
-  markdown: String,
-  muyaIndexCursor: Object,
+  markdown: {
+    type: String,
+    default: ''
+  },
+  muyaIndexCursor: {
+    type: Object,
+    default: null
+  },
   textDirection: {
     type: String,
     required: true

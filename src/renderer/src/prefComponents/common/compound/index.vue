@@ -17,7 +17,10 @@
 
 <script setup>
 defineProps({
-  notes: String
+  notes: {
+    type: String,
+    default: ''
+  }
 })
 </script>
 

@@ -30,7 +30,16 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 defineProps({
-  uploaderService: Object
+  uploaderService: {
+    type: Object,
+    default: () => ({
+      agreedToLegalNotices: false,
+      name: '',
+      privacyUrl: '',
+      tosUrl: '',
+      isGdprCompliant: true
+    })
+  }
 })
 
 const openUrl = (link) => {

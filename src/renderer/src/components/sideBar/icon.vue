@@ -5,7 +5,7 @@ import fileIcons from 'muya/lib/ui/fileIcons'
 const props = defineProps({
   name: {
     type: String,
-    required: true,
+    required: false,
     default: 'mock.md'
   }
 })

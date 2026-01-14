@@ -18,6 +18,12 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '../..')
+const getFiles = (dir) => {
+  return fs.readdirSync(dir).filter((entry) => {
+    const fullPath = path.join(dir, entry)
+    return fs.statSync(fullPath).isFile()
+  })
+}
 
 test.describe('Build Verification', () => {
   test('should have built output directory', async () => {
@@ -27,15 +33,21 @@ test.describe('Build Verification', () => {
   })
 
   test('should have main process bundle', async () => {
-    const mainBundle = path.join(projectRoot, 'out/main/index.js')
-    const exists = fs.existsSync(mainBundle)
+    const mainDir = path.join(projectRoot, 'out/main')
+    const exists = fs.existsSync(mainDir)
     expect(exists).toBe(true)
+
+    const files = getFiles(mainDir)
+    expect(files.length).toBeGreaterThan(0)
   })
 
   test('should have preload script', async () => {
-    const preloadBundle = path.join(projectRoot, 'out/preload/index.mjs')
-    const exists = fs.existsSync(preloadBundle)
+    const preloadDir = path.join(projectRoot, 'out/preload')
+    const exists = fs.existsSync(preloadDir)
     expect(exists).toBe(true)
+
+    const files = getFiles(preloadDir)
+    expect(files.length).toBeGreaterThan(0)
   })
 
   test('should have renderer output', async () => {

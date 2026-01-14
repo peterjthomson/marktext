@@ -45,12 +45,30 @@ import { ref, watch } from 'vue'
 import { InfoFilled } from '@element-plus/icons-vue'
 
 const props = defineProps({
-  description: String,
-  notes: String,
-  bool: Boolean,
-  onChange: Function,
-  more: String,
-  detailedDescription: String,
+  description: {
+    type: String,
+    default: ''
+  },
+  notes: {
+    type: String,
+    default: ''
+  },
+  bool: {
+    type: Boolean,
+    default: false
+  },
+  onChange: {
+    type: Function,
+    default: () => {}
+  },
+  more: {
+    type: String,
+    default: ''
+  },
+  detailedDescription: {
+    type: String,
+    default: ''
+  },
   disable: {
     type: Boolean,
     default: false

@@ -70,8 +70,7 @@ npm run test:all
 Tests focus on **behavior** rather than implementation details:
 
 1. **Unit tests** - Pure functions without side effects (encoding, path utilities)
-2. **Integration tests** - IPC communication, markdown parsing edge cases
-3. **E2E smoke tests** - App launches, windows open, critical paths work
+2. **E2E smoke tests** - Build output exists, fixtures are valid, app launch checks
 
 This approach ensures tests remain valuable during refactoring while catching real regressions.
 

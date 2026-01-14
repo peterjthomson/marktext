@@ -169,12 +169,27 @@ import { useEditorStore } from '@/store/editor'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
-  project: Object,
-  filename: String,
-  pathname: String,
+  project: {
+    type: Object,
+    default: null
+  },
+  filename: {
+    type: String,
+    default: ''
+  },
+  pathname: {
+    type: String,
+    default: ''
+  },
   active: Boolean,
-  wordCount: Object,
-  platform: String,
+  wordCount: {
+    type: Object,
+    default: null
+  },
+  platform: {
+    type: String,
+    default: ''
+  },
   isSaved: Boolean,
   isSaving: Boolean
 })

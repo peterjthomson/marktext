@@ -3,19 +3,20 @@
     <h4>{{ t('preferences.theme.title') }}</h4>
     <section class="offcial-themes">
       <div
-        v-for="t of themes"
-        :key="t.name"
+        v-for="themeItem of themes"
+        :key="themeItem.name"
         class="theme"
         :class="[
-          t.name,
+          themeItem.name,
           {
-            active: t.name === theme,
+            active: themeItem.name === theme,
             disabled: followSystemTheme
           }
         ]"
-        @click="!followSystemTheme && onSelectChange('theme', t.name)"
+        @click="!followSystemTheme && onSelectChange('theme', themeItem.name)"
       >
-        <div v-html="t.html" />
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="themeItem.html" />
       </div>
     </section>
     <separator />
