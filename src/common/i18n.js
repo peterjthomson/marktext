@@ -13,27 +13,33 @@ let translationsCache = {}
  * @returns {object} 翻译数据
  */
 function loadTranslations(language) {
-  if (translationsCache[language]) {
-    return translationsCache[language]
-  }
-
   try {
-    // 尝试多个可能的路径
+    // Since this script is used in both main and preload processes, we can't use global.__static directly here since it is only for the main process.
+    // Also, `process.env.NODE_ENV` is not always reliable across Electron contexts, so determine
+    // the correct locales directory by probing the filesystem.
+    const devLocalesDir = path.join(process.cwd(), 'static', 'locales')
+    const prodLocalesDir = path.join(process.resourcesPath, 'static', 'locales')
+    const localesDir = fs.existsSync(prodLocalesDir) ? prodLocalesDir : devLocalesDir
 
-    // Since this script is used in both main and preload processes, we can't use global.__static directly here since it is only for the main process
-    const localePath =
-      process.env.NODE_ENV === 'development'
-        ? path.join(process.cwd(), 'static', 'locales', `${language}.min.json`)
-        : path.join(process.resourcesPath, 'static', 'locales', `${language}.min.json`)
+    // Prefer minified files (used in packaged builds), but fall back to the normal JSON
+    // to keep development setups working even if `npm run minify-locales` hasn't been run.
+    const minPath = path.join(localesDir, `${language}.min.json`)
+    const jsonPath = path.join(localesDir, `${language}.json`)
+
+    const localePath = fs.existsSync(minPath) ? minPath : jsonPath
 
     if (!fs.existsSync(localePath)) {
-      throw new Error(`Translation file not found for language: ${language}`)
+      throw new Error(
+        `Translation file not found for language: ${language} (tried ${minPath} and ${jsonPath})`
+      )
     }
 
     const content = fs.readFileSync(localePath, 'utf8')
 
     const translationData = JSON.parse(content)
 
+    // Keep a cache for callers that want it (main process), but always overwrite so updates
+    // on disk can't get stuck behind stale cached data.
     translationsCache[language] = translationData
     return translationData
   } catch (error) {

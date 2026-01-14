@@ -86,6 +86,10 @@ This ensures **the Light Touch baseline becomes the last saved markdown**, preve
   - The renderer has to infer the saved content/baseline from local state.
   - This is fragile with async saves (edits during save) and Light Touch logic.
   - Current mitigation: Use `pendingSavedMarkdown` map to track save payloads.
+- **Save As mid-save edits are still fuzzy**:
+  - We don't track `pendingSavedMarkdown` for Save As flows (a file dialog is shown).
+  - If the user edits during the Save As write, the tab may still be marked saved even though content diverged.
+  - Recommended: after Save As completes, re-read from disk (or plumb saved payload/checksum) to refresh baseline and saved state.
 
 ## Follow-ups (suggested direction)
 
