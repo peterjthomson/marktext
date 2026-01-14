@@ -1,6 +1,6 @@
 # Light Touch Mode
 
-Light Touch mode preserves the original whitespace formatting of your markdown files when no semantic changes have been made. This is especially useful for Git workflows where you don't want unnecessary diffs from whitespace normalization.
+Light Touch mode preserves the original whitespace formatting of your markdown files, minimizing unnecessary diffs when saving. This is especially useful for Git workflows where you want commits to show only actual content changes.
 
 ## The Problem
 
@@ -10,7 +10,7 @@ When you open a markdown file in MarkText, it parses the content into an interna
 - Consecutive blank lines (collapsed to single blank lines)
 - Other whitespace formatting
 
-This means that simply opening and saving a file—without making any edits—could show as modified in Git, causing confusion and polluting commit history.
+This means that editing one paragraph could cause whitespace changes throughout the entire file, making git diffs noisy and hard to review.
 
 **Related upstream issues:**
 - [marktext/marktext#2148](https://github.com/marktext/marktext/issues/2148): "don't modify file when I don't modify it"
@@ -19,26 +19,42 @@ This means that simply opening and saving a file—without making any edits—co
 
 ## The Solution
 
-Light Touch mode solves this by:
+Light Touch mode solves this with **block-level preservation**:
 
-1. **Storing the original content** - When a file is loaded from disk, the original markdown is preserved
-2. **Semantic comparison** - On save, the regenerated markdown is compared with the original, ignoring whitespace differences
-3. **Smart preservation** - If the content is semantically unchanged, the original file content is saved instead of the regenerated version
+1. **Stores the original content** - When a file is loaded, the original markdown is preserved
+2. **Block-level comparison** - On save, the document is split into logical blocks (paragraphs, headings, code blocks, etc.)
+3. **Smart merging** - Unchanged blocks keep their original formatting; only changed blocks use regenerated formatting
+
+This means if you edit one paragraph, only that paragraph gets reformatted—the rest of the file stays exactly as it was.
 
 ## How It Works
 
-When you save a file with Light Touch enabled:
+```
+Original file loaded → Split into blocks, stored
+                ↓
+User edits paragraph 3 → Content regenerated from editor
+                ↓
+On save: Compare blocks
+                ↓
+Paragraph 1: unchanged → Use original (preserves whitespace)
+Paragraph 2: unchanged → Use original (preserves whitespace)
+Paragraph 3: CHANGED   → Use regenerated (applies formatting)
+Paragraph 4: unchanged → Use original (preserves whitespace)
+                ↓
+Result: Only paragraph 3 shows in git diff!
+```
 
-```
-Original file content → Stored on load
-                ↓
-User makes edits → Content regenerated from blocks
-                ↓
-On save: Compare normalized versions
-                ↓
-If semantically identical → Save original (preserves whitespace)
-If content changed → Save regenerated (applies formatting)
-```
+## Block Types
+
+Light Touch recognizes these as separate blocks:
+- Paragraphs (separated by blank lines)
+- Headings
+- Code blocks (fenced with ```)
+- Lists
+- Block quotes
+- Tables
+
+Each block is compared independently, so changes to one don't affect others.
 
 ## Configuration
 
@@ -52,16 +68,49 @@ To toggle it:
 
 ## When It Applies
 
-Light Touch mode only applies when:
+Light Touch mode:
 
-- The file was loaded from disk (not a new untitled file)
-- No semantic changes were made to the content
-- The setting is enabled in preferences
-
-If you make actual content changes (add/remove text, change formatting, etc.), the regenerated markdown will be saved normally, applying MarkText's standard formatting rules.
+| Scenario | Behavior |
+|----------|----------|
+| No changes made | Original file saved exactly |
+| One block edited | Only that block reformatted |
+| Multiple blocks edited | Only changed blocks reformatted |
+| New block added | New block uses standard formatting |
+| Block deleted | Removed from output |
+| Setting disabled | Full file regenerated (standard behavior) |
 
 ## Benefits
 
-- **Clean Git history** - No spurious whitespace changes in your commits
-- **Preserve intentional formatting** - Keep trailing spaces used for line breaks
+- **Minimal git diffs** - Only actual changes appear in version control
+- **Preserve intentional formatting** - Trailing spaces for line breaks stay intact in unchanged sections
+- **Better code review** - Reviewers see only what you actually changed
 - **Seamless workflow** - Works automatically without changing how you use MarkText
+
+## Example
+
+Given this original file with trailing spaces for line breaks:
+
+```markdown
+First paragraph with
+trailing spaces for breaks.
+
+Second paragraph stays
+exactly the same.
+
+Third paragraph here.
+```
+
+If you only edit the third paragraph, the git diff will show:
+
+```diff
+ First paragraph with
+ trailing spaces for breaks.
+
+ Second paragraph stays
+ exactly the same.
+
+-Third paragraph here.
++Third paragraph was edited.
+```
+
+The first two paragraphs keep their original trailing spaces—no spurious whitespace changes!

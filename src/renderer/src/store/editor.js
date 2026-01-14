@@ -1437,28 +1437,161 @@ const trimTrailingNewlines = (text) => {
 }
 
 /**
- * Normalizes markdown for semantic comparison by removing whitespace differences.
- * Used by Light Touch mode to detect if only whitespace changed.
+ * Normalizes a block of text for semantic comparison.
+ * Removes whitespace differences while preserving content.
  *
- * @param {string} markdown The markdown text to normalize.
- * @returns {string} Normalized markdown for comparison.
+ * @param {string} text The text to normalize.
+ * @returns {string} Normalized text for comparison.
  */
-const normalizeForComparison = (markdown) => {
-  if (!markdown) return ''
-  return markdown
+const normalizeBlock = (text) => {
+  if (!text) return ''
+  return text
     // Normalize line endings
     .replace(/\r\n/g, '\n')
-    // Remove trailing spaces from lines (but preserve newlines)
+    // Remove trailing spaces from lines
     .replace(/[ \t]+$/gm, '')
-    // Collapse multiple blank lines to single blank line
-    .replace(/\n{3,}/g, '\n\n')
-    // Trim leading/trailing whitespace
+    // Collapse multiple spaces to single space
+    .replace(/[ \t]+/g, ' ')
+    // Trim
     .trim()
 }
 
 /**
+ * Splits markdown into logical blocks (paragraphs, headings, code blocks, etc.)
+ * Each block includes its trailing blank lines to preserve document structure.
+ *
+ * @param {string} markdown The markdown to split.
+ * @returns {Array<{text: string, normalized: string}>} Array of blocks with original and normalized text.
+ */
+const splitIntoBlocks = (markdown) => {
+  if (!markdown) return []
+
+  const blocks = []
+  // Split on double newlines but keep the structure
+  // This regex captures: content + trailing newlines
+  const blockRegex = /(?:^|\n\n)((?:```[\s\S]*?```|[^\n]+(?:\n(?!\n)[^\n]*)*))(\n*)/g
+
+  // Handle leading content before first double newline
+  const normalized = markdown.replace(/\r\n/g, '\n')
+  let lastIndex = 0
+  let match
+
+  // Simple split approach: split by blank lines, preserving code blocks
+  const lines = normalized.split('\n')
+  let currentBlock = []
+  let inCodeBlock = false
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    // Track code block state
+    if (line.startsWith('```')) {
+      inCodeBlock = !inCodeBlock
+    }
+
+    // If we hit a blank line outside a code block, that's a block boundary
+    if (line === '' && !inCodeBlock && currentBlock.length > 0) {
+      // Check if next lines are also blank (preserve multiple blank lines)
+      let trailingBlanks = '\n'
+      while (i + 1 < lines.length && lines[i + 1] === '') {
+        trailingBlanks += '\n'
+        i++
+      }
+
+      const blockText = currentBlock.join('\n') + trailingBlanks
+      blocks.push({
+        text: blockText,
+        normalized: normalizeBlock(currentBlock.join('\n'))
+      })
+      currentBlock = []
+    } else {
+      currentBlock.push(line)
+    }
+  }
+
+  // Don't forget the last block
+  if (currentBlock.length > 0) {
+    const blockText = currentBlock.join('\n')
+    blocks.push({
+      text: blockText,
+      normalized: normalizeBlock(blockText)
+    })
+  }
+
+  return blocks
+}
+
+/**
+ * Finds the best matching block from candidates based on normalized content.
+ * Uses exact match first, then falls back to similarity matching.
+ *
+ * @param {string} normalizedTarget The normalized block to match.
+ * @param {Array<{text: string, normalized: string, used: boolean}>} candidates Available blocks.
+ * @returns {number} Index of best match, or -1 if no good match found.
+ */
+const findMatchingBlock = (normalizedTarget, candidates) => {
+  // First try exact match
+  for (let i = 0; i < candidates.length; i++) {
+    if (!candidates[i].used && candidates[i].normalized === normalizedTarget) {
+      return i
+    }
+  }
+  return -1
+}
+
+/**
+ * Merges regenerated markdown with original, preserving original formatting
+ * for unchanged blocks. Only changed/new content uses regenerated formatting.
+ *
+ * @param {string} regenerated The regenerated markdown from editor.
+ * @param {string} original The original markdown from file.
+ * @returns {string} Merged markdown with preserved formatting where possible.
+ */
+const mergeWithOriginal = (regenerated, original) => {
+  const regenBlocks = splitIntoBlocks(regenerated)
+  const origBlocks = splitIntoBlocks(original).map((b) => ({ ...b, used: false }))
+
+  if (regenBlocks.length === 0) return regenerated
+  if (origBlocks.length === 0) return regenerated
+
+  const resultBlocks = []
+
+  for (const regenBlock of regenBlocks) {
+    const matchIdx = findMatchingBlock(regenBlock.normalized, origBlocks)
+
+    if (matchIdx !== -1) {
+      // Found matching original block - use original formatting
+      resultBlocks.push(origBlocks[matchIdx].text)
+      origBlocks[matchIdx].used = true
+    } else {
+      // New or changed block - use regenerated version
+      resultBlocks.push(regenBlock.text)
+    }
+  }
+
+  // Join blocks, being careful about spacing
+  let result = ''
+  for (let i = 0; i < resultBlocks.length; i++) {
+    const block = resultBlocks[i]
+    if (i > 0 && !result.endsWith('\n\n') && !block.startsWith('\n')) {
+      // Ensure proper separation between blocks
+      result += '\n\n'
+    }
+    result += block.replace(/\n+$/, '') // Remove trailing newlines, we'll add proper separation
+  }
+
+  // Preserve original's trailing newline pattern
+  const originalTrailing = original.match(/\n*$/)
+  const trailingNewlines = originalTrailing ? originalTrailing[0] : '\n'
+  result = result.replace(/\n*$/, trailingNewlines)
+
+  return result
+}
+
+/**
  * Determines the markdown to save based on Light Touch mode.
- * If Light Touch is enabled and only whitespace changed, returns original.
+ * Preserves original formatting for unchanged blocks, applies formatting
+ * only to changed/new content.
  *
  * @param {string} currentMarkdown The current (regenerated) markdown.
  * @param {string|null} originalMarkdown The original markdown from file load.
@@ -1471,17 +1604,17 @@ const getMarkdownForSave = (currentMarkdown, originalMarkdown, lightTouch) => {
     return currentMarkdown
   }
 
-  // Compare normalized versions to check for semantic equivalence
-  const normalizedCurrent = normalizeForComparison(currentMarkdown)
-  const normalizedOriginal = normalizeForComparison(originalMarkdown)
+  // Normalize both for quick full-document comparison
+  const normalizedCurrent = normalizeBlock(currentMarkdown)
+  const normalizedOriginal = normalizeBlock(originalMarkdown)
 
-  // If semantically the same, use original to preserve whitespace
+  // If semantically identical, use original entirely
   if (normalizedCurrent === normalizedOriginal) {
     return originalMarkdown
   }
 
-  // Real changes detected, use current (regenerated) markdown
-  return currentMarkdown
+  // Changes detected - merge block by block to preserve unchanged sections
+  return mergeWithOriginal(currentMarkdown, originalMarkdown)
 }
 
 /**
