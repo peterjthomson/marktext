@@ -25,6 +25,12 @@ import { i18n } from '../i18n'
 const autoSaveTimers = new Map()
 // Tracks the exact markdown payload we asked the main process to write.
 // Used to update `originalMarkdown` after save so Light Touch doesn't drift.
+//
+// Race condition handling:
+// - When save completes, we check if tab.markdown === pendingSavedMarkdown.get(id)
+// - If they match: save was successful with no concurrent edits → mark as saved
+// - If they differ: user edited during save → keep unsaved, but update baseline
+// - If no entry exists: user canceled save dialog → keep unsaved
 const pendingSavedMarkdown = new Map()
 
 export const useEditorStore = defineStore('editor', {
@@ -374,9 +380,31 @@ export const useEditorStore = defineStore('editor', {
           window.DIRNAME = window.path.dirname(pathname)
         }
         if (tab) {
-          Object.assign(tab, { filename, pathname, isSaved: true })
-          // Update originalMarkdown to the *saved* markdown so Light Touch doesn't drift.
-          tab.originalMarkdown = pendingSavedMarkdown.get(id) ?? tab.markdown
+          const savedMarkdown = pendingSavedMarkdown.get(id)
+
+          // Apply pathname and filename regardless
+          Object.assign(tab, { filename, pathname })
+
+          // Race condition check: Only mark as saved if current content
+          // matches what was saved (no concurrent edits during save operation)
+          if (savedMarkdown) {
+            if (tab.markdown === savedMarkdown) {
+              // Success: what we saved matches current content
+              tab.isSaved = true
+              tab.originalMarkdown = savedMarkdown
+            } else {
+              // User edited during save - keep unsaved state
+              tab.isSaved = false
+              // Still update baseline to what was actually written to disk
+              tab.originalMarkdown = savedMarkdown
+            }
+          } else {
+            // Fallback: no pending record (shouldn't happen for set-pathname)
+            // Mark as saved with current content as baseline
+            tab.isSaved = true
+            tab.originalMarkdown = tab.markdown
+          }
+
           pendingSavedMarkdown.delete(id)
         }
         // Clear the saving spinner with minimum display time
@@ -386,9 +414,28 @@ export const useEditorStore = defineStore('editor', {
       window.electron.ipcRenderer.on('mt::tab-saved', (_, tabId) => {
         const tab = this.tabs.find((f) => f.id === tabId)
         if (tab) {
-          tab.isSaved = true
-          // Update originalMarkdown to the *saved* markdown so Light Touch doesn't drift.
-          tab.originalMarkdown = pendingSavedMarkdown.get(tabId) ?? tab.markdown
+          const savedMarkdown = pendingSavedMarkdown.get(tabId)
+
+          // Race condition check: Only mark as saved if:
+          // 1. We have a record of what was saved (not a cancellation)
+          // 2. Current content matches what we saved (no concurrent edits)
+          if (savedMarkdown) {
+            if (tab.markdown === savedMarkdown) {
+              // Success: what we asked to save matches current content
+              tab.isSaved = true
+              tab.originalMarkdown = savedMarkdown
+            } else {
+              // User edited during save - keep unsaved state
+              tab.isSaved = false
+              // Still update baseline to what was actually written to disk
+              tab.originalMarkdown = savedMarkdown
+            }
+          } else {
+            // No pending save record means user canceled save dialog
+            // Keep current unsaved state
+            tab.isSaved = false
+          }
+
           pendingSavedMarkdown.delete(tabId)
         }
         // Clear the saving spinner with minimum display time

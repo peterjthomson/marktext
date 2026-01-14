@@ -551,7 +551,9 @@
           "default": "Predeterminado",
           "crlf": "CRLF",
           "lf": "LF"
-        }
+        },
+        "lightTouch": "Modo Light Touch",
+        "lightTouchNotes": "Cuando está activado, conserva los espacios en blanco originales (espacios finales, líneas en blanco) si no se realizaron cambios semánticos. Útil para flujos de trabajo con Git."
       },
       "misc": {
         "title": "Misceláneos",

@@ -552,7 +552,9 @@
           "default": "Padrão",
           "crlf": "CRLF",
           "lf": "LF"
-        }
+        },
+        "lightTouch": "Modo Light Touch",
+        "lightTouchNotes": "Quando ativado, preserva o espaçamento original (espaços finais, linhas em branco) se nenhuma alteração semântica tiver sido feita. Útil para fluxos de trabalho com Git."
       },
       "misc": {
         "title": "Diversos",

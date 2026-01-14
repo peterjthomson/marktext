@@ -552,7 +552,9 @@
           "default": "Par défaut",
           "crlf": "CRLF (Windows)",
           "lf": "LF (Linux/Mac)"
-        }
+        },
+        "lightTouch": "Mode « Light Touch »",
+        "lightTouchNotes": "Lorsqu’il est activé, préserve les espaces d’origine (espaces de fin de ligne, lignes vides) si aucune modification sémantique n’a été effectuée. Utile pour les workflows Git."
       },
       "misc": {
         "title": "Divers",

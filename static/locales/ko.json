@@ -552,7 +552,9 @@
           "default": "기본값",
           "crlf": "CRLF",
           "lf": "LF"
-        }
+        },
+        "lightTouch": "라이트 터치 모드",
+        "lightTouchNotes": "활성화하면 의미 있는 변경이 없을 때 원래 공백(줄 끝 공백, 빈 줄)을 유지합니다. Git 워크플로에 유용합니다."
       },
       "misc": {
         "title": "기타",

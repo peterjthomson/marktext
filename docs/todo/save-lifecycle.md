@@ -65,17 +65,27 @@ The renderer now tracks the exact payload it asked main to write (primarily for 
 
 This ensures **the Light Touch baseline becomes the last saved markdown**, preventing drift across repeated saves.
 
-## Known smells / issues (not fixed here)
+## Known smells / issues
 
-These are potential correctness issues and code smells worth sweeping more broadly:
+### Fixed Issues
 
-- **`mt::tab-saved` conflates success and cancel**:
-  - In the main process, “Save”/“Save As…” dialog cancellation can still emit `mt::tab-saved(tabId)` to clear UI state.
-  - The renderer currently treats `mt::tab-saved` as success (sets `isSaved = true`).
-  - This is likely a correctness bug (and could lead to data loss on close prompts).
-- **Save success events don’t carry “what was saved”**:
+- **Race condition with concurrent edits** (FIXED):
+  - The renderer now checks if `tab.markdown === savedMarkdown` before marking as saved.
+  - If user edits during save, tab remains unsaved but baseline is updated to disk content.
+  - This prevents the tab from incorrectly appearing saved when content differs from disk.
+
+- **`mt::tab-saved` conflates success and cancel** (PARTIALLY FIXED):
+  - In the main process, "Save"/"Save As…" dialog cancellation emits `mt::tab-saved(tabId)` to clear UI state.
+  - The renderer now detects cancellation by checking if `pendingSavedMarkdown` exists.
+  - If no pending record exists, the tab remains unsaved.
+  - **Note**: This is a workaround. Ideally, the IPC protocol should distinguish success/cancel explicitly.
+
+### Remaining Issues
+
+- **Save success events don't carry "what was saved"**:
   - The renderer has to infer the saved content/baseline from local state.
   - This is fragile with async saves (edits during save) and Light Touch logic.
+  - Current mitigation: Use `pendingSavedMarkdown` map to track save payloads.
 
 ## Follow-ups (suggested direction)
 
