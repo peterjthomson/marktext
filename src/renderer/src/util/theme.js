@@ -152,23 +152,29 @@ export const setEditorWidth = (value) => {
 
 export const setMetaTransparency = (value) => {
   const META_TRANSPARENCY_STYLE_ID = 'meta-transparency'
-  let result = ''
 
   // value is 0-100, where 100 = fully visible (default), 0 = completely transparent
-  // This controls how visible meta symbols are when they ARE shown (on active lines)
+  // This controls how visible meta symbols are when they ARE shown on active lines (heading markers, code fence delimiters, etc.)
   const opacity = value / 100
-  result = `
-/* Control opacity of visible meta/format symbols on active lines */
-.ag-gray,
-.ag-paragraph.ag-active .ag-hide:not(.ag-math):not(.ag-ruby),
-.ag-paragraph.ag-active span[class*="ag-"] .ag-hide:not(.ag-math):not(.ag-ruby) {
+
+  // Target .ag-gray elements - these are visible meta symbols like:
+  // - Heading markers (# ## ###)
+  // - Code fence markers (```)
+  // - HR markers (---)
+  // - Link brackets [ ] ( )
+  const result = `
+/* Control opacity of visible meta/format symbols */
+#ag-editor-id .ag-gray {
   opacity: ${opacity} !important;
 }
 
-/* Also apply to code fence delimiters and front matter markers */
-pre.ag-active::before,
-pre.ag-active::after,
-pre.ag-active .ag-language-input {
+/* Code fence language input */
+#ag-editor-id pre.ag-active .ag-language-input {
+  opacity: ${opacity} !important;
+}
+
+/* Front matter markers */
+#ag-editor-id pre.ag-front-matter .ag-gray {
   opacity: ${opacity} !important;
 }
 `
