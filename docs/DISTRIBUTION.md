@@ -45,7 +45,8 @@ electron-builder
 ### macOS
 
 - Xcode Command Line Tools: `xcode-select --install`
-- For notarization: Apple Developer account (optional)
+- For code signing and notarization: Apple Developer account
+- See `.env.example` for environment variable configuration
 
 ### Linux
 
@@ -120,6 +121,32 @@ npm run build:linux
 
 Cross-compilation is **not recommended** due to native module dependencies.
 
+### macOS Code Signing & Notarization
+
+For local release builds with notarization:
+
+1. **Set up credentials** (one-time):
+   ```bash
+   xcrun notarytool store-credentials "AC_PASSWORD" \
+     --apple-id "YOUR_APPLE_ID" \
+     --team-id "YOUR_TEAM_ID"
+   ```
+
+2. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your keychain profile name
+   ```
+
+3. **Build with notarization**:
+   ```bash
+   npm run build:mac
+   ```
+
+See `.env.example` for all available configuration options.
+
+**Note:** GitHub Actions CI/CD uses a separate secrets-based configuration (see `.github/workflows/release.yml`). Local builds using keychain profiles are the primary development workflow.
+
 ## Package Outputs
 
 All packages are output to `dist/`.
@@ -147,7 +174,7 @@ Installer features:
 | `marktext-mac-x64-{version}.zip`   | Archive    | Intel Macs (portable)    |
 | `marktext-mac-arm64-{version}.zip` | Archive    | Apple Silicon (portable) |
 
-**Important:** macOS builds are **not notarized**. Users will see security warnings. They need to:
+**Note:** Release builds are code signed and notarized. If you encounter security warnings with development builds, you can:
 
 1. Right-click the app → Open, or
 2. Run: `xattr -cr /Applications/MarkText.app`
@@ -190,7 +217,7 @@ win:
 
 mac:
   target: [dmg, zip]
-  notarize: false
+  notarize: true
 
 linux:
   target: [AppImage, snap, deb, rpm, tar.gz]
