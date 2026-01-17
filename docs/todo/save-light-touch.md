@@ -9,7 +9,7 @@ Working notes for Light Touch behavior in `src/renderer/src/store/editor.js`.
 - Baseline advances to the last saved payload when tracked via `pendingSavedMarkdown` (manual/auto saves to existing paths).
 
 ## Known tradeoffs (accepted for now)
-- Aggressive normalization: intentional multiple blank lines can be collapsed when nearby edits occur.
+- ~~Aggressive normalization: intentional multiple blank lines can be collapsed when nearby edits occur.~~ (FIXED: merge now preserves original blank line counts)
 - Line-oriented LCS can misalign within fenced code, tables, or reordered lists because block types are ignored.
 
 ## Test coverage to add

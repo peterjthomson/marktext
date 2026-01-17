@@ -1602,18 +1602,28 @@ const mergeWithOriginal = (regenerated, original) => {
   let prevRegen = -1
 
   for (const { orig: oi, regen: rj } of matches) {
-    // Anything inserted between previous regen match and this regen match
-    const inserted = regenLines.slice(prevRegen + 1, rj)
-    if (inserted.length) {
-      const onlyBlank = inserted.every((l) => normalizeLine(l) === '')
-      const origGap = oi - prevOrig - 1 // lines between previous orig match and this one
-      // If original lines were adjacent (no gap), drop purely blank insertions
-      if (!(onlyBlank && origGap === 0)) {
-        // If no orig gap, strip blank lines that piggyback on edits
-        const toInsert = origGap === 0 ? inserted.filter((l) => normalizeLine(l) !== '') : inserted
-        if (toInsert.length) {
-          resultLines.push(...toInsert)
-        }
+    // Lines from original in the gap (blank lines we want to preserve)
+    const origGapLines = origLines.slice(prevOrig + 1, oi)
+    // Lines from regenerated in the gap (may include new content)
+    const regenGapLines = regenLines.slice(prevRegen + 1, rj)
+
+    if (origGapLines.length > 0) {
+      // Original had lines in this gap
+      const newContent = regenGapLines.filter((l) => normalizeLine(l) !== '')
+
+      if (newContent.length > 0) {
+        // New content is being inserted - use Muya's spacing since structure changed
+        resultLines.push(...regenGapLines)
+      } else {
+        // No new content - preserve original gap lines exactly (keeps double blanks)
+        resultLines.push(...origGapLines)
+      }
+    } else if (regenGapLines.length > 0) {
+      // Original had no gap but regen does - this is purely new content
+      // Strip blank-only insertions to avoid adding unwanted spacing
+      const onlyBlank = regenGapLines.every((l) => normalizeLine(l) === '')
+      if (!onlyBlank) {
+        resultLines.push(...regenGapLines.filter((l) => normalizeLine(l) !== ''))
       }
     }
 
@@ -1623,12 +1633,26 @@ const mergeWithOriginal = (regenerated, original) => {
     prevRegen = rj
   }
 
-  // Handle tail insertions after the last match
-  if (prevRegen < regenLines.length - 1) {
-    const tail = regenLines.slice(prevRegen + 1)
-    const onlyBlank = tail.every((l) => normalizeLine(l) === '')
+  // Handle tail after the last match
+  const origTail = origLines.slice(prevOrig + 1)
+  const regenTail = regenLines.slice(prevRegen + 1)
+
+  if (origTail.length > 0) {
+    // Original had lines after last match
+    const newContent = regenTail.filter((l) => normalizeLine(l) !== '')
+
+    if (newContent.length > 0) {
+      // New content at end - use Muya's spacing since structure changed
+      resultLines.push(...regenTail)
+    } else {
+      // No new content - preserve original tail exactly
+      resultLines.push(...origTail)
+    }
+  } else if (regenTail.length > 0) {
+    // Only regen has tail lines - add non-blank content only
+    const onlyBlank = regenTail.every((l) => normalizeLine(l) === '')
     if (!onlyBlank) {
-      resultLines.push(...tail.filter((l) => normalizeLine(l) !== ''))
+      resultLines.push(...regenTail.filter((l) => normalizeLine(l) !== ''))
     }
     // If only blank, rely on original trailing newlines preservation below
   }
