@@ -394,10 +394,13 @@ div.title > span {
 }
 
 .active .save-dot {
-  margin-left: 3px;
+  margin-left: 6px;
+  margin-right: 4px;
   width: 7px;
+  min-width: 7px;
   height: 7px;
   display: inline-block;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--highlightThemeColor);
   opacity: 0.7;
