@@ -1,91 +1,60 @@
 # Build Instructions
 
-**Please see [this issue](https://github.com/jacobwhall/marktext/issues/2) for updates on our efforts to modernize this process!**
+This document provides legacy build context. For current build instructions, see [Developer Documentation](README.md).
 
-Clone the repository:
+## Quick Start
 
-```
-git clone https://github.com/marktext/marktext.git
-```
-
-## Container Setup
-
-The Marktext build process currently relies on an old version of node.
-The easiest way to build Marktext for Linux right now is from inside a container.
-Here are the steps for doing so:
-
-```sh
-# cd to marktext repository
-
-# run container (you can use docker instead of podman if you like)
-podman run -it -v ./:/mnt:Z node:18.19-bookworm /bin/bash
-# you should now be interacting with the container
-
-# install dependency xkbfile
-apt update
-apt-get install libx11-dev libxkbfile-dev libsecret-1-dev libfontconfig-dev rpm
-
-cd /mnt
-yarn install
-yarn run build
-
-exit
-# container should now be terminated
-
-# build artifacts can be found in build directory
+```bash
+git clone https://github.com/peterjthomson/marktext.git
+cd marktext
+npm install
+npm run dev        # Development
+npm run build:mac  # or build:win / build:linux
 ```
 
-Below are the complete build instructions, which may help you troubleshoot the above or attempt to build for other platforms.
+## Prerequisites
 
-### Prerequisites
+- **Node.js 22.x** (same as Electron's bundled version)
+- **Python 3.12+** (for native module compilation)
 
-Before you can get started developing, you need set up your build environment:
+### Platform-Specific
 
-- Node.js `>=v16` but `<v17` and yarn
-- Python `>=v3.6` for node-gyp
-- C++ compiler and development tools
-- Build is supported on Linux, macOS and Windows
+**Linux:**
 
-**Additional development dependencies on Linux:**
+```bash
+# Debian/Ubuntu
+sudo apt install build-essential libx11-dev libxkbfile-dev libsecret-1-dev libfontconfig-dev
 
-- libX11 (with headers)
-- libxkbfile (with headers)
-- libsecret (with headers)
-- libfontconfig (with headers)
-- rpm (if building on Debian)
+# Fedora
+sudo dnf install gcc-c++ libX11-devel libxkbfile-devel libsecret-devel fontconfig-devel
 
-On Debian-based Linux: `sudo apt-get install libx11-dev libxkbfile-dev libsecret-1-dev libfontconfig-dev rpm`
-
-On Red Hat-based Linux: `sudo dnf install libX11-devel libxkbfile-devel libsecret-devel fontconfig-devel`
-
-On Arch Linux: `sudo pacman -S libx11 libxkbfile libsecret fontconfig`
-
-**Additional development dependencies on Windows:**
-
-- Windows 10 SDK (only needed before Windows 10)
-- Visual Studio 2019 (preferred)
-
-### Let's build
-
-1. Go to `marktext` folder
-2. Install dependencies: `yarn install` or `yarn install --frozen-lockfile`
-3. Build MarkText binaries and packages: `yarn run build`
-4. MarkText binary is located under `build` folder
-
-Copy the build app to applications folder, or if on Windows run the executable installer.
-
-### Important scripts
-
-```
-$ yarn run <script> # or npm run <script>
+# Arch
+sudo pacman -S base-devel libx11 libxkbfile libsecret fontconfig
 ```
 
-| Script          | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `build`         | Build MarkText binaries and packages for your OS |
-| `build:bin`     | Build MarkText binary for your OS                |
-| `dev`           | Build and run MarkText in developer mode         |
-| `lint`          | Lint code style                                  |
-| `test` / `unit` | Run unit tests                                   |
+**Windows:**
 
-For more scripts please see `package.json`.
+- [Build Tools for Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
+- Install "Desktop development with C++"
+- Add "MSVC Spectre-mitigated libs" from Individual Components
+
+**macOS:**
+
+```bash
+xcode-select --install
+```
+
+## Scripts
+
+| Script        | Description                    |
+| ------------- | ------------------------------ |
+| `dev`         | Run in development mode        |
+| `build`       | Build application bundles      |
+| `build:win`   | Build Windows packages         |
+| `build:mac`   | Build macOS packages           |
+| `build:linux` | Build Linux packages           |
+| `lint`        | Run ESLint                     |
+| `test:unit`   | Run unit tests                 |
+| `test:e2e`    | Run end-to-end tests           |
+
+See `package.json` for all available scripts.

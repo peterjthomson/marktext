@@ -1,46 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import {
-  MARKDOWN_EXTENSIONS,
-  MARKDOWN_INCLUSIONS,
-  IMAGE_EXTENSIONS,
   hasMarkdownExtension,
   isChildOfDirectory,
   checkPathExcludePattern
 } from 'common/filesystem/paths'
 
 describe('filesystem path utilities', () => {
-  describe('MARKDOWN_EXTENSIONS', () => {
-    it('should be a frozen array', () => {
-      expect(Object.isFrozen(MARKDOWN_EXTENSIONS)).toBe(true)
-    })
-
-    it('should contain common markdown extensions', () => {
-      expect(MARKDOWN_EXTENSIONS).toContain('md')
-      expect(MARKDOWN_EXTENSIONS).toContain('markdown')
-      expect(MARKDOWN_EXTENSIONS).toContain('mdx')
-      expect(MARKDOWN_EXTENSIONS).toContain('txt')
-    })
-  })
-
-  describe('MARKDOWN_INCLUSIONS', () => {
-    it('should be glob patterns for markdown files', () => {
-      expect(MARKDOWN_INCLUSIONS).toContain('*.md')
-      expect(MARKDOWN_INCLUSIONS).toContain('*.markdown')
-      expect(MARKDOWN_INCLUSIONS).toContain('*.txt')
-    })
-  })
-
-  describe('IMAGE_EXTENSIONS', () => {
-    it('should contain common image formats', () => {
-      expect(IMAGE_EXTENSIONS).toContain('jpg')
-      expect(IMAGE_EXTENSIONS).toContain('jpeg')
-      expect(IMAGE_EXTENSIONS).toContain('png')
-      expect(IMAGE_EXTENSIONS).toContain('gif')
-      expect(IMAGE_EXTENSIONS).toContain('svg')
-      expect(IMAGE_EXTENSIONS).toContain('webp')
-    })
-  })
-
   describe('hasMarkdownExtension', () => {
     it('should return true for markdown files', () => {
       expect(hasMarkdownExtension('README.md')).toBe(true)

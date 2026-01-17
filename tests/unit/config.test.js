@@ -1,26 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import {
-  PANDOC_EXTENSIONS,
   LINE_ENDING_REG,
   LF_LINE_ENDING_REG,
   CRLF_LINE_ENDING_REG,
   URL_REG
 } from 'main_renderer/config'
 
-describe('config constants', () => {
-  describe('PANDOC_EXTENSIONS', () => {
-    it('should be a frozen array', () => {
-      expect(Object.isFrozen(PANDOC_EXTENSIONS)).toBe(true)
-    })
-
-    it('should contain common export formats', () => {
-      expect(PANDOC_EXTENSIONS).toContain('html')
-      expect(PANDOC_EXTENSIONS).toContain('docx')
-      expect(PANDOC_EXTENSIONS).toContain('latex')
-      expect(PANDOC_EXTENSIONS).toContain('epub')
-    })
-  })
-
+describe('config regex patterns', () => {
   describe('LINE_ENDING_REG', () => {
     it('should match LF line endings', () => {
       expect('line1\nline2'.match(LINE_ENDING_REG)).toHaveLength(1)

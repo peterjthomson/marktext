@@ -7,14 +7,14 @@ This directory contains the test suite for MarkText.
 ```
 tests/
 ├── unit/           # Unit tests (Vitest)
-│   ├── encoding.test.js       # Encoding utilities tests
-│   ├── filesystem-paths.test.js   # Path utilities tests
-│   └── config.test.js         # Configuration constants tests
+│   ├── encoding.test.js          # Encoding utilities
+│   ├── filesystem-paths.test.js  # Path utilities
+│   └── config.test.js            # Regex patterns
 ├── e2e/            # End-to-end tests (Playwright)
-│   └── app-launch.spec.js     # App launch smoke tests
+│   └── app-launch.spec.js        # Build verification & smoke tests
 ├── fixtures/       # Test data files
-│   ├── sample.md              # Sample markdown file
-│   └── sample-crlf.md         # CRLF line ending test file
+│   ├── sample.md                 # Sample markdown file
+│   └── sample-crlf.md            # CRLF line ending test file
 └── README.md
 ```
 
@@ -23,14 +23,9 @@ tests/
 ### Unit Tests
 
 ```bash
-# Run all unit tests
-npm run test:unit
-
-# Run in watch mode (during development)
-npm run test:unit:watch
-
-# Run with coverage report
-npm run test:unit:coverage
+npm run test:unit           # Run all unit tests
+npm run test:unit:watch     # Watch mode
+npm run test:unit:coverage  # With coverage report
 ```
 
 ### E2E Tests
@@ -38,17 +33,13 @@ npm run test:unit:coverage
 E2E tests verify build output and test fixtures by default.
 
 ```bash
-# Run E2E tests (builds app first)
-npm run test:e2e
-
-# Run E2E tests with visible browser (for debugging)
-npm run test:e2e:headed
+npm run test:e2e         # Run E2E tests (builds app first)
+npm run test:e2e:headed  # With visible browser (debugging)
 ```
 
 #### Full E2E Tests (with packaged app)
 
 Full E2E tests that launch the actual Electron app require a packaged binary.
-This is due to electron-vite's module bundling approach.
 
 ```bash
 # Build the packaged app first
@@ -61,36 +52,37 @@ MARKTEXT_E2E_FULL=1 MARKTEXT_APP_PATH=/path/to/MarkText.app/Contents/MacOS/markt
 ### All Tests
 
 ```bash
-# Run both unit and E2E tests
-npm run test:all
+npm run test:all  # Run both unit and E2E tests
 ```
 
 ## Test Philosophy
 
 Tests focus on **behavior** rather than implementation details:
 
-1. **Unit tests** - Pure functions without side effects (encoding, path utilities)
-2. **E2E smoke tests** - Build output exists, fixtures are valid, app launch checks
+- **Unit tests** verify function behavior (inputs → outputs)
+- **E2E tests** verify build artifacts and app launch
 
-This approach ensures tests remain valuable during refactoring while catching real regressions.
+We avoid tests that merely "assert the implementation" such as checking that arrays are frozen or contain specific internal values. Tests should catch real regressions, not implementation changes.
 
 ## Adding New Tests
 
 ### Unit Tests
 
 Add `.test.js` files to `tests/unit/`. Tests should:
+
 - Import from source using configured aliases (`common/`, `muya/`, etc.)
 - Focus on pure functions that don't require Electron APIs
-- Use `describe`/`it` blocks from Vitest
+- Test observable behavior, not internal implementation
 
 ### E2E Tests
 
 Add `.spec.js` files to `tests/e2e/`. Tests should:
+
 - Use Playwright's Electron support
 - Focus on user-facing behavior
 - Clean up resources in `afterAll` hooks
 
 ## Configuration
 
-- **Vitest**: `vitest.config.mjs` (path aliases match `electron.vite.config.mjs`)
+- **Vitest**: `vitest.config.mjs`
 - **Playwright**: `playwright.config.mjs`

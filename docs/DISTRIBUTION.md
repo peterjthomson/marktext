@@ -68,7 +68,7 @@ sudo pacman -S base-devel libx11 libxkbfile libsecret
 ### Install Dependencies
 
 ```bash
-git clone https://github.com/Tkaixiang/marktext.git
+git clone https://github.com/peterjthomson/marktext.git
 cd marktext
 npm install
 ```
@@ -293,7 +293,7 @@ Updates are configured in `electron-builder.yml`:
 ```yaml
 publish:
   provider: github
-  owner: Tkaixiang
+  owner: peterjthomson
   repo: marktext
 ```
 

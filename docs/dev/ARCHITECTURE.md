@@ -15,7 +15,7 @@
   - `muya/`: MarkTexts backend that only allow pure JavaScript, BOM and DOM APIs. Don't use Electron or Node.js APIs!
   - `renderer`: Frontend that require Electron renderer-process APIs and may use `common` or `muya` source code.
 - `static/`: Application assets (images, themes, etc)
-- `test/`: Contains (unit) tests
+- `tests/`: Contains unit and e2e tests
 
 ## Introduction to MarkText
 
