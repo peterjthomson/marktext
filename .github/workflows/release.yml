@@ -216,15 +216,43 @@ jobs:
       contents: write
       actions: read
     steps:
-      # upload-artifact@v4 treats `dist/` as the common-ancestor root and
-      # stores files flat inside each artifact (no `dist/` prefix). Downloading
-      # with `path: dist` + `merge-multiple` recreates `./dist/<file>` across
-      # all platforms.
+      # Deliberately NOT merge-multiple: every Windows arch emits its own
+      # `latest.yml` describing only its own installer, so a flat merge lets
+      # one arch silently clobber the other's update feed. Download into
+      # per-artifact directories, reconcile the feeds, then flatten.
       - name: Download all platform artifacts
         uses: actions/download-artifact@v4.3.0
         with:
-          path: dist
-          merge-multiple: true
+          path: artifacts
+
+      - name: Merge Windows update feeds and flatten into dist/
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          x64='artifacts/oh-my-marktext-windows-x64/latest.yml'
+          arm64='artifacts/oh-my-marktext-windows-arm64/latest.yml'
+
+          if [[ -f "$x64" && -f "$arm64" ]]; then
+            # electron-updater resolves the right installer via the per-file
+            # `arch` field; entries without one are treated as x64.
+            yq eval-all '
+              select(fi==0) as $x | select(fi==1) as $a |
+              $x | .files += ($a.files | map(. + {"arch": "arm64"}))
+            ' "$x64" "$arm64" > dist/latest.yml
+            echo "Merged Windows update feeds:"
+            cat dist/latest.yml
+          fi
+
+          # Flatten everything else, never overwriting the merged feed.
+          find artifacts -type f ! -name 'builder-debug.yml' -print0 |
+            while IFS= read -r -d '' f; do
+              name="$(basename "$f")"
+              [[ "$name" == 'latest.yml' && -f dist/latest.yml ]] && continue
+              cp -n "$f" "dist/$name"
+            done
+
+          ls -1 dist
 
       - name: Generate SHA256SUMS.txt
         working-directory: dist
