@@ -10,6 +10,8 @@
 // a scary dialog instead of an app.
 
 const { execFileSync } = require('child_process')
+const crypto = require('crypto')
+const fs = require('fs')
 const path = require('path')
 
 const notarytoolAuthArgs = () => {
@@ -29,6 +31,50 @@ const notarytoolAuthArgs = () => {
   }
 
   return null
+}
+
+// Stapling rewrites the DMG, so the sha512/size electron-builder already wrote
+// into latest-mac.yml no longer match the shipped file. electron-updater uses
+// the zip for macOS updates so a stale DMG entry is not fatal, but publishing a
+// feed whose checksums are wrong is a trap for whoever debugs it later.
+const refreshUpdateInfo = (dir) => {
+  let yaml
+  try {
+    yaml = require('js-yaml')
+  } catch {
+    console.warn('notarize-dmg: js-yaml unavailable, cannot refresh update metadata')
+    return
+  }
+
+  for (const name of fs.readdirSync(dir).filter((f) => /^latest.*\.yml$/.test(f))) {
+    const ymlPath = path.join(dir, name)
+    let doc
+    try {
+      doc = yaml.load(fs.readFileSync(ymlPath, 'utf8'))
+    } catch {
+      continue
+    }
+    if (!doc || !Array.isArray(doc.files)) continue
+
+    let changed = false
+    for (const entry of doc.files) {
+      const artifact = path.join(dir, entry.url)
+      if (!entry.url.endsWith('.dmg') || !fs.existsSync(artifact)) continue
+
+      const buf = fs.readFileSync(artifact)
+      const sha512 = crypto.createHash('sha512').update(buf).digest('base64')
+      if (entry.sha512 !== sha512 || entry.size !== buf.length) {
+        entry.sha512 = sha512
+        entry.size = buf.length
+        changed = true
+      }
+    }
+
+    if (changed) {
+      fs.writeFileSync(ymlPath, yaml.dump(doc, { lineWidth: -1 }))
+      console.log(`notarize-dmg: refreshed DMG checksums in ${name}`)
+    }
+  }
 }
 
 module.exports = async function notarizeDmg(buildResult) {
@@ -63,6 +109,8 @@ module.exports = async function notarizeDmg(buildResult) {
     execFileSync('xcrun', ['stapler', 'validate', dmg], { stdio: 'inherit' })
     console.log(`notarize-dmg: ${name} notarized and stapled`)
   }
+
+  refreshUpdateInfo(path.dirname(dmgs[0]))
 
   return []
 }
