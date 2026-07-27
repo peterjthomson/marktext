@@ -221,13 +221,21 @@ export const useProjectStore = defineStore('project', () => {
     })
     bus.on('SIDEBAR::remove', () => {
       const { pathname } = activeItem.value
-      window.electron.ipcRenderer.invoke('mt::fs-trash-item', pathname).catch((err) => {
-        notice.notify({
-          title: 'Error while deleting',
-          type: 'error',
-          message: err instanceof Error ? err.message : String(err)
+      window.electron.ipcRenderer
+        .invoke('mt::fs-trash-item', pathname)
+        .then(() => {
+          // Close any tab backing the trashed path. Leaving it open means the file
+          // watcher marks the tab unsaved, and the next save (manual or autosave)
+          // writes it straight back to disk.
+          useEditorStore().CLOSE_TABS_FOR_TRASHED_PATH(pathname)
         })
-      })
+        .catch((err) => {
+          notice.notify({
+            title: 'Error while deleting',
+            type: 'error',
+            message: err instanceof Error ? err.message : String(err)
+          })
+        })
     })
     bus.on('SIDEBAR::copy-cut', (type: unknown) => {
       const { pathname: src } = activeItem.value
