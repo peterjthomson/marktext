@@ -1,7 +1,7 @@
 {
   "name": "marktext",
   "productName": "Oh My Marktext",
-  "version": "0.20.0-omm.0-dev",
+  "version": "0.20.0-omm.1",
   "description": "Oh My Marktext — a sister fork of MarkText with notarized builds and git-friendly Light Touch save",
   "main": "./out/main/index.js",
   "author": {

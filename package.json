@@ -1,6 +1,6 @@
 {
   "name": "marktext-monorepo",
-  "version": "0.20.0-omm.0-dev",
+  "version": "0.20.0-omm.1",
   "description": "Oh My Marktext monorepo root — sister fork of MarkText",
   "private": true,
   "homepage": "https://github.com/peterjthomson/marktext",
