@@ -18,7 +18,9 @@ const keybindings: Map<string, string> = new Map([
   ['file.save-as', 'Ctrl+Shift+S'],
   ['file.move-file', ''],
   ['file.rename-file', ''],
-  ['file.print', 'Ctrl+P'],
+  // Ctrl+P is file.quick-open on every platform (including here); leaving print on
+  // the same key meant print shadowed quick-open and quick-open never fired.
+  ['file.print', ''],
   ['file.preferences', 'Ctrl+,'],
   ['file.close-tab', 'Ctrl+W'],
   ['file.close-window', 'Ctrl+Shift+W'],
@@ -56,8 +58,10 @@ const keybindings: Map<string, string> = new Map([
   ['paragraph.heading-4', ''],
   ['paragraph.heading-5', ''],
   ['paragraph.heading-6', ''],
-  ['paragraph.upgrade-heading', 'Ctrl+Plus'],
-  ['paragraph.degrade-heading', 'Ctrl+-'],
+  // Ctrl+=/- belong to zoom (see window.zoomIn/zoomOut below), so heading
+  // promote/demote takes the Alt variant.
+  ['paragraph.upgrade-heading', 'Ctrl+Alt+='],
+  ['paragraph.degrade-heading', 'Ctrl+Alt+-'],
   ['paragraph.table', 'Ctrl+Shift+T'],
   ['paragraph.code-fence', 'Ctrl+Shift+K'],
   ['paragraph.quote-block', 'Ctrl+Shift+Q'],
