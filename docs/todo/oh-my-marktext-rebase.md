@@ -1,5 +1,33 @@
 # Plan: Rebase onto MarkText 0.20 as **Oh My Marktext**
 
+## Implementation status (branch `feature/oh-my-marktext`)
+
+Phases 0, A–E are implemented on `feature/oh-my-marktext`, branched from `v0.20.0-rc.1`. Phase F (tag + release) is **not** done: it needs the Apple secrets provisioned and is an outward-facing action.
+
+| Phase | Status | Notes |
+|-------|--------|-------|
+| 0 — archive + remotes | done | `archive/v1.3.0-flat` branch, `archive/v1.3.0` tag, `upstream` remote. Nothing pushed. |
+| A — bootstrap | done | pnpm install + rebuild OK. Baseline: 728 unit tests pass, 2 pre-existing flakes in `pdf.spec.ts` (cross-file pollution; pass in isolation), 79 pre-existing e2e typecheck errors. `@muyajs/core` confirmed as the renderer's engine. |
+| B — branding | done | Verified in a packaged build: appId, `CFBundleName`, `productName`, version. |
+| C — notarization | done | Smaller than planned: upstream's `release.yml` is **already** a pnpm matrix for win/linux/mac, so only the mac signing env needed adding. Upstream entitlements already superset the 1.x fork's. Added a fail-fast secrets check. |
+| D — Light Touch | done | Pure module + 27 tests. Found and fixed a data-loss bug (see below). Dirty state left history-based as designed. |
+| E — UI affordances | done | Two of four items were already handled upstream (see below). |
+| F — first release | **not done** | Needs secrets + an explicit decision to publish. |
+
+### Corrections to this plan found during implementation
+
+- **Deletions were silently reverted.** The 1.x merge treated "regenerated gap has no new content" as "keep the original lines", so deleting a paragraph and saving restored it — mid-document, at end-of-file, and wholesale. Fixed in the port; three regression tests cover it. This is a live bug in shipping 1.3.0.
+- **Light Touch does not fix ordered-list renumbering.** Repeated `1.` markers differ in characters, not whitespace, so neither the whole-document comparison nor line-level LCS can treat them as unchanged. Success metric #2 ("open → save → `git status` clean") therefore fails for such documents until upstream #4776 lands. Padded tables are reformatted for the same reason (delimiter rows differ in dash count).
+- **Upstream already ships a pnpm release matrix** for all three platforms, so the planned workflow rewrite was unnecessary.
+- **Upstream already renders the paragraph menu style-grid first**, so "Style-first front menu" needed only an item reorder — which exposed a latent `splice(0, 1)` that assumed a fixed index.
+- **The dirty dot already exists** upstream (`save-dot`, tab `unsaved` class); only the in-flight spinner was missing.
+- **The empty-anchor bug survives into `@muyajs/core`** and was ported.
+- **`repository` in `packages/desktop/package.json` is load-bearing** for the update feed — confirmed present in the packaged asar alongside the explicit `publish` block.
+
+### Watch item
+
+A local `electron-builder --dir` run overwrote the repo-root `package.json` with a flattened desktop manifest once; it did not reproduce on a second run. Check `git status` after local packaging runs before committing.
+
 ## Intent
 
 Turn `peterjthomson/marktext` from a parallel modernization fork into a **long-running sister fork** that:
