@@ -197,6 +197,11 @@
     "default": 2,
     "enum": [0, 1, 2, 3]
   },
+  "lightTouch": {
+    "description": "Editor--Preserve the original file's formatting for lines you did not edit, so saving produces a minimal git diff.",
+    "type": "boolean",
+    "default": true
+  },
   "textDirection": {
     "description": "Editor--The writing text direction",
     "enum": ["ltr", "rtl"],

@@ -22,6 +22,7 @@ import { useLayoutStore } from './layout'
 import { useMainStore } from '.'
 import { t } from '../i18n'
 import { debouncedSendBufferedState, sendBufferedState } from './bufferedState'
+import { getMarkdownForSave } from 'common/lightTouch'
 import type {
   IFileState,
   FileNotification,
@@ -145,6 +146,28 @@ export interface EditorState {
 }
 
 const autoSaveTimers = new Map<string, ReturnType<typeof setTimeout>>()
+
+/**
+ * Applies the Light Touch preference to a save payload.
+ *
+ * Muya regenerates markdown from its block model, so saving an untouched file
+ * can rewrite whitespace across the whole document. Light Touch merges that
+ * output back against the bytes read from disk so unchanged lines stay
+ * byte-identical and `git diff` shows only the real edit.
+ *
+ * The payload is stashed on the tab and promoted to `originalMarkdown` when
+ * the main process confirms the write. Note this deliberately does not touch
+ * `isSaved` — dirty state is history-based in 0.20 (`lastSavedHistoryId`) and
+ * comparing markdown here is what left tabs permanently dirty in the 1.x fork.
+ */
+const applyLightTouch = (tab: IFileState | null | undefined, markdown: string): string => {
+  const { lightTouch } = usePreferencesStore()
+  const payload = getMarkdownForSave(markdown, tab?.originalMarkdown, lightTouch)
+  if (tab) {
+    tab.pendingSavedMarkdown = payload
+  }
+  return payload
+}
 
 export const useEditorStore = defineStore('editor', {
   state: (): EditorState => ({
@@ -522,7 +545,7 @@ export const useEditorStore = defineStore('editor', {
           id,
           filename,
           pathname,
-          markdown,
+          applyLightTouch(this.currentFile, markdown),
           deepClone(options),
           defaultPath
         )
@@ -553,7 +576,9 @@ export const useEditorStore = defineStore('editor', {
           id,
           filename,
           pathname,
-          markdown,
+          // Save-as writes a copy: if the document is semantically unchanged,
+          // that copy should be a faithful one rather than a reformatted one.
+          applyLightTouch(this.currentFile, markdown),
           deepClone(options),
           defaultPath
         )
@@ -596,6 +621,14 @@ export const useEditorStore = defineStore('editor', {
         }
         if (tab) {
           Object.assign(tab, { filename, pathname, isSaved: true })
+          // Light Touch: a save-as / first save of an untitled buffer now has a
+          // file behind it, so the bytes just written become the merge baseline.
+          if (tab.pendingSavedMarkdown != null) {
+            tab.originalMarkdown = tab.pendingSavedMarkdown
+            tab.pendingSavedMarkdown = null
+          } else if (pathname && tab.originalMarkdown == null) {
+            tab.originalMarkdown = tab.markdown
+          }
           debouncedSendBufferedState()
         }
       })
@@ -615,6 +648,12 @@ export const useEditorStore = defineStore('editor', {
             }
           }
           tab.isSaved = true
+          // Light Touch: the bytes now on disk become the baseline for the next
+          // merge. Purely a baseline update — `isSaved` above is untouched.
+          if (tab.pendingSavedMarkdown != null) {
+            tab.originalMarkdown = tab.pendingSavedMarkdown
+            tab.pendingSavedMarkdown = null
+          }
           debouncedSendBufferedState()
         }
       })
@@ -633,6 +672,8 @@ export const useEditorStore = defineStore('editor', {
         }
 
         tab.isSaved = false
+        // Light Touch: nothing reached disk, so the baseline must not advance.
+        tab.pendingSavedMarkdown = null
         this.pushTabNotification({
           tabId,
           msg: t('store.editor.errorWhileSaving', { msg }),
@@ -696,7 +737,7 @@ export const useEditorStore = defineStore('editor', {
             id,
             filename,
             pathname,
-            markdown,
+            markdown: applyLightTouch(file, markdown),
             options,
             defaultPath: getRootFolderFromState(projectStore)
           }
@@ -1493,7 +1534,7 @@ export const useEditorStore = defineStore('editor', {
             id,
             filename,
             pathname,
-            markdown,
+            applyLightTouch(tab, markdown),
             deepClone(options),
             defaultPath
           )

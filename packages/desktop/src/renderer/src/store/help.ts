@@ -45,7 +45,10 @@ const defaultFileStateWithoutId = {
   },
   scrollTop: 0,
   muyaIndexCursor: null,
-  notifications: []
+  notifications: [],
+  // Light Touch merge baseline; set from disk content when a file is opened.
+  originalMarkdown: null,
+  pendingSavedMarkdown: null
 } satisfies Omit<IFileState, 'id'>
 
 /**
@@ -83,7 +86,8 @@ const documentStateKeys = [
   'searchMatches',
   'scrollTop',
   'muyaIndexCursor',
-  'notifications'
+  'notifications',
+  'originalMarkdown'
 ] as const satisfies ReadonlyArray<keyof IFileState>
 
 export const getBlankFileState = (
@@ -150,7 +154,14 @@ export const createDocumentState = (
     id,
     // See `getBlankFileState`: the loaded document is its own clean baseline and
     // the engine's baseline undo-stack depth (the synthetic id) is 0.
-    lastSavedHistoryId: 0
+    lastSavedHistoryId: 0,
+    // Light Touch baseline: the markdown just read from disk. Only meaningful
+    // for documents that have a file behind them — untitled buffers have no
+    // original to preserve. An explicit value in `src` (e.g. restored buffered
+    // state) wins.
+    originalMarkdown:
+      docState.originalMarkdown ?? (docState.pathname ? docState.markdown : null),
+    pendingSavedMarkdown: null
   }) as IFileState
 }
 

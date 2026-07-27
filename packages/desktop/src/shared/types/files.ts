@@ -88,6 +88,17 @@ export interface IFileState {
   // Muya block tree; only populated for the actively edited tab.
   blocks?: unknown
   isMixedLineEndings?: boolean
+  // --- Light Touch (Oh My Marktext) ---
+  // The markdown exactly as it was last read from or written to disk. Used as
+  // the merge baseline so unchanged lines keep their original bytes. Null for
+  // untitled buffers, which have no on-disk original.
+  originalMarkdown?: string | null
+  // What the most recent save asked the main process to write. Promoted to
+  // `originalMarkdown` once the save is confirmed. This deliberately does NOT
+  // feed into `isSaved`: dirty state is history-based (`lastSavedHistoryId`),
+  // and comparing markdown strings here is what made the 1.x implementation
+  // leave tabs permanently dirty whenever Light Touch wrote back the original.
+  pendingSavedMarkdown?: string | null
 }
 
 /**

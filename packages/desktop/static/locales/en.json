@@ -539,6 +539,8 @@
           "preserve": "Preserve",
           "trimAll": "Trim All"
         },
+        "lightTouch": "Light Touch save",
+        "lightTouchNotes": "Keep the original formatting of lines you did not edit, so saving a file produces a minimal git diff. Turn off to always rewrite the whole file in MarkText's canonical style.",
         "endOfLine": {
           "default": "Default",
           "crlf": "CRLF(Windows)",
