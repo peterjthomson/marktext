@@ -20,3 +20,8 @@ playwright-report/
 .claude/
 .agents/
 .agent/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example

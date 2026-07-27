@@ -122,7 +122,12 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   icon: static/icon.icns
-  notarize: false
+  # Notarization is a first-class product feature for Oh My Marktext: colleagues
+  # must be able to open the DMG without `xattr -cr`. Requires APPLE_ID,
+  # APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID in the environment. Local
+  # builds with no Developer ID in the keychain skip signing (and therefore
+  # notarization) with a warning rather than failing.
+  notarize: true
   target:
     - dmg
     - zip

@@ -1,4 +1,4 @@
-name: Release MarkText
+name: Release Oh My Marktext
 
 on:
   push:
@@ -114,16 +114,52 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Mac builds are unsigned (no Developer ID); see release notes for the
-      # user-side xattr/codesign workaround. Per-arch script: electron-builder's
-      # --arm64/--x64 flags are additive over the config's arch list, so
-      # electron-builder.yml must not pin mac.target arches for the flag to
-      # actually restrict the build to a single arch.
+      # Mac builds are signed with a Developer ID Application certificate and
+      # notarized by Apple, so Gatekeeper accepts them without any user-side
+      # xattr workaround. Notarization can take up to ~30 minutes.
+      #
+      # The signing identity must be authorised for the appId in
+      # electron-builder.yml (com.peterjthomson.ohmy-marktext).
+      #
+      # Per-arch script: electron-builder's --arm64/--x64 flags are additive
+      # over the config's arch list, so electron-builder.yml must not pin
+      # mac.target arches for the flag to actually restrict the build to a
+      # single arch.
+      # Signed+notarized macOS builds are a headline feature of this fork, so a
+      # release must never silently fall back to unsigned artifacts because a
+      # secret is missing or expired.
+      - name: Verify macOS signing secrets are present
+        if: matrix.platform == 'macos'
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          missing=()
+          for name in MAC_CERTS MAC_CERTS_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            [[ -z "${!name}" ]] && missing+=("$name")
+          done
+          if (( ${#missing[@]} )); then
+            echo "::error::Missing macOS signing secrets: ${missing[*]}. Refusing to publish an unsigned release."
+            exit 1
+          fi
+          echo "All macOS signing secrets present."
+
       - name: build-mac
         if: matrix.platform == 'macos'
         run: pnpm run build:mac:${{ matrix.arch }}
+        timeout-minutes: 60
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Code signing: MAC_CERTS is the base64-encoded Developer ID .p12
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          # Notarization (electron-builder reads these for mac.notarize: true)
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: build-win
         if: matrix.platform == 'windows'
@@ -134,7 +170,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: marktext-${{ matrix.name }}
+          name: oh-my-marktext-${{ matrix.name }}
           retention-days: 7
           if-no-files-found: error
           path: |
@@ -190,11 +226,11 @@ jobs:
               echo "- May contain bugs and unfinished features."
               echo ""
             fi
-            echo "## ⚠️ Note for macOS users"
-            echo "Builds are unsigned (no Apple Developer ID). After dragging MarkText into Applications, clear the quarantine flag once:"
-            echo '```'
-            echo 'xattr -cr /Applications/marktext.app'
-            echo '```'
+            echo "## 🍎 macOS"
+            echo "Builds are signed with a Developer ID certificate and notarized by Apple — just drag \"Oh My Marktext\" into Applications and open it. No \`xattr\` workaround needed."
+            echo ""
+            echo "## Based on MarkText"
+            echo "Oh My Marktext is a sister fork of [MarkText](https://github.com/marktext/marktext). All credit for the editor and Muya engine goes to Jocs and the MarkText contributors."
             echo ""
             echo "## Verifying downloads"
             echo "All artifacts are listed with their SHA-256 in \`SHA256SUMS.txt\`. Verify with:"

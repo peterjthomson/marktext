@@ -71,9 +71,15 @@ jobs:
         if: matrix.platform == 'linux'
         run: pnpm run build:linux
 
+      # CI builds are unsigned smoke builds. electron-builder.yml sets
+      # mac.notarize: true for releases, so explicitly disable identity
+      # discovery here — otherwise this job would try (and fail) to notarize
+      # without the release secrets. Signed builds happen in release.yml only.
       - name: build-mac
         if: matrix.platform == 'macos'
         run: pnpm run build:mac:${{ matrix.arch }}
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: build-win
         if: matrix.platform == 'windows'
@@ -82,7 +88,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: marktext-${{ matrix.name }}
+          name: oh-my-marktext-${{ matrix.name }}
           retention-days: 30
           path: |
             dist/*.exe
