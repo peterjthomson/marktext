@@ -6,6 +6,10 @@ on:
     # (e.g. `vbad.tag`) instead of them silently not triggering anything.
     tags:
       - 'v*'
+  # Allows re-running a release against an existing tag, e.g. to add the
+  # Windows/Linux artifacts to a release whose mac build was done locally:
+  #   gh workflow run release.yml --ref v0.20.0-omm.1
+  workflow_dispatch:
 
 concurrency:
   group: release-${{ github.ref }}
@@ -29,34 +33,58 @@ jobs:
           fi
           echo "Tag '$tag' is valid."
 
+  # Windows and Linux need no signing secrets, so they must never be gated on
+  # the macOS Apple credentials. Build the matrix dynamically: mac is included
+  # only when the signing secrets exist, because an unsigned mac build is worse
+  # than no mac build for this fork — the whole point is a Gatekeeper-clean
+  # install. When mac is excluded the release still ships win/linux.
+  #
+  # Intel mac (x64) is intentionally absent: Apple has ended the Intel
+  # transition and arm64 is the only mac target we publish.
+  preflight:
+    name: Resolve build matrix
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+      mac_signing: ${{ steps.resolve.outputs.mac_signing }}
+    steps:
+      - id: resolve
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          entries='{"name":"linux","os":"ubuntu-22.04","platform":"linux"}'
+          entries="$entries"',{"name":"windows-x64","os":"windows-latest","platform":"windows","arch":"x64"}'
+          entries="$entries"',{"name":"windows-arm64","os":"windows-11-arm","platform":"windows","arch":"arm64"}'
+
+          mac_signing=false
+          if [[ -n "$MAC_CERTS" && -n "$MAC_CERTS_PASSWORD" && -n "$APPLE_ID" \
+                && -n "$APPLE_APP_SPECIFIC_PASSWORD" && -n "$APPLE_TEAM_ID" ]]; then
+            mac_signing=true
+            entries="$entries"',{"name":"macos-arm64","os":"macos-15","platform":"macos","arch":"arm64"}'
+          else
+            echo "::warning::macOS signing secrets absent — skipping the mac build. \
+          Windows and Linux will still be released. Build and attach the signed mac \
+          artifacts separately, or set MAC_CERTS, MAC_CERTS_PASSWORD, APPLE_ID, \
+          APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID."
+          fi
+
+          echo "mac_signing=$mac_signing" >> "$GITHUB_OUTPUT"
+          echo "matrix=[$entries]" >> "$GITHUB_OUTPUT"
+
   build:
     name: Build (${{ matrix.name }})
-    needs: validate
+    needs: [validate, preflight]
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: linux
-            os: ubuntu-22.04
-            platform: linux
-          - name: windows-x64
-            os: windows-latest
-            platform: windows
-            arch: x64
-          - name: windows-arm64
-            os: windows-11-arm
-            platform: windows
-            arch: arm64
-          - name: macos-x64
-            os: macos-15-intel
-            platform: macos
-            arch: x64
-          - name: macos-arm64
-            os: macos-15
-            platform: macos
-            arch: arm64
+        include: ${{ fromJSON(needs.preflight.outputs.matrix) }}
 
     steps:
       - name: Check out Git repository
@@ -125,28 +153,9 @@ jobs:
       # over the config's arch list, so electron-builder.yml must not pin
       # mac.target arches for the flag to actually restrict the build to a
       # single arch.
-      # Signed+notarized macOS builds are a headline feature of this fork, so a
-      # release must never silently fall back to unsigned artifacts because a
-      # secret is missing or expired.
-      - name: Verify macOS signing secrets are present
-        if: matrix.platform == 'macos'
-        env:
-          MAC_CERTS: ${{ secrets.MAC_CERTS }}
-          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: |
-          missing=()
-          for name in MAC_CERTS MAC_CERTS_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
-            [[ -z "${!name}" ]] && missing+=("$name")
-          done
-          if (( ${#missing[@]} )); then
-            echo "::error::Missing macOS signing secrets: ${missing[*]}. Refusing to publish an unsigned release."
-            exit 1
-          fi
-          echo "All macOS signing secrets present."
-
+      # The `preflight` job owns the signing-secret check: mac is only in the
+      # matrix when all five secrets exist, so reaching this step means signing
+      # is configured.
       - name: build-mac
         if: matrix.platform == 'macos'
         run: pnpm run build:mac:${{ matrix.arch }}
@@ -188,6 +197,10 @@ jobs:
   release:
     name: Publish GitHub Release
     needs: build
+    # Only a tag push publishes. A workflow_dispatch run is for producing
+    # artifacts against an existing tag (e.g. adding win/linux to a release
+    # whose mac build was signed locally) and must not rewrite that release.
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     # Per-job permissions REPLACE workflow-level ones, so re-declare
     # both: contents:write to publish the release, actions:read for
