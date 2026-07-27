@@ -25,6 +25,13 @@ jobs:
     steps:
       - name: Validate semver tag
         run: |
+          # workflow_dispatch can target a branch to produce artifacts without
+          # publishing; only a tag ref needs to satisfy the version format.
+          if [[ "${GITHUB_REF_TYPE}" != "tag" ]]; then
+            echo "Ref '${GITHUB_REF_NAME}' is not a tag; skipping semver validation."
+            exit 0
+          fi
+
           tag="${GITHUB_REF_NAME}"
           # SemVer 2.0.0 with leading "v"
           if ! [[ "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
