@@ -55,6 +55,8 @@ extraResources:
       - '**/*'
       - '!locales/**/!(*.min).json'
 npmRebuild: false
+# Notarizes + staples the DMG itself; mac.notarize only covers the .app.
+afterAllArtifactBuild: build/notarize-dmg.cjs
 electronLanguages: # Avoid packaging all chromium locales since our app has in-built locales
   - en-US
 
@@ -133,6 +135,11 @@ mac:
     - zip
 dmg:
   artifactName: 'oh-my-marktext-mac-${arch}-${version}.${ext}'
+  # electron-builder leaves DMGs unsigned by default, which makes Gatekeeper
+  # reject the downloaded disk image ("no usable signature") even though the
+  # app inside is notarized. Sign it, then afterAllArtifactBuild notarizes and
+  # staples it.
+  sign: true
   contents:
     - x: 410
       y: 240
