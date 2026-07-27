@@ -36,6 +36,7 @@ class SettingWindow extends BaseWindow {
     if (isLinux) {
       winOptions.icon = path.join(
         (global as unknown as { __static: string }).__static,
+        'oh-my-marktext',
         'logo-96px.png'
       )
     }

@@ -21,6 +21,7 @@ import { useProjectStore } from './project'
 import { useLayoutStore } from './layout'
 import { useMainStore } from '.'
 import { t } from '../i18n'
+import { PATH_SEPARATOR } from '../config'
 import { debouncedSendBufferedState, sendBufferedState } from './bufferedState'
 import { getMarkdownForSave } from 'common/lightTouch'
 import type {
@@ -1145,6 +1146,37 @@ export const useEditorStore = defineStore('editor', {
     CLOSE_ALL_TABS(): void {
       this.tabs.slice().forEach((tab) => {
         this.CLOSE_TAB(tab)
+      })
+    },
+
+    /**
+     * Closes the tabs backing a path the user just moved to the trash.
+     *
+     * `pathname` may be a file or a directory; for a directory every tab beneath
+     * it is closed.
+     *
+     * Deliberately force-closes rather than going through CLOSE_TAB. An open tab
+     * for a deleted file is marked unsaved by the file watcher
+     * (SET_SAVE_STATUS_WHEN_REMOVE), so CLOSE_TAB would route to
+     * CLOSE_UNSAVED_TAB and offer to save it — writing the file straight back to
+     * disk and undoing the delete. The same is true of autosave while the tab
+     * stays open. The user asked for the file to go, so the buffer goes with it.
+     */
+    CLOSE_TABS_FOR_TRASHED_PATH(pathname: string): void {
+      if (!pathname) return
+
+      const trashed = window.path.normalize(pathname)
+      const prefix = trashed.endsWith(PATH_SEPARATOR) ? trashed : trashed + PATH_SEPARATOR
+
+      const doomed = this.tabs.filter((tab) => {
+        if (!tab.pathname) return false
+        if (window.fileUtils.isSamePathSync(tab.pathname, trashed)) return true
+        // Directory case: any tab living underneath the trashed folder.
+        return window.path.normalize(tab.pathname).startsWith(prefix)
+      })
+
+      doomed.forEach((tab) => {
+        this.FORCE_CLOSE_TAB(tab)
       })
     },
 

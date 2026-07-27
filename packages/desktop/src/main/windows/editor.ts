@@ -105,7 +105,12 @@ class EditorWindow extends BaseWindow {
       options
     )
     if (isLinux) {
-      winOptions.icon = path.join(process.cwd(), 'static', 'logo-96px.png')
+      winOptions.icon = path.join(
+        process.cwd(),
+        'static',
+        'oh-my-marktext',
+        'logo-96px.png'
+      )
     }
 
     const {

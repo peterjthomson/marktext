@@ -1,5 +1,3 @@
-<p align="center"><img src="docs/assets/logo-small.png" alt="Oh My Marktext" width="100" height="100"></p>
-
 <h1 align="center">Oh My Marktext</h1>
 
 <div align="center">

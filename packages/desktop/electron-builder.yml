@@ -105,7 +105,7 @@ win:
   target:
     - target: 'nsis'
     - target: 'zip'
-  icon: static/icon.ico
+  icon: static/oh-my-marktext/icon.ico
 nsis:
   artifactName: 'oh-my-marktext-win-${arch}-${version}-setup.${ext}'
   shortcutName: ${productName}
@@ -123,7 +123,7 @@ mac:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
-  icon: static/icon.icns
+  icon: static/oh-my-marktext/icon.icns
   # Notarization is a first-class product feature for Oh My Marktext: colleagues
   # must be able to open the DMG without `xattr -cr`. Requires APPLE_ID,
   # APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID in the environment. Local
@@ -156,7 +156,7 @@ linux:
   category: 'Office;TextEditor;Utility'
   mimeTypes:
     - 'text/markdown'
-  icon: 'static/icon.png'
+  icon: 'static/oh-my-marktext/icon.png'
   desktop:
     entry:
       StartupWMClass: 'oh-my-marktext'

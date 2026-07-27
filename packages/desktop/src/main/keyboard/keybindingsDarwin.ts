@@ -53,8 +53,10 @@ const keybindings: Map<string, string> = new Map([
   ['paragraph.heading-4', 'Command+4'],
   ['paragraph.heading-5', 'Command+5'],
   ['paragraph.heading-6', 'Command+6'],
-  ['paragraph.upgrade-heading', 'Command+='],
-  ['paragraph.degrade-heading', 'Command+-'],
+  // Command+=/- belong to zoom (see window.zoomIn/zoomOut below), so heading
+  // promote/demote takes the Ctrl variant.
+  ['paragraph.upgrade-heading', 'Ctrl+Command+='],
+  ['paragraph.degrade-heading', 'Ctrl+Command+-'],
   ['paragraph.table', 'Command+Shift+T'],
   ['paragraph.code-fence', 'Command+Option+C'],
   ['paragraph.quote-block', 'Command+Option+Q'],
