@@ -1,8 +1,15 @@
-appId: com.github.marktext.marktext
-productName: marktext
+appId: com.peterjthomson.ohmy-marktext
+productName: Oh My Marktext
 directories:
   buildResources: build
   output: ../../dist
+# Auto-update feed. Upstream ships no `publish` block, which makes electron-updater
+# fall back to the `repository` field in package.json. Oh My Marktext must never
+# resolve to the official marktext/marktext latest*.yml, so pin it explicitly.
+publish:
+  - provider: github
+    owner: peterjthomson
+    repo: marktext
 files:
   - '!**/.vscode/*'
   - '!src/*'
@@ -91,14 +98,14 @@ fileAssociations:
     role: Editor
     icon: icons/md.ico
 win:
-  executableName: marktext
-  artifactName: 'marktext-win-${arch}-${version}.${ext}'
+  executableName: oh-my-marktext
+  artifactName: 'oh-my-marktext-win-${arch}-${version}.${ext}'
   target:
     - target: 'nsis'
     - target: 'zip'
   icon: static/icon.ico
 nsis:
-  artifactName: 'marktext-win-${arch}-${version}-setup.${ext}'
+  artifactName: 'oh-my-marktext-win-${arch}-${version}-setup.${ext}'
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: true
@@ -108,7 +115,7 @@ nsis:
   perMachine: false
   include: windows/installer.nsh
 mac:
-  artifactName: 'marktext-mac-${arch}-${version}.${ext}'
+  artifactName: 'oh-my-marktext-mac-${arch}-${version}.${ext}'
   entitlementsInherit: build/mac/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -120,7 +127,7 @@ mac:
     - dmg
     - zip
 dmg:
-  artifactName: 'marktext-mac-${arch}-${version}.${ext}'
+  artifactName: 'oh-my-marktext-mac-${arch}-${version}.${ext}'
   contents:
     - x: 410
       y: 240
@@ -130,18 +137,18 @@ dmg:
       y: 240
       type: 'file'
 linux:
-  artifactName: 'marktext-linux-${version}.${ext}'
-  executableName: 'marktext'
-  description: 'A simple and elegant open-source markdown editor that focused on speed and usability.'
-  maintainer: 'MarkText Contributors'
+  artifactName: 'oh-my-marktext-linux-${version}.${ext}'
+  executableName: 'oh-my-marktext'
+  description: 'Oh My Marktext — a sister fork of MarkText with notarized builds and git-friendly Light Touch save.'
+  maintainer: 'Peter Thomson'
   category: 'Office;TextEditor;Utility'
   mimeTypes:
     - 'text/markdown'
   icon: 'static/icon.png'
   desktop:
     entry:
-      StartupWMClass: 'marktext'
-      Keywords: 'marktext;'
+      StartupWMClass: 'oh-my-marktext'
+      Keywords: 'marktext;ohmymarktext;omm;'
   target:
     - AppImage
     - snap

@@ -93,6 +93,7 @@
       "viewSource": "View Source",
       "followUs": "Follow Us",
       "support": "Support MarkText",
+      "basedOnMarkText": "Based on MarkText",
       "license": "License",
       "about": "About",
       "checkUpdates": "Check for Updates"
@@ -729,7 +730,9 @@
   },
   "about": {
     "copyright": "Copyright © Luo Ran 2017-{year}",
-    "copyrightContributors": "Made with <3 by Github Contributors"
+    "copyrightContributors": "Made with <3 by Github Contributors",
+    "basedOn": "Based on MarkText by Jocs & contributors",
+    "sisterFork": "Oh My Marktext is a sister fork — not affiliated with the official MarkText project"
   },
   "commands": {
     "mt": {

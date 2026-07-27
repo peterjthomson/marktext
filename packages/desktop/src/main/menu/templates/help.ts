@@ -3,6 +3,7 @@ import { shell, type BrowserWindow, type MenuItemConstructorOptions } from 'elec
 import { isFile } from 'common/filesystem'
 import * as actions from '../actions/help'
 import { checkUpdates } from '../actions/marktext'
+import { GITHUB_REPO_URL, UPSTREAM_REPO_URL } from '../../config'
 import { t } from '../../i18n'
 
 /// Check whether the package is updatable at runtime.
@@ -41,7 +42,7 @@ export default function(): MenuItemConstructorOptions {
     {
       label: t('menu.help.changelog'),
       click() {
-        shell.openExternal('https://github.com/marktext/marktext/releases')
+        shell.openExternal(`${GITHUB_REPO_URL}/releases`)
       }
     },
     {
@@ -65,28 +66,35 @@ export default function(): MenuItemConstructorOptions {
     {
       label: t('menu.help.askQuestion'),
       click() {
-        shell.openExternal('https://github.com/marktext/marktext/discussions')
+        shell.openExternal(`${GITHUB_REPO_URL}/discussions`)
       }
     },
     {
       label: t('menu.help.reportBug'),
       click() {
-        shell.openExternal('https://github.com/marktext/marktext/issues')
+        shell.openExternal(`${GITHUB_REPO_URL}/issues`)
       }
     },
     {
       label: t('menu.help.viewSource'),
       click() {
-        shell.openExternal('https://github.com/marktext/marktext')
+        shell.openExternal(GITHUB_REPO_URL)
       }
     },
     {
       type: 'separator'
     },
     {
+      // Oh My Marktext is a sister fork: send people to the project it is built on.
+      label: t('menu.help.basedOnMarkText'),
+      click() {
+        shell.openExternal(UPSTREAM_REPO_URL)
+      }
+    },
+    {
       label: t('menu.help.license'),
       click() {
-        shell.openExternal('https://github.com/marktext/marktext/blob/develop/LICENSE')
+        shell.openExternal(`${GITHUB_REPO_URL}/blob/master/LICENSE`)
       }
     }
   ]

@@ -35,6 +35,16 @@
             {{ copyrightContributors }}
           </div>
         </el-col>
+        <el-col :span="24">
+          <div class="text">
+            {{ basedOn }}
+          </div>
+        </el-col>
+        <el-col :span="24">
+          <div class="text sister-fork">
+            {{ sisterFork }}
+          </div>
+        </el-col>
       </el-row>
     </el-dialog>
   </div>
@@ -49,9 +59,11 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const name = 'MarkText'
+const name = 'Oh My Marktext'
 const copyright = t('about.copyright', { year: new Date().getFullYear() })
 const copyrightContributors = t('about.copyrightContributors')
+const basedOn = t('about.basedOn')
+const sisterFork = t('about.sisterFork')
 const showAboutDialog = ref(false)
 
 const store = useMainStore()
@@ -95,5 +107,11 @@ onBeforeUnmount(() => {
 
 .about-dialog .text {
   color: var(--floatFontColor);
+}
+
+.about-dialog .text.sister-fork {
+  font-size: 12px;
+  opacity: 0.7;
+  line-height: 1.4;
 }
 </style>
