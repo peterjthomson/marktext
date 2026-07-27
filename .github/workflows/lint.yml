@@ -7,6 +7,13 @@ on:
     # Skip the desktop lint+typecheck on muya-only PRs.
     paths-ignore:
       - 'packages/muya/**'
+  # main tracks an upstream tag and shares no history with master, so changes
+  # land on it directly rather than through PRs. Without this the default
+  # branch would never be linted in CI.
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'packages/muya/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

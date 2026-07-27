@@ -7,6 +7,11 @@ on:
     # Skip the desktop unit tests on muya-only PRs.
     paths-ignore:
       - 'packages/muya/**'
+  # Changes land on main directly (see lint.yml), so gate it on push too.
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'packages/muya/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
