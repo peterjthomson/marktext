@@ -77,7 +77,7 @@ const refreshUpdateInfo = (dir) => {
   }
 }
 
-module.exports = async function notarizeDmg(buildResult) {
+module.exports = async function notarizeDmg (buildResult) {
   if (process.platform !== 'darwin') return []
 
   const dmgs = (buildResult.artifactPaths || []).filter((p) => p.endsWith('.dmg'))
