@@ -116,11 +116,13 @@ export default function htmlTag(
         outerClass,
     }: ISyntaxRenderOptions & { token: HTMLTagToken },
 ) {
-    const { tag, openTag, closeTag, children } = token;
+    const { tag, openTag, closeTag } = token;
 
-    const className = children?.length
-        ? this.getClassName(outerClass, block, token, cursor)
-        : CLASS_NAMES.MU_GRAY;
+    // Always resolve visibility through getClassName. Forcing childless tags to
+    // MU_GRAY rendered empty anchors such as `<a name="anchor"></a>` as visible
+    // grey text at all times, instead of hiding them when the cursor is
+    // elsewhere the way every other inline markup token behaves.
+    const className = this.getClassName(outerClass, block, token, cursor);
     const tagClassName
         = className === CLASS_NAMES.MU_HIDE ? className : CLASS_NAMES.MU_HTML_TAG;
     const { start, end } = token.range;

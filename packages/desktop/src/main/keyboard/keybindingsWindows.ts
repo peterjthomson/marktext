@@ -88,8 +88,10 @@ const keybindings: Map<string, string> = new Map([
   // Window menu
   ['window.minimize', 'Ctrl+M'],
   ['window.toggle-always-on-top', ''],
-  ['window.zoomIn', ''],
-  ['window.zoomOut', ''],
+  // Upstream leaves these unbound; bind them to the conventional zoom keys so
+  // font size can be adjusted without opening the menu.
+  ['window.zoomIn', 'Ctrl+='],
+  ['window.zoomOut', 'Ctrl+-'],
   ['window.toggle-full-screen', 'F11'],
 
   // View menu

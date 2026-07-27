@@ -878,7 +878,8 @@
   },
   "common": {
     "cancel": "Cancel",
-    "ok": "OK"
+    "ok": "OK",
+    "saving": "Saving…"
   },
   "dialog": {
     "cancel": "Cancel",

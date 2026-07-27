@@ -143,7 +143,14 @@ export interface EditorState {
   tabIdToIndex: Record<string, number>
   listToc: TocItem[]
   toc: TocTreeNode[]
+  // True while a manual save is in flight, so the title bar can show a spinner.
+  isSaving: boolean
 }
+
+// A save is usually instantaneous. Hold the spinner briefly anyway, otherwise
+// it flickers and reads as a glitch rather than as confirmation.
+const MIN_SPINNER_MS = 600
+let saveStartTime = 0
 
 const autoSaveTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
@@ -175,10 +182,25 @@ export const useEditorStore = defineStore('editor', {
     tabs: [],
     tabIdToIndex: {},
     listToc: [], // Used for equal check and for searching for the correct github-slug to jump to
-    toc: []
+    toc: [],
+    isSaving: false
   }),
 
   actions: {
+    // Start/stop the manual-save spinner. Cleared on both save confirmation and
+    // save failure so it can never get stuck on.
+    _beginSavingSpinner(): void {
+      saveStartTime = Date.now()
+      this.isSaving = true
+    },
+
+    _clearSavingSpinner(): void {
+      const remaining = Math.max(0, MIN_SPINNER_MS - (Date.now() - saveStartTime))
+      setTimeout(() => {
+        this.isSaving = false
+      }, remaining)
+    },
+
     updateTabIdToIndex(): void {
       this.tabIdToIndex = this.tabs.reduce<Record<string, number>>((map, tab, index) => {
         map[tab.id] = index
@@ -540,6 +562,7 @@ export const useEditorStore = defineStore('editor', {
       const options = getOptionsFromState(this.currentFile)
       const defaultPath = getRootFolderFromState(projectStore)
       if (id) {
+        this._beginSavingSpinner()
         window.electron.ipcRenderer.send(
           'mt::response-file-save',
           id,
@@ -631,6 +654,7 @@ export const useEditorStore = defineStore('editor', {
           }
           debouncedSendBufferedState()
         }
+        this._clearSavingSpinner()
       })
 
       window.electron.ipcRenderer.on('mt::tab-saved', (_, tabId) => {
@@ -656,6 +680,7 @@ export const useEditorStore = defineStore('editor', {
           }
           debouncedSendBufferedState()
         }
+        this._clearSavingSpinner()
       })
 
       window.electron.ipcRenderer.on('mt::tab-save-failure', (_, tabId, msg) => {
@@ -668,12 +693,14 @@ export const useEditorStore = defineStore('editor', {
             time: 20000,
             showConfirm: false
           })
+          this._clearSavingSpinner()
           return
         }
 
         tab.isSaved = false
         // Light Touch: nothing reached disk, so the baseline must not advance.
         tab.pendingSavedMarkdown = null
+        this._clearSavingSpinner()
         this.pushTabNotification({
           tabId,
           msg: t('store.editor.errorWhileSaving', { msg }),

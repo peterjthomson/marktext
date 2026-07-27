@@ -40,7 +40,15 @@
           >
             {{ filename }}
           </span>
+          <!-- Saving takes precedence over the dirty dot: while a write is in
+               flight, show progress rather than "unsaved". -->
           <span
+            v-if="isSaving"
+            class="save-spinner"
+            :title="t('common.saving')"
+          />
+          <span
+            v-else
             class="save-dot"
             :class="{ show: !isSaved }"
           />
@@ -211,6 +219,7 @@ onMounted(async () => {
 
 const { titleBarStyle } = storeToRefs(preferencesStore)
 const { showTabBar } = storeToRefs(layoutStore)
+const { isSaving } = storeToRefs(editorStore)
 
 const paths = computed(() => {
   if (!props.pathname) return []
@@ -394,6 +403,28 @@ div.title > span {
 }
 .active .save-dot.show {
   visibility: visible;
+}
+/* Shown in place of the dirty dot while a save is in flight. */
+.save-spinner {
+  margin-right: 0.25rem;
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  border-radius: 50%;
+  border: 1.5px solid var(--highlightThemeColor);
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: save-spinner-rotate 0.7s linear infinite;
+}
+@keyframes save-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .save-spinner {
+    animation: none;
+  }
 }
 .title:hover {
   color: var(sideBarTitleColor);

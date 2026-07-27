@@ -142,7 +142,12 @@ export class ParagraphFrontMenu extends BaseFloat {
         const { _oldVNode: oldVNode, _frontMenuContainer: frontMenuContainer, _block: block } = this;
         const { i18n } = this.muya;
         const { blockName } = block!;
-        const children = FRONT_MENU.map(({ icon, label, text, shortCut }) => {
+        // Frontmatter cannot be duplicated. Filter by label rather than by
+        // index so reordering FRONT_MENU cannot silently drop the wrong item.
+        const menuItems = FRONT_MENU.filter(
+            ({ label }) => !(blockName === 'frontmatter' && label === 'duplicate'),
+        );
+        const children = menuItems.map(({ icon, label, text, shortCut }) => {
             const iconWrapperSelector = 'div.icon-wrapper';
             const iconWrapper = h(iconWrapperSelector, renderIcon({ icon, label }));
             const textWrapper = h('span.text', i18n.t(text));
@@ -162,10 +167,6 @@ export class ParagraphFrontMenu extends BaseFloat {
                 itemChildren,
             );
         });
-
-        // Frontmatter can not be duplicated
-        if (blockName === 'frontmatter')
-            children.splice(0, 1);
 
         const subMenu = canTurnIntoMenu(block!);
         if (subMenu.length) {
