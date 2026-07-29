@@ -288,7 +288,7 @@ Port from current fork:
 1. Version `0.20.0-omm.1`
 2. Tag `v0.20.0-omm.1`
 3. Build scope: **mac (signed) is the omm.1 commitment**; win/linux ship only if their workflows are adapted to the pnpm monorepo by then (today's flat-tree npm workflows will not run) — otherwise explicitly release mac-only and note win/linux as follow-up
-4. Verify updater upgrade path between omm tags (prerelease semver + electron-updater `allowPrerelease` semantics — see version row in identity table) using a throwaway `0.20.0-omm.0` → `omm.1` release pair
+4. ~~Verify updater upgrade path between omm tags~~ **Done 2026-07-29, and it was broken.** `release.yml` marked every hyphenated tag as a GitHub pre-release. electron-updater's GitHub provider resolves the latest *non*-prerelease release unless `allowPrerelease` is set, and it is not — so `releases/latest` returned `v0.20.0-omm.1` and omm.2 and omm.3 were invisible to the updater. Releases are no longer flagged as pre-releases; see `docs/omm/signing-and-release.md`.
 5. Release notes template:
 
 ```markdown

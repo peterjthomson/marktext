@@ -265,15 +265,8 @@ jobs:
           cat SHA256SUMS.txt
 
       - name: Compose release notes body
-        env:
-          IS_PRERELEASE: ${{ contains(github.ref_name, '-') }}
         run: |
           {
-            if [[ "$IS_PRERELEASE" == "true" ]]; then
-              echo "## ❗ This is a pre-release"
-              echo "- May contain bugs and unfinished features."
-              echo ""
-            fi
             echo "## 🍎 macOS"
             echo "Builds are signed with a Developer ID certificate and notarized by Apple — just drag \"Oh My Marktext\" into Applications and open it. No \`xattr\` workaround needed."
             echo ""
@@ -295,7 +288,13 @@ jobs:
         uses: softprops/action-gh-release@v2.6.2
         with:
           draft: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          # The `-omm.N` suffix records which upstream version this fork tracks;
+          # it is not a warning about stability. Flagging these as pre-releases
+          # also hid them: electron-updater's GitHub provider resolves the latest
+          # *non*-prerelease release unless `allowPrerelease` is set (it is not),
+          # so omm.2 and omm.3 were invisible to the updater and the repo page
+          # still headlined omm.1.
+          prerelease: false
           generate_release_notes: true
           name: ${{ github.ref_name }}
           body_path: release_body.md

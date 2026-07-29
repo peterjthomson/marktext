@@ -97,6 +97,21 @@ sort -k2 /tmp/SHA256SUMS.txt -o /tmp/SHA256SUMS.txt
 gh release upload v0.20.0-omm.N /tmp/SHA256SUMS.txt --clobber
 ```
 
+### Releases are not marked "pre-release"
+
+`-omm.N` records which upstream version this fork tracks. It is not a warning
+about stability, and the release notes carry no "may contain bugs" boilerplate:
+this fork ships signed, notarized, tested builds and should say so plainly.
+
+There is a functional reason too. electron-updater's GitHub provider resolves
+the latest **non**-prerelease release unless `allowPrerelease` is set, which
+this app does not set. While `release.yml` flagged every hyphenated tag as a
+pre-release, `repos/.../releases/latest` returned `v0.20.0-omm.1` and every
+release after it was invisible to the auto-updater.
+
+If a genuinely experimental build is ever needed, mark that one release
+pre-release deliberately — do not derive it from the version string.
+
 Steps 5 and 6 are manual because the mac artifacts are produced off-CI. If a
 release ever ships without them, `gh release view <tag>` showing no
 `*-mac-arm64-*` assets is the tell.
