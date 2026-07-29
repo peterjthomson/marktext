@@ -1,0 +1,122 @@
+/*
+ * Prism.js Tufte Theme (Light) — Oh My Marktext
+ *
+ * Code is set in a monospace face against the theme's paper, with syntax
+ * colours pulled toward earth tones so a fenced block does not shout next to
+ * the serif body text. Structure mirrors the sibling light themes.
+ */
+
+code[class*='language-'],
+pre.ag-paragraph,
+pre.mu-code-block {
+  color: rgba(51, 47, 43, 0.87);
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  overflow: visible;
+}
+
+pre.ag-paragraph,
+pre.mu-code-block {
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*='language-'],
+pre.ag-paragraph,
+pre.mu-code-block {
+  background: rgba(51, 47, 43, 0.05);
+}
+
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: rgba(51, 47, 43, 0.45);
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: rgba(51, 47, 43, 0.6);
+}
+
+.namespace {
+  opacity: 0.7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #a0522d;
+}
+
+.token.boolean,
+.token.number {
+  color: #8b5a2b;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #6b7f5b;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: rgba(51, 47, 43, 0.7);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: #9c7648;
+}
+
+.token.keyword {
+  color: #7a5c38;
+  font-style: italic;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #a0522d;
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}

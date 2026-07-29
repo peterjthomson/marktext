@@ -11,6 +11,7 @@ import {
   materialDark,
   oneDark,
   ulysses,
+  tufte, // OMM
   // New gogh themes - Dark
   dracula,
   nord,
@@ -84,6 +85,10 @@ export const addThemeStyle = (theme: string): void => {
       break
     case 'graphite':
       themeStyleEle.innerHTML = patchTheme(graphite())
+      break
+    // OMM
+    case 'tufte':
+      themeStyleEle.innerHTML = patchTheme(tufte())
       break
     case 'one-dark':
       themeStyleEle.innerHTML = patchTheme(oneDark())

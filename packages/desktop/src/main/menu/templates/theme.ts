@@ -2,6 +2,7 @@ import { type MenuItemConstructorOptions } from 'electron'
 import * as actions from '../actions/theme'
 import { t } from '../../i18n'
 import type Preference from '../../preferences'
+import { ommLightThemeMenuEntries, ommDarkThemeMenuEntries } from 'common/omm/themes' // OMM
 
 // [i18nLabelKey, themeId] for each selectable theme. The menu label is
 // `menu.theme.<labelKey>`; `themeId` is both the menu item id and the value
@@ -17,7 +18,8 @@ const LIGHT_THEMES: ReadonlyArray<readonly [string, string]> = [
   ['rosePineDawn', 'rose-pine-dawn'],
   ['solarizedLight', 'solarized-light'],
   ['tokyoNightLight', 'tokyo-night-light'],
-  ['ulyssesLight', 'ulysses']
+  ['ulyssesLight', 'ulysses'],
+  ...ommLightThemeMenuEntries // OMM
 ]
 
 const DARK_THEMES: ReadonlyArray<readonly [string, string]> = [
@@ -34,6 +36,7 @@ const DARK_THEMES: ReadonlyArray<readonly [string, string]> = [
   ['materialDark', 'material-dark'],
   ['monokaiPro', 'monokai-pro'],
   ['nightfox', 'nightfox'],
+  ...ommDarkThemeMenuEntries, // OMM (none today; keeps the two tables symmetrical)
   ['nord', 'nord'],
   ['oneDark', 'one-dark'],
   ['oxocarbonDark', 'oxocarbon-dark'],

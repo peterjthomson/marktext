@@ -1,5 +1,6 @@
 import darkTheme from '../assets/themes/dark.theme.css?inline'
 import graphiteTheme from '../assets/themes/graphite.theme.css?inline'
+import tufteTheme from '../assets/themes/tufte.theme.css?inline' // OMM
 import materialDarkTheme from '../assets/themes/material-dark.theme.css?inline'
 import oneDarkTheme from '../assets/themes/one-dark.theme.css?inline'
 import ulyssesTheme from '../assets/themes/ulysses.theme.css?inline'
@@ -66,6 +67,7 @@ import oxocarbonDarkPrismTheme from '../assets/themes/prismjs/oxocarbon-dark.the
 import nightfoxPrismTheme from '../assets/themes/prismjs/nightfox.theme.css?inline'
 import cyberdreamPrismTheme from '../assets/themes/prismjs/cyberdream.theme.css?inline'
 import graphitePrismTheme from '../assets/themes/prismjs/graphite.theme.css?inline'
+import tuftePrismTheme from '../assets/themes/prismjs/tufte.theme.css?inline' // OMM
 import ulyssesPrismTheme from '../assets/themes/prismjs/ulysses.theme.css?inline'
 
 // Original themes
@@ -75,6 +77,11 @@ export const dark = (): string => {
 
 export const graphite = (): string => {
   return graphiteTheme + '\n' + graphitePrismTheme
+}
+
+// OMM
+export const tufte = (): string => {
+  return tufteTheme + '\n' + tuftePrismTheme
 }
 
 export const materialDark = (): string => {

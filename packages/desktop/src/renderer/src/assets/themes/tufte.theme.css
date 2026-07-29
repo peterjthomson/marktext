@@ -1,0 +1,351 @@
+/*
+ * Tufte — Oh My Marktext
+ *
+ * Ported from the pre-0.20 fork (src/renderer/src/assets/themes/tufte.theme.css).
+ * Inspired by Edward Tufte's handouts and Tufte CSS
+ * (https://edwardtufte.github.io/tufte-css/): aged-paper background, warm ochre
+ * accent, serif body text, centred title and italic section headings.
+ *
+ * Two things differ from the archived original:
+ *
+ * 1. Selectors target @muyajs/core (`.mu-*`), not the retired muyajs engine
+ *    (`.ag-*`). The old rules silently stopped matching when the engine changed.
+ * 2. The palette is expressed in both the camelCase variables the Vue chrome
+ *    reads and the kebab-case ones @muyajs/core reads, as upstream themes do.
+ *
+ * Unlike every upstream theme this one sets `font-family`, because the serif is
+ * the point of Tufte rather than decoration. That overrides the editor font
+ * preference while the theme is active.
+ */
+
+:root {
+  /* Warm ochre/tan accent for a classic feel */
+  --themeColor: rgb(156, 118, 72);
+  --themeColor90: rgba(156, 118, 72, 0.9);
+  --themeColor80: rgba(156, 118, 72, 0.8);
+  --themeColor70: rgba(156, 118, 72, 0.7);
+  --themeColor60: rgba(156, 118, 72, 0.6);
+  --themeColor50: rgba(156, 118, 72, 0.5);
+  --themeColor40: rgba(156, 118, 72, 0.4);
+  --themeColor30: rgba(156, 118, 72, 0.3);
+  --themeColor20: rgba(156, 118, 72, 0.2);
+  --themeColor10: rgba(156, 118, 72, 0.1);
+
+  /* Warm dark grey on cream */
+  --highlightColor: rgba(156, 118, 72, 0.25);
+  --selectionColor: rgba(156, 118, 72, 0.15);
+  --editorColor: rgba(51, 47, 43, 0.87);
+  --editorColor80: rgba(51, 47, 43, 0.8);
+  --editorColor60: rgba(51, 47, 43, 0.6);
+  --editorColor50: rgba(51, 47, 43, 0.5);
+  --editorColor40: rgba(51, 47, 43, 0.4);
+  --editorColor30: rgba(51, 47, 43, 0.3);
+  --editorColor10: rgba(51, 47, 43, 0.1);
+  --editorColor04: rgba(51, 47, 43, 0.04);
+
+  /* Aged paper */
+  --editorBgColor: #f8f6f1;
+  --deleteColor: #bf4040;
+  --iconColor: rgba(51, 47, 43, 0.45);
+  --codeBgColor: rgba(51, 47, 43, 0.06);
+  --codeBlockBgColor: rgba(51, 47, 43, 0.04);
+  --footnoteBgColor: rgba(156, 118, 72, 0.06);
+  --inputBgColor: rgba(51, 47, 43, 0.05);
+  --focusColor: var(--themeColor);
+
+  --buttonFontColor: var(--editorColor);
+  --buttonBgColor: #faf8f3;
+  --buttonBorder: 1px solid rgba(51, 47, 43, 0.12);
+  --buttonShadow: none;
+  --buttonFontColorHover: var(--buttonFontColor);
+  --buttonBgColorHover: linear-gradient(#fcfaf5, #f5f3ee);
+  --buttonBorderHover: var(--buttonBorder);
+  --buttonFontColorActive: var(--buttonFontColor);
+  --buttonBgColorActive: #f5f3ee;
+  --buttonBorderActive: var(--buttonBorder);
+  --buttonFocusBorder: 1px solid var(--themeColor);
+
+  --buttonPrimaryFontColor: #faf8f3;
+  --buttonPrimaryBgColor: var(--themeColor);
+  --buttonPrimaryBorder: none;
+  --buttonPrimaryShadow: 0 0 8px 0 rgba(0, 0, 0, 0.08);
+  --buttonPrimaryFontColorHover: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorHover: var(--themeColor90);
+  --buttonPrimaryBorderHover: var(--buttonPrimaryBorder);
+  --buttonPrimaryFontColorActive: var(--buttonPrimaryFontColor);
+  --buttonPrimaryBgColorActive: var(--themeColor80);
+  --buttonPrimaryBorderActive: var(--buttonPrimaryBorder);
+  --buttonPrimaryFocusBorder: none;
+  --buttonPrimaryFocusShadow: inset 0 0 0 1px rgba(100, 75, 46, 0.5), 0 0 0 1px var(--themeColor);
+  --tableBorderColor: rgba(51, 47, 43, 0.12);
+
+  /* Markdown elements — muted, closer to ink than to syntax highlighting */
+  --headingColor: rgba(51, 47, 43, 0.9);
+  --h1Color: rgba(51, 47, 43, 0.9);
+  --h2Color: rgba(51, 47, 43, 0.85);
+  --h3Color: rgba(51, 47, 43, 0.85);
+  --h4Color: rgba(51, 47, 43, 0.8);
+  --h5Color: rgba(51, 47, 43, 0.8);
+  --h6Color: rgba(51, 47, 43, 0.75);
+  --blockquoteTextColor: rgba(51, 47, 43, 0.7);
+  --blockquoteBorderColor: var(--themeColor50);
+  --hrColor: rgba(51, 47, 43, 0.15);
+  --linkColor: rgb(122, 92, 56);
+  --strongColor: rgba(51, 47, 43, 0.95);
+  --emColor: rgba(51, 47, 43, 0.87);
+  --listMarkerColor: var(--themeColor);
+
+  /* Sidebar — warm grey tones */
+  --sideBarColor: rgba(51, 47, 43, 0.6);
+  --sideBarIconColor: rgba(51, 47, 43, 0.4);
+  --sideBarTitleColor: rgba(51, 47, 43, 0.87);
+  --sideBarTextColor: rgba(51, 47, 43, 0.4);
+  --sideBarBgColor: #f0ede6;
+  --sideBarItemHoverBgColor: rgba(156, 118, 72, 0.1);
+  --itemBgColor: rgba(51, 47, 43, 0.04);
+
+  --floatFontColor: rgba(51, 47, 43, 0.8);
+  --floatBgColor: #faf8f3;
+  --floatHoverColor: rgba(156, 118, 72, 0.1);
+  --floatBorderColor: rgba(51, 47, 43, 0.08);
+  --maskColor: rgba(240, 237, 230, 0.92);
+
+  /* Comfortable reading measure */
+  --editorAreaWidth: 780px;
+
+  /* @muyajs/core (kebab-case) editor variables — mirror the camelCase set. */
+  --theme-color: var(--themeColor);
+  --highlight-color: var(--highlightColor);
+  --selection-color: var(--selectionColor);
+  --editor-color: var(--editorColor);
+  --editor-color-80: var(--editorColor80);
+  --editor-color-50: var(--editorColor50);
+  --editor-color-30: var(--editorColor30);
+  --editor-color-10: var(--editorColor10);
+  --editor-color-04: var(--editorColor04);
+  --editor-bg-color: var(--editorBgColor);
+  --editor-area-width: var(--editorAreaWidth);
+  --delete-color: var(--deleteColor);
+  --icon-color: var(--iconColor);
+  --code-block-bg-color: var(--codeBlockBgColor);
+  --table-border-color: var(--tableBorderColor);
+  --input-bg-color: var(--inputBgColor);
+  --button-font-color: var(--buttonFontColor);
+  --button-bg-color: var(--buttonBgColor);
+  --button-border: var(--buttonBorder);
+  --button-bg-color-hover: var(--buttonBgColorHover);
+  --button-border-hover: var(--buttonBorderHover);
+  --button-bg-color-active: var(--buttonBgColorActive);
+  --button-border-active: var(--buttonBorderActive);
+  --button-border-focus: var(--button-border);
+  --float-bg-color: var(--floatBgColor);
+  --float-hover-color: var(--floatHoverColor);
+  --float-border-color: var(--floatBorderColor);
+  --float-shadow: rgb(51 47 43 / 4%) 0 0 0 1px, rgb(51 47 43 / 5%) 0 3px 6px, rgb(51 47 43 / 6%) 0 9px 24px;
+  --link-color: var(--linkColor);
+  --h1-color: var(--h1Color);
+  --h2-color: var(--h2Color);
+  --h3-color: var(--h3Color);
+  --h4-color: var(--h4Color);
+  --h5-color: var(--h5Color);
+  --h6-color: var(--h6Color);
+  --blockquote-text-color: var(--blockquoteTextColor);
+  --blockquote-border-color: var(--blockquoteBorderColor);
+  --strong-color: var(--strongColor);
+  --em-color: var(--emColor);
+  --list-marker-color: var(--listMarkerColor);
+  --hr-color: var(--hrColor);
+}
+
+/* Tab bar */
+.editor-tabs {
+  background: #edeae3 !important;
+  box-shadow: none !important;
+}
+.editor-tabs:after {
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid rgba(51, 47, 43, 0.08);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+.editor-tabs ul.tabs-container:after {
+  position: absolute;
+  content: '';
+  border-bottom: 1px solid rgba(51, 47, 43, 0.08);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+.title-bar-editor-bg.tabs-visible {
+  background: #edeae3 !important;
+}
+
+.tabs-container > li {
+  background: none !important;
+}
+.tabs-container > li.active {
+  border: 1px solid rgba(51, 47, 43, 0.08);
+  border-top: none;
+  border-bottom: none;
+  background: var(--editorBgColor) !important;
+}
+.tabs-container > li.active:after {
+  top: 0 !important;
+  bottom: auto !important;
+  background: var(--themeColor) !important;
+}
+
+/* ------------------------------------ */
+/* Typography                           */
+/* ------------------------------------ */
+
+/* ET Book is what Tufte CSS ships; the rest are the closest faces macOS and
+   Windows have by default. */
+.editor-wrapper,
+.mu-editor,
+.mu-container {
+  font-family:
+    'ET Book', Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia,
+    serif !important;
+}
+
+/* Serif at the same nominal size reads smaller than sans, so nudge body text. */
+.mu-container p.mu-paragraph {
+  font-size: 103%;
+}
+
+.mu-container h1,
+.mu-container h2,
+.mu-container h3,
+.mu-container h4,
+.mu-container h5,
+.mu-container h6 {
+  font-family:
+    'ET Book', Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Book Antiqua', Georgia,
+    serif !important;
+  font-weight: 400;
+}
+
+/* Centred title, italic centred section headings: the Tufte signature. */
+.mu-container h1 {
+  text-align: center;
+  font-size: 2.4em;
+  margin-top: 0.8em;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.01em;
+}
+
+.mu-container h2 {
+  text-align: center;
+  font-size: 1.5em;
+  font-style: italic;
+  margin-top: 2em;
+  margin-bottom: 0.8em;
+}
+
+.mu-container h3 {
+  font-size: 1.25em;
+  font-style: italic;
+  font-weight: 600;
+  margin-top: 1.6em;
+}
+
+.mu-container h4 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 1.4em;
+}
+
+.mu-container h5,
+.mu-container h6 {
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 1.2em;
+}
+
+/* Quiet left rule instead of a filled block. */
+.mu-container blockquote {
+  border-left: 3px solid var(--themeColor50);
+  padding-left: 1.2em;
+  margin-left: 0;
+  background: transparent;
+  font-style: italic;
+  color: var(--editorColor80);
+}
+
+.mu-container li.mu-list-item {
+  color: var(--editorColor);
+}
+
+/* Task lists */
+li.mu-task-list-item {
+  list-style-type: none;
+  position: relative;
+}
+li.mu-task-list-item > input[type='checkbox'] {
+  position: absolute;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  top: 0.15em;
+  margin: 0;
+  left: -24px;
+  transition: all 0.15s ease;
+}
+li.mu-task-list-item > input.mu-checkbox-checked {
+  opacity: 0.5;
+}
+li.mu-task-list-item > input[type='checkbox']::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  display: inline-block;
+  border: 1.5px solid var(--editorColor40);
+  border-radius: 3px;
+  background-color: var(--editorBgColor);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.15s ease;
+}
+li.mu-task-list-item > input.mu-checkbox-checked::before {
+  border-color: var(--themeColor);
+  background-color: var(--themeColor);
+}
+li.mu-task-list-item > input::after {
+  content: '';
+  transform: rotate(-45deg) scale(0);
+  width: 9px;
+  height: 5px;
+  border: 2px solid #faf8f3;
+  border-top: none;
+  border-right: none;
+  position: absolute;
+  display: inline-block;
+  top: 1px;
+  left: 5px;
+  transition: all 0.15s ease;
+}
+li.mu-task-list-item > input.mu-checkbox-checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+/* Thematic break: a dashed rule reads as a page ornament rather than a divider. */
+.mu-thematic-break:not(.mu-active)::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  display: block;
+  left: 50%;
+  top: 50%;
+  height: 2px;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px dashed var(--editorColor30);
+  transform: translateX(-50%) translateY(-50%);
+}

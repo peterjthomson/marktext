@@ -203,6 +203,23 @@ const onSelectChange = (type: keyof PreferencesState, value: unknown): void => {
       }
     }
 
+    /* OMM */
+    &.tufte {
+      color: rgba(51, 47, 43, 0.87);
+      background: #f8f6f1;
+      font-family: 'ET Book', Palatino, 'Book Antiqua', Georgia, serif;
+      & a {
+        color: rgb(122, 92, 56);
+      }
+      & h1,
+      & h2 {
+        text-align: center;
+      }
+      & h2 {
+        font-style: italic;
+      }
+    }
+
     /* New gogh themes - Dark */
     &.dracula {
       color: #f8f8f2;

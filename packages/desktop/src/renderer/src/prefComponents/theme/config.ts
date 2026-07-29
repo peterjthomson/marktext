@@ -1,3 +1,5 @@
+import { OMM_THEMES } from 'common/omm/themes' // OMM
+
 export interface ThemeDescriptor {
   name: string
 }
@@ -37,7 +39,8 @@ export const themes: ReadonlyArray<ThemeDescriptor> = [
   { name: 'solarized-dark' },
   { name: 'synthwave-84' },
   { name: 'tokyo-night' },
-  { name: 'tokyo-night-storm' }
+  { name: 'tokyo-night-storm' },
+  ...OMM_THEMES.map((theme) => ({ name: theme.id })) // OMM
 ]
 
 // getAutoSwitchThemeOptions removed - no longer needed

@@ -1,3 +1,6 @@
+// OMM: fork themes are declared in common/omm/themes.ts.
+import { ommThemeBackgrounds, ommDarkThemeIds } from './omm/themes'
+
 export const railscastsThemes: readonly string[] = Object.freeze([
   'dark',
   'material-dark',
@@ -28,7 +31,10 @@ export const oneDarkThemes: readonly string[] = Object.freeze(['one-dark'])
 
 export const isDarkThemeId = (theme: unknown): theme is string => {
   return (
-    typeof theme === 'string' && (railscastsThemes.includes(theme) || oneDarkThemes.includes(theme))
+    typeof theme === 'string' &&
+    (railscastsThemes.includes(theme) ||
+      oneDarkThemes.includes(theme) ||
+      ommDarkThemeIds.includes(theme)) // OMM
   )
 }
 
@@ -70,7 +76,8 @@ const themeBackgroundColors: ReadonlyMap<string, string> = new Map([
   ['tokyo-night', '#1a1b26'],
   ['tokyo-night-light', '#d5d6db'],
   ['tokyo-night-storm', '#24283b'],
-  ['ulysses', '#f3f3f3']
+  ['ulysses', '#f3f3f3'],
+  ...ommThemeBackgrounds // OMM
 ])
 
 const DARK_FALLBACK_BACKGROUND = '#282828'
