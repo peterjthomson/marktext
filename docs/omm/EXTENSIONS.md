@@ -88,7 +88,8 @@ fast. Keep this list short, and prefer upstream PRs over carrying a patch.
 
 Fork-owned by definition, not tracked as deltas: `.github/workflows/*`,
 `.env.example`, `.gitignore`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`,
-`packages/desktop/build/notarize-dmg.cjs`, `packages/desktop/electron-builder.yml`,
+`packages/desktop/build/notarize-dmg.cjs`, `packages/desktop/build/refresh-update-info.cjs`,
+`packages/desktop/electron-builder.yml`,
 `packages/desktop/package.json`, `package.json`,
 `packages/desktop/static/oh-my-marktext/*`, and anything under an `omm/`
 directory or `test/unit/specs/omm/`.
