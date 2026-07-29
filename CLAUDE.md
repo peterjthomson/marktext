@@ -10,7 +10,17 @@ MarkText is a WYSIWYG markdown editor built on Electron + Vue 3. It supports Com
 
 - **Version**: see `package.json`
 - **License**: MIT
-- **Repository**: https://github.com/marktext/marktext
+- **Repository**: https://github.com/peterjthomson/marktext (Oh My Marktext)
+- **Upstream**: https://github.com/marktext/marktext
+
+This checkout is **Oh My Marktext**, a sister fork that tracks upstream and
+carries a deliberately small set of deltas. Before changing anything outside an
+`omm/` directory, read **`docs/omm/EXTENSIONS.md`** — it defines the module /
+hook / patch rule, the `OMM` marker convention, the delta ledger, and the
+upstream-merge runbook. New fork behaviour goes in a module under `omm/` with a
+marked one-line hook in the upstream file, a spec in
+`packages/desktop/test/unit/specs/omm/`, and a ledger row. `pnpm omm:deltas`
+(CI: `--check`) fails on any undocumented divergence.
 
 ## Tech Stack
 
@@ -292,6 +302,23 @@ See `packages/website/content/docs/dev/IPC.md` for conventions and examples.
   - `muya` → `../muyajs` (i.e. `packages/muyajs`). Renderer-side imports therefore look like `muya/lib/...` (the alias) — the workspace dep `@marktext/muyajs` is declared in `packages/desktop/package.json` so module resolution stays inside the workspace.
 - **Workspace deps**: muya's own npm runtime deps (`github-markdown-css`, `katex`, `dompurify`, `snabbdom`, …) are declared in `packages/muyajs/package.json` so Node module resolution from `packages/muyajs/lib/*.js` finds them inside the workspace rather than walking out to a parent directory.
 - **Patches**: `patch-package` patches live at `packages/desktop/patches/`. The root `postinstall` calls patch-package with `cwd=packages/desktop` so the path resolves correctly.
+
+## Fork layer (Oh My Marktext)
+
+`docs/omm/EXTENSIONS.md` is the source of truth. In short:
+
+| Path | Contents |
+|---|---|
+| `packages/desktop/src/common/omm/` | `brand.ts` (product identity), `lightTouch.ts` (pure save merge) |
+| `packages/desktop/src/main/keyboard/omm/` | keybinding overrides applied to upstream keymaps on export |
+| `packages/desktop/src/renderer/src/omm/` | Light Touch save wiring, save spinner, trashed-tab closing |
+| `packages/desktop/test/unit/specs/omm/` | fork specs and drift guards |
+| `docs/omm/` | extension-layer conventions, ledger, signing/release |
+
+```bash
+pnpm omm:deltas            # report fork deltas against the upstream base
+pnpm omm:deltas --check    # fail on undocumented divergence (CI)
+```
 
 ## Contribution
 

@@ -34,6 +34,7 @@
     "typecheck": "pnpm --filter marktext typecheck",
     "typecheck:watch": "pnpm --filter marktext typecheck:watch",
     "check": "pnpm lint && pnpm typecheck",
+    "omm:deltas": "tsx scripts/omm-deltas.ts",
     "gen-third-party": "tsx scripts/generateThirdPartyLicense.ts",
     "validate-licenses": "tsx scripts/validateLicenses.ts"
   },

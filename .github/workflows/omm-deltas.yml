@@ -1,0 +1,36 @@
+name: OMM deltas
+
+# Oh My Marktext is a sister fork: the value is in a small, documented set of
+# deltas against upstream MarkText. This job fails when a change to an upstream
+# file is not recorded in docs/omm/EXTENSIONS.md, so divergence stays deliberate.
+# See docs/omm/EXTENSIONS.md for the ledger and the merge runbook.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deltas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The audit needs the merge base with upstream, which a shallow clone
+          # does not contain.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup
+
+      - name: Fetch upstream MarkText
+        run: |
+          git remote add upstream https://github.com/marktext/marktext.git
+          git fetch --no-tags upstream develop:refs/remotes/upstream/develop
+
+      - name: Audit fork deltas against the ledger
+        run: pnpm omm:deltas --check

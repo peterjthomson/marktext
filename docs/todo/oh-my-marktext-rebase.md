@@ -13,6 +13,7 @@ Phases 0, A–E are implemented on `feature/oh-my-marktext`, branched from `v0.2
 | D — Light Touch | done | Pure module + 27 tests. Found and fixed a data-loss bug (see below). Dirty state left history-based as designed. |
 | E — UI affordances | done | Two of four items were already handled upstream (see below). |
 | F — first release | **not done** | Needs secrets + an explicit decision to publish. |
+| G — extension layer | done | Fork code refactored into `omm/` modules with marked hooks, a delta ledger and `pnpm omm:deltas`. See `docs/omm/EXTENSIONS.md` — that document, not this plan, is the standing reference for how deltas are carried. |
 
 ### Corrections to this plan found during implementation
 
