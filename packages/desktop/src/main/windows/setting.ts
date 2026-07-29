@@ -2,6 +2,7 @@ import path from 'path'
 import { BrowserWindow, ipcMain } from 'electron'
 import type { BrowserWindowConstructorOptions } from 'electron'
 import { electronLocalshortcut } from '@hfelix/electron-localshortcut'
+import { OMM_SLUG } from 'common/omm/brand' // OMM
 import BaseWindow, { WindowLifecycle, WindowType, type EnvLike, type PreferenceLike } from './base'
 import type Accessor from '../app/accessor'
 import { centerWindowOptions } from './utils'
@@ -36,7 +37,7 @@ class SettingWindow extends BaseWindow {
     if (isLinux) {
       winOptions.icon = path.join(
         (global as unknown as { __static: string }).__static,
-        'oh-my-marktext',
+        OMM_SLUG, // OMM: fork-owned icons live in their own static subdirectory.
         'logo-96px.png'
       )
     }

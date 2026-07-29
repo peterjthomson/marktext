@@ -3,7 +3,8 @@ import { shell, type BrowserWindow, type MenuItemConstructorOptions } from 'elec
 import { isFile } from 'common/filesystem'
 import * as actions from '../actions/help'
 import { checkUpdates } from '../actions/marktext'
-import { GITHUB_REPO_URL, UPSTREAM_REPO_URL } from '../../config'
+import { GITHUB_REPO_URL } from '../../config'
+import { OMM_DEFAULT_BRANCH, UPSTREAM_REPO_URL } from 'common/omm/brand' // OMM
 import { t } from '../../i18n'
 
 /// Check whether the package is updatable at runtime.
@@ -85,7 +86,7 @@ export default function(): MenuItemConstructorOptions {
       type: 'separator'
     },
     {
-      // Oh My Marktext is a sister fork: send people to the project it is built on.
+      // OMM: a sister fork should send people to the project it is built on.
       label: t('menu.help.basedOnMarkText'),
       click() {
         shell.openExternal(UPSTREAM_REPO_URL)
@@ -94,7 +95,7 @@ export default function(): MenuItemConstructorOptions {
     {
       label: t('menu.help.license'),
       click() {
-        shell.openExternal(`${GITHUB_REPO_URL}/blob/master/LICENSE`)
+        shell.openExternal(`${GITHUB_REPO_URL}/blob/${OMM_DEFAULT_BRANCH}/LICENSE`)
       }
     }
   ]

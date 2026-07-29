@@ -146,6 +146,7 @@
           :options="getTrimTrailingNewlineOptions()"
           :on-change="(value) => onSelectChange('trimTrailingNewline', value)"
         />
+        <!-- OMM -->
         <bool
           :description="t('preferences.editor.fileRepresentation.lightTouch')"
           :notes="t('preferences.editor.fileRepresentation.lightTouchNotes')"
@@ -235,7 +236,7 @@ const {
   defaultEncoding,
   autoGuessEncoding,
   trimTrailingNewline,
-  lightTouch
+  lightTouch // OMM
 } = storeToRefs(preferenceStore)
 
 const onSelectChange = (type: keyof PreferencesState, value: unknown): void => {

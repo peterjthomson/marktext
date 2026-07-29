@@ -21,9 +21,15 @@ import { useProjectStore } from './project'
 import { useLayoutStore } from './layout'
 import { useMainStore } from '.'
 import { t } from '../i18n'
-import { PATH_SEPARATOR } from '../config'
 import { debouncedSendBufferedState, sendBufferedState } from './bufferedState'
-import { getMarkdownForSave } from 'common/lightTouch'
+// OMM: fork features hook in here; their logic lives under `src/renderer/src/omm`.
+import {
+  applyLightTouch,
+  discardSaveBaseline,
+  promoteSaveBaseline
+} from '../omm/lightTouchSave'
+import { beginSaveSpinner, clearSaveSpinner } from '../omm/savingSpinner'
+import { tabsUnderTrashedPath } from '../omm/trashedTabs'
 import type {
   IFileState,
   FileNotification,
@@ -144,38 +150,11 @@ export interface EditorState {
   tabIdToIndex: Record<string, number>
   listToc: TocItem[]
   toc: TocTreeNode[]
-  // True while a manual save is in flight, so the title bar can show a spinner.
+  // OMM: true while a manual save is in flight, so the title bar can show a spinner.
   isSaving: boolean
 }
 
-// A save is usually instantaneous. Hold the spinner briefly anyway, otherwise
-// it flickers and reads as a glitch rather than as confirmation.
-const MIN_SPINNER_MS = 600
-let saveStartTime = 0
-
 const autoSaveTimers = new Map<string, ReturnType<typeof setTimeout>>()
-
-/**
- * Applies the Light Touch preference to a save payload.
- *
- * Muya regenerates markdown from its block model, so saving an untouched file
- * can rewrite whitespace across the whole document. Light Touch merges that
- * output back against the bytes read from disk so unchanged lines stay
- * byte-identical and `git diff` shows only the real edit.
- *
- * The payload is stashed on the tab and promoted to `originalMarkdown` when
- * the main process confirms the write. Note this deliberately does not touch
- * `isSaved` — dirty state is history-based in 0.20 (`lastSavedHistoryId`) and
- * comparing markdown here is what left tabs permanently dirty in the 1.x fork.
- */
-const applyLightTouch = (tab: IFileState | null | undefined, markdown: string): string => {
-  const { lightTouch } = usePreferencesStore()
-  const payload = getMarkdownForSave(markdown, tab?.originalMarkdown, lightTouch)
-  if (tab) {
-    tab.pendingSavedMarkdown = payload
-  }
-  return payload
-}
 
 export const useEditorStore = defineStore('editor', {
   state: (): EditorState => ({
@@ -188,20 +167,6 @@ export const useEditorStore = defineStore('editor', {
   }),
 
   actions: {
-    // Start/stop the manual-save spinner. Cleared on both save confirmation and
-    // save failure so it can never get stuck on.
-    _beginSavingSpinner(): void {
-      saveStartTime = Date.now()
-      this.isSaving = true
-    },
-
-    _clearSavingSpinner(): void {
-      const remaining = Math.max(0, MIN_SPINNER_MS - (Date.now() - saveStartTime))
-      setTimeout(() => {
-        this.isSaving = false
-      }, remaining)
-    },
-
     updateTabIdToIndex(): void {
       this.tabIdToIndex = this.tabs.reduce<Record<string, number>>((map, tab, index) => {
         map[tab.id] = index
@@ -563,13 +528,13 @@ export const useEditorStore = defineStore('editor', {
       const options = getOptionsFromState(this.currentFile)
       const defaultPath = getRootFolderFromState(projectStore)
       if (id) {
-        this._beginSavingSpinner()
+        beginSaveSpinner(this) // OMM
         window.electron.ipcRenderer.send(
           'mt::response-file-save',
           id,
           filename,
           pathname,
-          applyLightTouch(this.currentFile, markdown),
+          applyLightTouch(this.currentFile, markdown), // OMM
           deepClone(options),
           defaultPath
         )
@@ -600,8 +565,8 @@ export const useEditorStore = defineStore('editor', {
           id,
           filename,
           pathname,
-          // Save-as writes a copy: if the document is semantically unchanged,
-          // that copy should be a faithful one rather than a reformatted one.
+          // OMM: save-as writes a copy, so it should be a faithful copy rather
+          // than a reformatted one when the document is semantically unchanged.
           applyLightTouch(this.currentFile, markdown),
           deepClone(options),
           defaultPath
@@ -645,17 +610,10 @@ export const useEditorStore = defineStore('editor', {
         }
         if (tab) {
           Object.assign(tab, { filename, pathname, isSaved: true })
-          // Light Touch: a save-as / first save of an untitled buffer now has a
-          // file behind it, so the bytes just written become the merge baseline.
-          if (tab.pendingSavedMarkdown != null) {
-            tab.originalMarkdown = tab.pendingSavedMarkdown
-            tab.pendingSavedMarkdown = null
-          } else if (pathname && tab.originalMarkdown == null) {
-            tab.originalMarkdown = tab.markdown
-          }
+          promoteSaveBaseline(tab, !!pathname) // OMM
           debouncedSendBufferedState()
         }
-        this._clearSavingSpinner()
+        clearSaveSpinner(this) // OMM
       })
 
       window.electron.ipcRenderer.on('mt::tab-saved', (_, tabId) => {
@@ -673,15 +631,10 @@ export const useEditorStore = defineStore('editor', {
             }
           }
           tab.isSaved = true
-          // Light Touch: the bytes now on disk become the baseline for the next
-          // merge. Purely a baseline update — `isSaved` above is untouched.
-          if (tab.pendingSavedMarkdown != null) {
-            tab.originalMarkdown = tab.pendingSavedMarkdown
-            tab.pendingSavedMarkdown = null
-          }
+          promoteSaveBaseline(tab) // OMM
           debouncedSendBufferedState()
         }
-        this._clearSavingSpinner()
+        clearSaveSpinner(this) // OMM
       })
 
       window.electron.ipcRenderer.on('mt::tab-save-failure', (_, tabId, msg) => {
@@ -694,14 +647,13 @@ export const useEditorStore = defineStore('editor', {
             time: 20000,
             showConfirm: false
           })
-          this._clearSavingSpinner()
+          clearSaveSpinner(this) // OMM
           return
         }
 
         tab.isSaved = false
-        // Light Touch: nothing reached disk, so the baseline must not advance.
-        tab.pendingSavedMarkdown = null
-        this._clearSavingSpinner()
+        discardSaveBaseline(tab) // OMM
+        clearSaveSpinner(this) // OMM
         this.pushTabNotification({
           tabId,
           msg: t('store.editor.errorWhileSaving', { msg }),
@@ -765,7 +717,7 @@ export const useEditorStore = defineStore('editor', {
             id,
             filename,
             pathname,
-            markdown: applyLightTouch(file, markdown),
+            markdown: applyLightTouch(file, markdown), // OMM
             options,
             defaultPath: getRootFolderFromState(projectStore)
           }
@@ -1150,10 +1102,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     /**
-     * Closes the tabs backing a path the user just moved to the trash.
-     *
-     * `pathname` may be a file or a directory; for a directory every tab beneath
-     * it is closed.
+     * OMM: closes the tabs backing a path the user just moved to the trash.
      *
      * Deliberately force-closes rather than going through CLOSE_TAB. An open tab
      * for a deleted file is marked unsaved by the file watcher
@@ -1163,19 +1112,7 @@ export const useEditorStore = defineStore('editor', {
      * stays open. The user asked for the file to go, so the buffer goes with it.
      */
     CLOSE_TABS_FOR_TRASHED_PATH(pathname: string): void {
-      if (!pathname) return
-
-      const trashed = window.path.normalize(pathname)
-      const prefix = trashed.endsWith(PATH_SEPARATOR) ? trashed : trashed + PATH_SEPARATOR
-
-      const doomed = this.tabs.filter((tab) => {
-        if (!tab.pathname) return false
-        if (window.fileUtils.isSamePathSync(tab.pathname, trashed)) return true
-        // Directory case: any tab living underneath the trashed folder.
-        return window.path.normalize(tab.pathname).startsWith(prefix)
-      })
-
-      doomed.forEach((tab) => {
+      tabsUnderTrashedPath(this.tabs, pathname).forEach((tab) => {
         this.FORCE_CLOSE_TAB(tab)
       })
     },
@@ -1593,7 +1530,7 @@ export const useEditorStore = defineStore('editor', {
             id,
             filename,
             pathname,
-            applyLightTouch(tab, markdown),
+            applyLightTouch(tab, markdown), // OMM
             deepClone(options),
             defaultPath
           )

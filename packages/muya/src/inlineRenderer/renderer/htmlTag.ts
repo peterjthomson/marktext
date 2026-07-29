@@ -118,7 +118,7 @@ export default function htmlTag(
 ) {
     const { tag, openTag, closeTag } = token;
 
-    // Always resolve visibility through getClassName. Forcing childless tags to
+    // OMM: always resolve visibility through getClassName. Forcing childless tags to
     // MU_GRAY rendered empty anchors such as `<a name="anchor"></a>` as visible
     // grey text at all times, instead of hiding them when the cursor is
     // elsewhere the way every other inline markup token behaves.

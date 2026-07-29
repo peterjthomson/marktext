@@ -1,5 +1,7 @@
 import type { IFileState } from '@shared/types/files'
 import { getUniqueId, deepClone } from '../util'
+// OMM: Light Touch keeps a merge baseline alongside the document state.
+import { initialBaseline } from '../omm/lightTouchSave'
 
 // Helper module (NOT a Pinia store): defaults and factories for the editor
 // document state objects.
@@ -46,7 +48,7 @@ const defaultFileStateWithoutId = {
   scrollTop: 0,
   muyaIndexCursor: null,
   notifications: [],
-  // Light Touch merge baseline; set from disk content when a file is opened.
+  // OMM: Light Touch merge baseline; set from disk content when a file is opened.
   originalMarkdown: null,
   pendingSavedMarkdown: null
 } satisfies Omit<IFileState, 'id'>
@@ -87,7 +89,7 @@ const documentStateKeys = [
   'scrollTop',
   'muyaIndexCursor',
   'notifications',
-  'originalMarkdown'
+  'originalMarkdown' // OMM
 ] as const satisfies ReadonlyArray<keyof IFileState>
 
 export const getBlankFileState = (
@@ -155,12 +157,8 @@ export const createDocumentState = (
     // See `getBlankFileState`: the loaded document is its own clean baseline and
     // the engine's baseline undo-stack depth (the synthetic id) is 0.
     lastSavedHistoryId: 0,
-    // Light Touch baseline: the markdown just read from disk. Only meaningful
-    // for documents that have a file behind them — untitled buffers have no
-    // original to preserve. An explicit value in `src` (e.g. restored buffered
-    // state) wins.
-    originalMarkdown:
-      docState.originalMarkdown ?? (docState.pathname ? docState.markdown : null),
+    // OMM
+    originalMarkdown: initialBaseline(docState),
     pendingSavedMarkdown: null
   }) as IFileState
 }

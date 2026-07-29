@@ -7,6 +7,9 @@
 //       none nodeadkeys german keyboard cannot be interpreted. In general don't bind default shortcuts to characters that
 //       can be produced with ^ or ` on any keyboard. --> ^, `, ", ~, ...
 
+// OMM: this fork's accelerators are applied on export, not edited in place.
+import { withOmmKeybindings } from './omm/keybindingOverrides'
+
 const keybindings: Map<string, string> = new Map([
   // MarkText menu on macOS only
   ['mt.hide', ''],
@@ -57,10 +60,8 @@ const keybindings: Map<string, string> = new Map([
   ['paragraph.heading-4', 'Ctrl+Alt+4'],
   ['paragraph.heading-5', 'Ctrl+Alt+5'],
   ['paragraph.heading-6', 'Ctrl+Alt+6'],
-  // Ctrl+=/- belong to zoom (see window.zoomIn/zoomOut below), so heading
-  // promote/demote takes the Alt variant, matching Ctrl+Alt+1..6 above.
-  ['paragraph.upgrade-heading', 'Ctrl+Alt+='],
-  ['paragraph.degrade-heading', 'Ctrl+Alt+-'],
+  ['paragraph.upgrade-heading', 'Ctrl+Plus'],
+  ['paragraph.degrade-heading', 'Ctrl+-'],
   ['paragraph.table', 'Ctrl+Shift+T'],
   ['paragraph.code-fence', 'Ctrl+Shift+K'],
   ['paragraph.quote-block', 'Ctrl+Shift+Q'],
@@ -91,10 +92,8 @@ const keybindings: Map<string, string> = new Map([
   // Window menu
   ['window.minimize', 'Ctrl+M'],
   ['window.toggle-always-on-top', ''],
-  // Upstream leaves these unbound; bind them to the conventional zoom keys so
-  // font size can be adjusted without opening the menu.
-  ['window.zoomIn', 'Ctrl+='],
-  ['window.zoomOut', 'Ctrl+-'],
+  ['window.zoomIn', ''],
+  ['window.zoomOut', ''],
   ['window.toggle-full-screen', 'F11'],
 
   // View menu
@@ -127,4 +126,4 @@ const keybindings: Map<string, string> = new Map([
   ['file.quick-open', 'Ctrl+P']
 ])
 
-export default keybindings
+export default withOmmKeybindings('linux', keybindings)

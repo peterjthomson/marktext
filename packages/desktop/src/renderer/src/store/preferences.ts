@@ -59,7 +59,7 @@ export interface PreferencesState {
   autoNormalizeLineEndings: boolean
 
   trimTrailingNewline: number
-  lightTouch: boolean
+  lightTouch: boolean // OMM
   textDirection: TextDirection | string
   hideQuickInsertHint: boolean
   imageInsertAction: ImageInsertAction | string
@@ -176,7 +176,7 @@ export const usePreferencesStore = defineStore('preferences', {
     autoNormalizeLineEndings: false,
 
     trimTrailingNewline: 2,
-    // On by default: git-friendly saves are a headline feature of this fork.
+    // OMM: on by default — git-friendly saves are a headline feature of this fork.
     lightTouch: true,
     textDirection: 'ltr',
     hideQuickInsertHint: false,

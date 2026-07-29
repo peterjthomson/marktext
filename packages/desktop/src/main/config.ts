@@ -1,5 +1,6 @@
 import path from 'path'
 import type { BrowserWindowConstructorOptions } from 'electron'
+import { OMM_REPO_URL } from 'common/omm/brand' // OMM
 
 export const isOsx: boolean = process.platform === 'darwin'
 export const isWindows: boolean = process.platform === 'win32'
@@ -79,10 +80,8 @@ export const LINE_ENDING_REG = /(?:\r\n|\n)/g
 export const LF_LINE_ENDING_REG = /(?:[^\r]\n)|(?:^\n$)/
 export const CRLF_LINE_ENDING_REG = /\r\n/
 
-// Oh My Marktext repo — bug reports from this build belong here, not on upstream's tracker.
-export const GITHUB_REPO_URL = 'https://github.com/peterjthomson/marktext'
-// Upstream MarkText, for credit and "based on" links.
-export const UPSTREAM_REPO_URL = 'https://github.com/marktext/marktext'
+// OMM: bug reports from this build belong on the fork's tracker, not upstream's.
+export const GITHUB_REPO_URL = OMM_REPO_URL
 // copy from muya
 export const URL_REG =
   /^http(s)?:\/\/([a-z0-9\-._~]+\.[a-z]{2,}|[0-9.]+|localhost|\[[a-f0-9.:]+\])(:[0-9]{1,5})?(\/[\S]+)?/i

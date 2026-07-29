@@ -4,6 +4,7 @@ import type { BrowserWindowConstructorOptions } from 'electron'
 import log from 'electron-log'
 import windowStateKeeper from 'electron-window-state'
 import { isChildOfDirectory, isSamePathSync } from 'common/filesystem/paths'
+import { OMM_SLUG } from 'common/omm/brand' // OMM
 import BaseWindow, { WindowLifecycle, WindowType } from './base'
 import type Accessor from '../app/accessor'
 import { ensureWindowPosition, zoomIn, zoomOut } from './utils'
@@ -105,12 +106,8 @@ class EditorWindow extends BaseWindow {
       options
     )
     if (isLinux) {
-      winOptions.icon = path.join(
-        process.cwd(),
-        'static',
-        'oh-my-marktext',
-        'logo-96px.png'
-      )
+      // OMM: fork-owned icons live in their own static subdirectory.
+      winOptions.icon = path.join(process.cwd(), 'static', OMM_SLUG, 'logo-96px.png')
     }
 
     const {

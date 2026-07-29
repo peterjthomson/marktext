@@ -3,6 +3,9 @@
 // NOTE: Avoid pure `Option` aka `Alt` shortcuts on macOS because these are used to produce alternative characters on all letters and digits.
 //       Our current key manager will forbid the usage of these key combinations too.
 
+// OMM: this fork's accelerators are applied on export, not edited in place.
+import { withOmmKeybindings } from './omm/keybindingOverrides'
+
 const keybindings: Map<string, string> = new Map([
   // MarkText menu
   ['mt.hide', 'Command+H'],
@@ -53,10 +56,8 @@ const keybindings: Map<string, string> = new Map([
   ['paragraph.heading-4', 'Command+4'],
   ['paragraph.heading-5', 'Command+5'],
   ['paragraph.heading-6', 'Command+6'],
-  // Command+=/- belong to zoom (see window.zoomIn/zoomOut below), so heading
-  // promote/demote takes the Ctrl variant.
-  ['paragraph.upgrade-heading', 'Ctrl+Command+='],
-  ['paragraph.degrade-heading', 'Ctrl+Command+-'],
+  ['paragraph.upgrade-heading', 'Command+='],
+  ['paragraph.degrade-heading', 'Command+-'],
   ['paragraph.table', 'Command+Shift+T'],
   ['paragraph.code-fence', 'Command+Option+C'],
   ['paragraph.quote-block', 'Command+Option+Q'],
@@ -87,10 +88,8 @@ const keybindings: Map<string, string> = new Map([
   // Window menu
   ['window.minimize', 'Command+M'],
   ['window.toggle-always-on-top', ''],
-  // Upstream leaves these unbound; bind them to the conventional zoom keys so
-  // font size can be adjusted without opening the menu.
-  ['window.zoomIn', 'Command+='],
-  ['window.zoomOut', 'Command+-'],
+  ['window.zoomIn', ''],
+  ['window.zoomOut', ''],
   ['window.toggle-full-screen', 'Ctrl+Command+F'],
 
   // View menu
@@ -123,4 +122,4 @@ const keybindings: Map<string, string> = new Map([
   ['file.quick-open', 'Command+P']
 ])
 
-export default keybindings
+export default withOmmKeybindings('darwin', keybindings)

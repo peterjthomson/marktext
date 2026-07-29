@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { isEqualAccelerator } from 'common/keybinding'
-import keybindingsDarwin from '../../../src/main/keyboard/keybindingsDarwin'
-import keybindingsLinux from '../../../src/main/keyboard/keybindingsLinux'
-import keybindingsWindows from '../../../src/main/keyboard/keybindingsWindows'
+import keybindingsDarwin from 'main_renderer/keyboard/keybindingsDarwin'
+import keybindingsLinux from 'main_renderer/keyboard/keybindingsLinux'
+import keybindingsWindows from 'main_renderer/keyboard/keybindingsWindows'
 
 /**
  * Accelerators must be unique within a platform's default keymap.

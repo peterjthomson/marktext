@@ -4,6 +4,9 @@
 //       Unlike Linux, `Ctrl+Alt` is an alias to `AltGr` on Windows and will produce alternative characters too.
 //       We'll should try bind no keys to `Alt` "modifiers" because there are only a few key bindings available.
 
+// OMM: this fork's accelerators are applied on export, not edited in place.
+import { withOmmKeybindings } from './omm/keybindingOverrides'
+
 const keybindings: Map<string, string> = new Map([
   // MarkText menu on macOS only
   ['mt.hide', ''],
@@ -18,9 +21,7 @@ const keybindings: Map<string, string> = new Map([
   ['file.save-as', 'Ctrl+Shift+S'],
   ['file.move-file', ''],
   ['file.rename-file', ''],
-  // Ctrl+P is file.quick-open on every platform (including here); leaving print on
-  // the same key meant print shadowed quick-open and quick-open never fired.
-  ['file.print', ''],
+  ['file.print', 'Ctrl+P'],
   ['file.preferences', 'Ctrl+,'],
   ['file.close-tab', 'Ctrl+W'],
   ['file.close-window', 'Ctrl+Shift+W'],
@@ -58,10 +59,8 @@ const keybindings: Map<string, string> = new Map([
   ['paragraph.heading-4', ''],
   ['paragraph.heading-5', ''],
   ['paragraph.heading-6', ''],
-  // Ctrl+=/- belong to zoom (see window.zoomIn/zoomOut below), so heading
-  // promote/demote takes the Alt variant.
-  ['paragraph.upgrade-heading', 'Ctrl+Alt+='],
-  ['paragraph.degrade-heading', 'Ctrl+Alt+-'],
+  ['paragraph.upgrade-heading', 'Ctrl+Plus'],
+  ['paragraph.degrade-heading', 'Ctrl+-'],
   ['paragraph.table', 'Ctrl+Shift+T'],
   ['paragraph.code-fence', 'Ctrl+Shift+K'],
   ['paragraph.quote-block', 'Ctrl+Shift+Q'],
@@ -92,10 +91,8 @@ const keybindings: Map<string, string> = new Map([
   // Window menu
   ['window.minimize', 'Ctrl+M'],
   ['window.toggle-always-on-top', ''],
-  // Upstream leaves these unbound; bind them to the conventional zoom keys so
-  // font size can be adjusted without opening the menu.
-  ['window.zoomIn', 'Ctrl+='],
-  ['window.zoomOut', 'Ctrl+-'],
+  ['window.zoomIn', ''],
+  ['window.zoomOut', ''],
   ['window.toggle-full-screen', 'F11'],
 
   // View menu
@@ -128,4 +125,4 @@ const keybindings: Map<string, string> = new Map([
   ['file.quick-open', 'Ctrl+P']
 ])
 
-export default keybindings
+export default withOmmKeybindings('windows', keybindings)

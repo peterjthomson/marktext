@@ -33,8 +33,8 @@ export interface IUserPreferences {
   defaultEncoding?: string
   autoGuessEncoding?: boolean
   trimTrailingNewline?: number
-  // Light Touch (Oh My Marktext): preserve original formatting for unedited
-  // lines so saving yields a minimal git diff.
+  // OMM: Light Touch — preserve original formatting for unedited lines so
+  // saving yields a minimal git diff.
   lightTouch?: boolean
   textDirection?: 'ltr' | 'rtl' | 'auto'
   preferLooseListItem?: boolean

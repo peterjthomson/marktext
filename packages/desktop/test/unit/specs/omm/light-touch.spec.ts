@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getMarkdownForSave, mergeWithOriginal, normalizeBlock } from 'common/lightTouch'
+import { getMarkdownForSave, mergeWithOriginal, normalizeBlock } from 'common/omm/lightTouch'
 
 // Light Touch exists so that opening a file and saving it produces no git diff,
 // and editing one paragraph produces a one-paragraph diff. Muya regenerates

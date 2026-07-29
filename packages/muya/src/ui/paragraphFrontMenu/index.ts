@@ -142,7 +142,7 @@ export class ParagraphFrontMenu extends BaseFloat {
         const { _oldVNode: oldVNode, _frontMenuContainer: frontMenuContainer, _block: block } = this;
         const { i18n } = this.muya;
         const { blockName } = block!;
-        // Frontmatter cannot be duplicated. Filter by label rather than by
+        // OMM: frontmatter cannot be duplicated. Filter by label rather than by
         // index so reordering FRONT_MENU cannot silently drop the wrong item.
         const menuItems = FRONT_MENU.filter(
             ({ label }) => !(blockName === 'frontmatter' && label === 'duplicate'),

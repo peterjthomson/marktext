@@ -40,8 +40,8 @@
           >
             {{ filename }}
           </span>
-          <!-- Saving takes precedence over the dirty dot: while a write is in
-               flight, show progress rather than "unsaved". -->
+          <!-- OMM: saving takes precedence over the dirty dot — while a write
+               is in flight, show progress rather than "unsaved". -->
           <span
             v-if="isSaving"
             class="save-spinner"
@@ -219,7 +219,7 @@ onMounted(async () => {
 
 const { titleBarStyle } = storeToRefs(preferencesStore)
 const { showTabBar } = storeToRefs(layoutStore)
-const { isSaving } = storeToRefs(editorStore)
+const { isSaving } = storeToRefs(editorStore) // OMM
 
 const paths = computed(() => {
   if (!props.pathname) return []
@@ -404,7 +404,7 @@ div.title > span {
 .active .save-dot.show {
   visibility: visible;
 }
-/* Shown in place of the dirty dot while a save is in flight. */
+/* OMM: shown in place of the dirty dot while a save is in flight. */
 .save-spinner {
   margin-right: 0.25rem;
   width: 8px;

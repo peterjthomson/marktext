@@ -88,7 +88,7 @@ export interface IFileState {
   // Muya block tree; only populated for the actively edited tab.
   blocks?: unknown
   isMixedLineEndings?: boolean
-  // --- Light Touch (Oh My Marktext) ---
+  // --- OMM: Light Touch (see src/renderer/src/omm/lightTouchSave.ts) ---
   // The markdown exactly as it was last read from or written to disk. Used as
   // the merge baseline so unchanged lines keep their original bytes. Null for
   // untitled buffers, which have no on-disk original.

@@ -35,6 +35,7 @@
             {{ copyrightContributors }}
           </div>
         </el-col>
+        <!-- OMM: credit the project this fork is built on. -->
         <el-col :span="24">
           <div class="text">
             {{ basedOn }}
@@ -56,12 +57,14 @@ import { useMainStore } from '@/store'
 import bus from '../../bus'
 import MarkTextLogo from '../../assets/images/logo.png'
 import { useI18n } from 'vue-i18n'
+import { OMM_PRODUCT_NAME } from 'common/omm/brand' // OMM
 
 const { t } = useI18n()
 
-const name = 'Oh My Marktext'
+const name = OMM_PRODUCT_NAME // OMM
 const copyright = t('about.copyright', { year: new Date().getFullYear() })
 const copyrightContributors = t('about.copyrightContributors')
+// OMM
 const basedOn = t('about.basedOn')
 const sisterFork = t('about.sisterFork')
 const showAboutDialog = ref(false)
@@ -109,6 +112,7 @@ onBeforeUnmount(() => {
   color: var(--floatFontColor);
 }
 
+/* OMM */
 .about-dialog .text.sister-fork {
   font-size: 12px;
   opacity: 0.7;
