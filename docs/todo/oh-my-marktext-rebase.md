@@ -12,7 +12,7 @@ Phases 0, A–E are implemented on `feature/oh-my-marktext`, branched from `v0.2
 | C — notarization | done | Smaller than planned: upstream's `release.yml` is **already** a pnpm matrix for win/linux/mac, so only the mac signing env needed adding. Upstream entitlements already superset the 1.x fork's. Added a fail-fast secrets check. |
 | D — Light Touch | done | Pure module + 27 tests. Found and fixed a data-loss bug (see below). Dirty state left history-based as designed. |
 | E — UI affordances | done | Two of four items were already handled upstream (see below). |
-| F — first release | **not done** | Needs secrets + an explicit decision to publish. |
+| F — first release | done | `v0.20.0-omm.1` (2026-07-27) and `v0.20.0-omm.2` (2026-07-29) published. mac is built, signed and notarized **locally** and uploaded to the CI-published release; CI ships win/linux. This split is a decision, not a gap — see `docs/omm/signing-and-release.md`. |
 | G — extension layer | done | Fork code refactored into `omm/` modules with marked hooks, a delta ledger and `pnpm omm:deltas`. See `docs/omm/EXTENSIONS.md` — that document, not this plan, is the standing reference for how deltas are carried. |
 
 ### Corrections to this plan found during implementation
@@ -256,7 +256,7 @@ Port from current fork:
 - `mac.notarize: true` under electron-builder (desktop package)
 - Entitlements (compare fork `build/mac/entitlements.mac.plist` vs upstream — keep Electron-required set)
 - GitHub Actions: adapt `release.yml` to **pnpm monorepo** (`pnpm --filter marktext build:mac`, correct working dirs, `dist` at repo root per upstream). Note: **all** current workflows assume the flat npm tree — win/linux jobs need the same pnpm adaptation, not just mac (see Phase F scoping)
-- GitHub Secrets to provision: `MAC_CERTS` / `MAC_CERTS_PASSWORD` / `APPLE_ID` / `APPLE_APP_SPECIFIC_PASSWORD` / `APPLE_TEAM_ID` — fork `release.yml:119-124` maps `MAC_CERTS → CSC_LINK` and `MAC_CERTS_PASSWORD → CSC_KEY_PASSWORD` at CI time; `.env.example` documents `APPLE_KEYCHAIN_PROFILE` for local builds
+- GitHub Secrets (**not provisioned — mac releases are built locally by choice**; an app-specific password cannot be minted from a CLI, so CI mac signing would need a deliberate trip to appleid.apple.com or an App Store Connect API key): `MAC_CERTS` / `MAC_CERTS_PASSWORD` / `APPLE_ID` / `APPLE_APP_SPECIFIC_PASSWORD` / `APPLE_TEAM_ID` — fork `release.yml:119-124` maps `MAC_CERTS → CSC_LINK` and `MAC_CERTS_PASSWORD → CSC_KEY_PASSWORD` at CI time; `.env.example` documents `APPLE_KEYCHAIN_PROFILE` for local builds
 - **Critical:** `appId` must match signing profile capability for the Developer ID Application cert
 
 **Exit criteria:** signed+notarized arm64 DMG opens on clean Mac without `xattr`.
