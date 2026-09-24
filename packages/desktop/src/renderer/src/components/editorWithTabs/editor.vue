@@ -1666,14 +1666,12 @@ const handleFileChange = (payload: unknown) => {
       // it too. `replaceContent` preserves the existing undo stack and pushes the
       // boundary on top.
       //
-      // The new content is this tab's clean baseline (the store seeds
-      // `lastSavedHistoryId: 0`), so re-seed the save-tracking allocator BEFORE
-      // applying: `replaceContent` fires a SYNCHRONOUS `json-change` that would
-      // otherwise mark the tab dirty against the stale (pre-reload) baseline.
-      if (id) {
-        resetSyntheticHistory(id, newMarkdown)
-      }
+      // OMM: seed the clean baseline from the engine serialization, not raw
+      // disk formatting. The synchronous json-change lazily creates id 0 from
+      // that serialization; seed it explicitly afterwards for a no-op reload.
+      if (id) syntheticHistoryByTab.delete(id)
       editor.value.replaceContent(newMarkdown)
+      if (id) resetSyntheticHistory(id, editor.value.getMarkdown())
       editorStore.UPDATE_TOC(editor.value.getTOC())
       if (newCursor) {
         applyCursor(editor.value, newCursor)

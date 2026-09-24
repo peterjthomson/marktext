@@ -117,6 +117,8 @@ fast. Keep this list short, and prefer upstream PRs over carrying a patch.
 
 | File | Feature | What the delta is | Upstreamable? |
 | --- | --- | --- | --- |
+| `packages/desktop/src/renderer/src/components/editorWithTabs/editor.vue` | External reload | Seed clean save history from engine serialization, so disk formatting does not trigger an unsaved prompt | Yes |
+| `packages/desktop/test/e2e/external-reload-undo.spec.ts` | External reload | Verify noncanonical disk formatting stays clean and undo remains dirty | Yes |
 | `packages/desktop/test/e2e/all-blocks-roundtrip.spec.ts` | Light Touch save | Check both preserved disk formatting and the opt-out canonical serialization path | Fork-specific |
 | `packages/desktop/test/unit/specs/source-mode-dirty.spec.ts` | Save state | Source undo, real save acknowledgement, settings changes and disk reload regressions | Yes, alongside the save-state fix |
 | `packages/website/content/docs/dev/README.md` | Developer setup | Fork clone URL, platform build commands and packaged launch check | Build and test instructions yes; clone URL is fork-specific |
