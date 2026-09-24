@@ -8,8 +8,8 @@ import type {
 } from '../../../state/types';
 import type Code from '../../commonMark/codeBlock/code';
 import type HTMLPreview from '../../commonMark/html/htmlPreview';
-import { HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
-import { adjustOffset, escapeHTML, firstWordOfInfo } from '../../../utils';
+import { CLASS_NAMES, EVENT_KEYS, HTML_TAGS, VOID_HTML_TAGS } from '../../../config';
+import { adjustOffset, escapeHTML, firstGraphemeLength, firstWordOfInfo, isKeyboardEvent, lastGraphemeLength, lineBounds } from '../../../utils';
 import { computeLineCount, repositionLineNumberSpans, syncLineNumbersSpans } from '../../../utils/codeBlockLineNumbers';
 import { getHighlightHtml, MARKER_HASH } from '../../../utils/highlightHTML';
 import prism, { loadedLanguages, transformAliasToOrigin, walkTokens } from '../../../utils/prism/index';
@@ -23,13 +23,25 @@ function checkAutoIndent(text: string, offset: number) {
 }
 
 function getIndentSpace(text: string, offset: number) {
-    const lineStart = text.lastIndexOf('\n', offset - 1) + 1;
-    let lineEnd = text.indexOf('\n', lineStart);
-    if (lineEnd === -1)
-        lineEnd = text.length;
+    const [lineStart, lineEnd] = lineBounds(text, offset);
     const match = /^(\s*)\S/.exec(text.slice(lineStart, lineEnd));
 
     return match ? match[1] : '';
+}
+
+/**
+ * Write `html` only when it differs from what the node already holds.
+ *
+ * Assigning `innerHTML` always destroys and recreates the child nodes, even for
+ * a byte-identical string — so every keystroke in a code block tore down the
+ * text node the caret was sitting in and built a new one, taking the native
+ * selection and any IME composition anchored to it along. `Format.inputHandler`
+ * has the same guard via `checkNeedRender`, which is why paragraphs never paid
+ * this cost.
+ */
+function replaceIfChanged(domNode: HTMLElement, html: string) {
+    if (domNode.innerHTML !== html)
+        domNode.innerHTML = html;
 }
 
 /**
@@ -169,11 +181,21 @@ class CodeBlockContent extends Content {
         // transform alias to original language
         const fullLengthLang = transformAliasToOrigin([lang])[0];
         const domNode = this.domNode!;
-        const code = escapeHTML(getHighlightHtml(text, highlights, true, true))
+        const code = escapeHTML(getHighlightHtml(text, highlights, true))
             .replace(new RegExp(MARKER_HASH['<'], 'g'), '<')
             .replace(new RegExp(MARKER_HASH['>'], 'g'), '>')
             .replace(new RegExp(MARKER_HASH['"'], 'g'), '"')
             .replace(new RegExp(MARKER_HASH['\''], 'g'), '\'');
+
+        // A final newline lays out no line of its own, so the caret after it has
+        // nowhere to sit (#5114). Appended after highlighting: Prism's
+        // keep-markup drops empty elements. Wrapped: Chromium puts the caret
+        // just before the <br>, and (content, childIndex) would read back as
+        // text offset childIndex where (wrapper, 0) reads back as the text
+        // length.
+        const trailingBreak = text.endsWith('\n')
+            ? `<span class="${CLASS_NAMES.MU_TRAILING_BREAK}"><br></span>`
+            : '';
 
         if (
             fullLengthLang
@@ -184,11 +206,11 @@ class CodeBlockContent extends Content {
             wrapper.classList.add(`language-${fullLengthLang}`);
             wrapper.innerHTML = code;
             prism.highlightElement(wrapper, false, function (this: HTMLElement) {
-                domNode.innerHTML = this.innerHTML;
+                replaceIfChanged(domNode, this.innerHTML + trailingBreak);
             });
         }
         else {
-            domNode.innerHTML = code;
+            replaceIfChanged(domNode, code + trailingBreak);
         }
 
         this._updateLineNumbers(text);
@@ -236,7 +258,7 @@ class CodeBlockContent extends Content {
 
         const textContent = this.domNode!.textContent!;
         const { start, end } = this.getCursor()!;
-        const { needRender, text } = this.autoPair(
+        const { text } = this.autoPair(
             event,
             textContent,
             start,
@@ -249,13 +271,7 @@ class CodeBlockContent extends Content {
 
         this._updatePreviewIfHave(text);
 
-        if (needRender) {
-            this.setCursor(start!.offset, end!.offset, true);
-        }
-        else {
-            // TODO: throttle render
-            this.setCursor(start!.offset, end!.offset, true);
-        }
+        this.setCursor(start!.offset, end!.offset, true);
     }
 
     override enterHandler(event: KeyboardEvent): void {
@@ -305,6 +321,23 @@ class CodeBlockContent extends Content {
             offset += tabSize;
 
         this.setCursor(offset, offset, true);
+    }
+
+    // Content.arrowHandler measures the caret to tell whether it is on the
+    // block's first or last line, and a caret on an empty line has no rect to
+    // measure, so it left the block. A newline on the caret's side settles it.
+    override arrowHandler(event: Event): void {
+        if (isKeyboardEvent(event)) {
+            const { start, end } = this.getCursor()!;
+            if (
+                (event.key === EVENT_KEYS.ArrowUp && this.text.slice(0, start.offset).includes('\n'))
+                || (event.key === EVENT_KEYS.ArrowDown && this.text.slice(end.offset).includes('\n'))
+            ) {
+                return;
+            }
+        }
+
+        super.arrowHandler(event);
     }
 
     override tabHandler(event: KeyboardEvent): void {
@@ -425,27 +458,33 @@ class CodeBlockContent extends Content {
                 const tokens = prism.tokenize(text, prism.languages[fullLengthLang]);
                 let offset = start.offset;
                 let code = '';
-                let needRender = false;
+                // Remove a whole character (grapheme cluster), not one UTF-16
+                // code unit: half of an emoji's surrogate pair left in the text
+                // crashes the next edit with "Invalid offset - splits unicode
+                // bytes" (#4926).
+                let removedLength = 0;
 
                 walkTokens(tokens, (token) => {
-                    if (offset === 1 && token.type === 'temp-text' && typeof token.content === 'string') {
-                        token.content = token.content.substring(1);
-                        needRender = true;
-                    }
-                    else if (offset === token.length && token.type !== 'temp-text' && typeof token.content === 'string') {
-                        token.content = token.content.substring(0, token.length - 1);
-                        needRender = true;
+                    if (typeof token.content === 'string') {
+                        if (token.type === 'temp-text' && offset === firstGraphemeLength(token.content)) {
+                            removedLength = offset;
+                            token.content = token.content.substring(removedLength);
+                        }
+                        else if (token.type !== 'temp-text' && offset === token.length) {
+                            removedLength = lastGraphemeLength(token.content);
+                            token.content = token.content.substring(0, token.length - removedLength);
+                        }
                     }
                     code += token.content;
                     // string and Token both has length property...
                     offset -= token.length;
                 });
 
-                if (needRender) {
+                if (removedLength > 0) {
                     event.preventDefault();
                     this.text = code;
                     this._updatePreviewIfHave(this.text);
-                    return this.setCursor(--start.offset, --end.offset, true);
+                    return this.setCursor(start.offset - removedLength, end.offset - removedLength, true);
                 }
             }
         }

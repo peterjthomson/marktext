@@ -3,7 +3,10 @@
     "counter": {
       "words": "Palavras",
       "characters": "Caracteres",
-      "paragraphs": "Parágrafos"
+      "paragraphs": "Parágrafos",
+      "allCharacters": "Todos os caracteres",
+      "document": "Documento",
+      "documentSelection": "Documento / Seleção"
     },
     "file": {
       "file": "Arquivo",
@@ -21,6 +24,7 @@
       "export": "Exportar",
       "exportHtml": "Exportar como HTML",
       "exportPdf": "Exportar como PDF",
+      "convertWithPandoc": "Converter com o Pandoc",
       "import": "Importar",
       "print": "Imprimir",
       "closeTab": "Fechar Aba",
@@ -80,6 +84,7 @@
       "minimize": "Minimizar",
       "zoomIn": "Aumentar Zoom",
       "zoomOut": "Diminuir Zoom",
+      "resetZoom": "Redefinir Zoom",
       "fullScreen": "Tela Cheia",
       "bringAllToFront": "Trazer Todas para Frente",
       "alwaysOnTop": "Sempre no Topo"
@@ -95,7 +100,8 @@
       "support": "Apoiar MarkText",
       "license": "Licença",
       "about": "Sobre",
-      "checkUpdates": "Verificar Atualizações"
+      "checkUpdates": "Verificar Atualizações",
+      "basedOnMarkText": "Based on MarkText"
     },
     "marktext": {
       "title": "MarkText",
@@ -174,7 +180,8 @@
       "tokyoNight": "Tokyo Night",
       "tokyoNightLight": "Tokyo Night Claro",
       "tokyoNightStorm": "Tokyo Night Storm",
-      "ulyssesLight": "Ulysses Claro"
+      "ulyssesLight": "Ulysses Claro",
+      "tufte": "Tufte"
     }
   },
   "contextMenu": {
@@ -184,6 +191,7 @@
     "copyAsRich": "Copiar como Rich Text",
     "copyAsHtml": "Copiar como HTML",
     "pasteAsPlainText": "Colar como Texto Simples",
+    "lookUp": "Consultar \"{selection}\"",
     "insertParagraphBefore": "Inserir Parágrafo Antes",
     "insertParagraphAfter": "Inserir Parágrafo Depois",
     "spelling": "Ortografia...",
@@ -241,7 +249,9 @@
       "openFolder": "Abrir Pasta"
     },
     "toc": {
-      "title": "Índice"
+      "title": "Índice",
+      "expandAll": "Expandir tudo",
+      "collapseAll": "Recolher tudo"
     },
     "icons": {
       "files": "Arquivos",
@@ -384,6 +394,7 @@
         "codeFontSize": "Tamanho da fonte no bloco de código, o intervalo é 12 ~ 18",
         "codeFontFamily": "Família de fonte usada no bloco de código",
         "codeBlockLineNumbers": "Se mostrar os números de linha",
+        "sourceCodeLineNumbers": "Mostrar números de linha no modo código fonte",
         "trimUnnecessaryCodeBlockEmptyLines": "Aparar as linhas vazias do início e fim no bloco de código",
         "autoPairBracket": "Parênteses automáticos ao editar",
         "autoPairMarkdownSyntax": "Autocompletar sintaxe markdown",
@@ -405,8 +416,12 @@
         "frontmatterType": "O tipo de frontmatter",
         "superSubScript": "Habilitar extensão markdown do pandoc para sobrescrito e subscrito",
         "footnote": "Habilitar extensão markdown do pandoc para nota de rodapé",
+        "texMathDollars": "Ativar a extensão markdown do pandoc tex_math_dollars",
+        "texMathGfm": "Ativar a extensão markdown do pandoc tex_math_gfm",
+        "texMathSingleBackslash": "Ativar a extensão markdown do pandoc tex_math_single_backslash",
+        "texMathDoubleBackslash": "Ativar a extensão markdown do pandoc tex_math_double_backslash",
         "isHtmlEnabled": "Habilitar renderização HTML",
-        "isGitlabCompatibilityEnabled": "Habilitar modo de compatibilidade GitLab",
+        "softNewlineAsSpace": "Tratar quebras de linha suaves como espaços",
         "sequenceTheme": "Tema do diagrama de sequência",
         "plantumlServer": "URL do servidor PlantUML",
         "theme": "Selecionar o tema usado no MarkText",
@@ -497,8 +512,10 @@
           "german": "Deutsch",
           "japanese": "日本語",
           "korean": "한국어",
+          "dutch": "Nederlands",
           "portuguese": "Português",
-          "turkish": "Türkçe"
+          "turkish": "Türkçe",
+          "russian": "Русский"
         }
       }
     },
@@ -510,7 +527,8 @@
         "lineHeight": "Altura da linha",
         "fontFamily": "Família da fonte",
         "maxWidth": "Largura máxima",
-        "maxWidthNotes": "Largura máxima do conteúdo do editor"
+        "maxWidthNotes": "Largura máxima do conteúdo do editor. Digite um número seguido de px, ch (caracteres) ou %, por exemplo 800px, 80ch ou 60%. Deixe vazio para usar a largura padrão.",
+        "maxWidthInvalid": "Digite um número seguido de px, ch ou %, por exemplo 800px."
       },
       "codeBlock": {
         "title": "Bloco de Código",
@@ -542,7 +560,9 @@
           "default": "Padrão",
           "crlf": "CRLF",
           "lf": "LF"
-        }
+        },
+        "lightTouch": "Light Touch save",
+        "lightTouchNotes": "Keep the original formatting of lines you did not edit, so saving a file produces a minimal git diff. Turn off to always rewrite the whole file in MarkText's canonical style."
       },
       "misc": {
         "title": "Diversos",
@@ -555,7 +575,8 @@
         "hideLinkPopup": "Ocultar popup de link",
         "autoCheck": "Verificação automática",
         "autoNormalizeLineEndings": "Normalizar automaticamente finais de linha para LF ao abrir",
-        "wrapCodeBlocks": "Quebrar blocos de código"
+        "wrapCodeBlocks": "Quebrar blocos de código",
+        "sourceCodeLineNumbers": "Mostrar números de linha no modo código fonte"
       }
     },
     "image": {
@@ -579,7 +600,7 @@
       },
       "uploader": {
         "title": "Carregador de Imagens",
-        "currentUploader": "Carregador Atual",
+        "currentUploader": "Uploader atual: {name}",
         "picgoNotInstalled": "PicGo não está instalado",
         "picgoInstalled": "PicGo está instalado",
         "picgoDetectionFailed": "Detecção do PicGo falhou",
@@ -625,6 +646,10 @@
         "superSubScript": "Super/Sub script",
         "footnote": "Nota de rodapé",
         "footnoteNotes": "Notas de rodapé",
+        "texMathDollars": "Matemática TeX com $ e $$",
+        "texMathGfm": "Matemática TeX do GitHub ($`…`$ e ```math)",
+        "texMathSingleBackslash": "Matemática TeX com barra invertida simples",
+        "texMathDoubleBackslash": "Matemática TeX com barra invertida dupla",
         "frontmatterType": {
           "jsonBrace": "JSON com Chaves",
           "jsonSemicolon": "JSON com Ponto e Vírgula",
@@ -651,8 +676,8 @@
         "title": "Diversos"
       },
       "compatibility": {
-        "enableGitlab": "Habilitar compatibilidade GitLab",
         "enableHtml": "Habilitar suporte HTML",
+        "softNewlineAsSpace": "Tratar quebras de linha suaves como espaços",
         "title": "Compatibilidade"
       },
       "lists": {
@@ -699,7 +724,7 @@
       "online": "Online",
       "saveError": "Erro ao salvar atalhos de teclado",
       "shortcutInUse": "Atalho em uso",
-      "shortcutInUseMessage": "Este atalho já está atribuído a outro comando",
+      "shortcutInUseMessage": "Este atalho já está atribuído a {accelerator}",
       "table": {
         "description": "Descrição",
         "edit": "Editar",
@@ -728,8 +753,10 @@
     }
   },
   "about": {
-    "copyright": "Copyright",
-    "copyrightContributors": "Copyright Contribuidores"
+    "copyright": "Copyright © Luo Ran 2017-{year}",
+    "copyrightContributors": "Copyright Contribuidores",
+    "basedOn": "Based on MarkText by Jocs & contributors",
+    "sisterFork": "Oh My Marktext is a sister fork — not affiliated with the official MarkText project"
   },
   "commands": {
     "mt": {
@@ -873,7 +900,8 @@
   },
   "common": {
     "cancel": "Cancelar",
-    "ok": "OK"
+    "ok": "OK",
+    "saving": "Saving…"
   },
   "dialog": {
     "cancel": "Cancelar",
@@ -881,10 +909,12 @@
     "close": "Fechar",
     "dontSave": "Não Salvar",
     "file": "Arquivo",
-    "fileExists": "Arquivo existe",
+    "fileExists": "O arquivo já existe: {filename}",
     "files": "Arquivos",
     "importWarning": "Aviso de importação",
-    "installPandoc": "Instalar Pandoc",
+    "installPandoc": "Pandoc não foi encontrado. Instale-o, ou defina a variável de ambiente MARKTEXT_PANDOC com o caminho do executável do pandoc e reinicie o MarkText.",
+    "exportWarning": "Aviso de exportação",
+    "exportWarningMore": "…e mais {count}",
     "keepOpen": "Manter aberto",
     "replace": "Substituir",
     "save": "Salvar",
@@ -898,12 +928,12 @@
   "error": {
     "configSchemaViolation": "Violação do esquema de configuração",
     "copyError": "Erro de cópia",
-    "initializationFailed": "Falha na inicialização",
+    "initializationFailed": "Falha na inicialização {hint}",
     "otherInstanceDetected": "Outra instância do MarkText já está em execução",
     "report": "Reportar",
     "startupError": "Erro de inicialização",
     "terminatedDueToError": "Terminado devido a erro",
-    "unexpectedErrorWithMessage": "Erro inesperado com mensagem",
+    "unexpectedErrorWithMessage": "Erro inesperado: {message}",
     "unexpectedMainProcess": "Erro inesperado do processo principal",
     "unexpectedRendererProcess": "Erro inesperado do processo de renderização"
   },
@@ -915,7 +945,7 @@
     "editor": {
       "anchorLinkCopied": "Link âncora copiado",
       "tabNotFound": "Aba não encontrada",
-      "tocItemNotFound": "Item do índice não encontrado",
+      "tocItemNotFound": "Item do índice {key} não encontrado",
       "errorLoadingTabTitle": "Erro ao carregar a aba",
       "errorLoadingTabMessage": "Ocorreu um erro ao carregar a alteração do arquivo porque a aba não pôde ser encontrada.",
       "mixedLineEndingsNormalized": "“{name}” possui finais de linha mistos que foram normalizados automaticamente para {lineEnding}.",
@@ -924,6 +954,7 @@
       "errorWhileSaving": "Ocorreu um erro ao salvar: {msg}",
       "exportSuccessTitle": "Exportado com sucesso",
       "exportSuccessMessage": "“{name}” foi exportado com sucesso!",
+      "exportLinkedMediaMessage": "\"{name}\" foi exportado. Este formato liga as imagens em vez de incorporá-las: mantenha as imagens junto do arquivo e compartilhe a pasta inteira.",
       "fileRemovedOnDisk": "“{name}” foi removido no disco.",
       "fileChangedOnDisk": "“{name}” foi alterado no disco. Deseja recarregar?"
     }
@@ -935,8 +966,8 @@
   "editor": {
     "export": {
       "error": "Erro de exportação",
-      "errorExporting": "Erro ao exportar arquivo",
-      "failed": "Exportação falhou"
+      "errorExporting": "Erro ao exportar arquivo {type}",
+      "failed": "Falha na exportação {type}"
     },
     "insertTable": {
       "title": "Inserir Tabela",
@@ -947,7 +978,7 @@
       "notificationNotFound": "Notificação não encontrada"
     },
     "print": {
-      "error": "Erro de impressão",
+      "error": "Erro de impressão para \"{title}\"",
       "failed": "Impressão falhou"
     },
     "sourceCode": {
@@ -956,9 +987,9 @@
     },
     "spellcheck": {
       "disabledError": "Erro ao desativar verificação ortográfica",
-      "errorSwitchingLanguage": "Erro ao trocar idioma da verificação ortográfica",
-      "languageMissing": "Idioma da verificação ortográfica não encontrado",
-      "switchError": "Erro ao trocar verificação ortográfica",
+      "errorSwitchingLanguage": "Erro ao alternar idioma do corretor {languageCode}",
+      "languageMissing": "Idioma do corretor não encontrado {languageCode}",
+      "switchError": "Erro ao alternar corretor para {languageCode}, {error}",
       "title": "Verificação Ortográfica"
     }
   }

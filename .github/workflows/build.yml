@@ -19,6 +19,7 @@ jobs:
       actions: read
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: linux
@@ -52,6 +53,12 @@ jobs:
 
       - uses: ./.github/actions/setup
 
+      - name: Configure Windows C++ toolchain
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch == 'arm64' && 'amd64_arm64' || 'x64' }}
+
       # Must be set before postinstall runs electron-rebuild
       - name: Set C++20 for MacOS
         if: matrix.platform == 'macos'
@@ -84,6 +91,8 @@ jobs:
       - name: build-win
         if: matrix.platform == 'windows'
         run: pnpm run build:win:${{ matrix.arch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # OMM: validate startup from the actual ZIP before sharing artifacts.
       - name: Test Windows package

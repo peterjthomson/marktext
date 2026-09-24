@@ -23,6 +23,15 @@ jobs:
     name: Validate tag
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: Verify upstream and fork ancestry
+        run: |
+          UPSTREAM_TAG=$(node -p "require('./docs/omm/upstream.json').upstreamTag")
+          git fetch --no-tags https://github.com/marktext/marktext.git "refs/tags/$UPSTREAM_TAG:refs/tags/$UPSTREAM_TAG"
+          pnpm omm:upstream
       - name: Validate semver tag
         run: |
           # workflow_dispatch can target a branch to produce artifacts without
@@ -39,6 +48,12 @@ jobs:
             exit 1
           fi
           echo "Tag '$tag' is valid."
+          VERSION=$(node -p "require('./packages/desktop/package.json').version")
+          ROOT_VERSION=$(node -p "require('./package.json').version")
+          if [[ "$tag" != "v$VERSION" || "$VERSION" != "$ROOT_VERSION" ]]; then
+            echo "::error::Release tag and both package versions must agree."
+            exit 1
+          fi
 
   # Windows and Linux need no signing secrets, so they must never be gated on
   # the macOS Apple credentials. Build the matrix dynamically: mac is included
@@ -115,6 +130,12 @@ jobs:
         uses: ./.github/actions/setup
         with:
           node-version: '24.14.1'
+
+      - name: Configure Windows C++ toolchain
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch == 'arm64' && 'amd64_arm64' || 'x64' }}
 
       # Cache Electron binary; key on package.json so it busts when Electron version changes.
       - name: Cache Electron binary

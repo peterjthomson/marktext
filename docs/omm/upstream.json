@@ -1,0 +1,9 @@
+{
+  "upstreamTag": "v0.20.0-rc.6",
+  "upstreamCommit": "b7a5dbb6e9d30f71966eb7e001957c811b429ed9",
+  "previousUpstreamCommit": "c907b29c9f2cb500d22259339ab64bc3c3a7219e",
+  "previousForkRelease": {
+    "tag": "v0.20.0-omm.3",
+    "commit": "9f6432196c4d4aa00ea4647e2466a7a272c3162f"
+  }
+}

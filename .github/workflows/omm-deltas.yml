@@ -21,16 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # The audit needs the merge base with upstream, which a shallow clone
-          # does not contain.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - uses: ./.github/actions/setup
 
-      - name: Fetch upstream MarkText
+      - name: Fetch the pinned upstream release tag
         run: |
-          git remote add upstream https://github.com/marktext/marktext.git
-          git fetch --no-tags upstream develop:refs/remotes/upstream/develop
+          UPSTREAM_TAG=$(node -p "require('./docs/omm/upstream.json').upstreamTag")
+          git fetch --no-tags https://github.com/marktext/marktext.git "refs/tags/$UPSTREAM_TAG:refs/tags/$UPSTREAM_TAG"
 
       - name: Audit fork deltas against the ledger
         run: pnpm omm:deltas --check
+        env:
+          OMM_PREVIOUS_REF: ${{ github.event.pull_request.base.sha || github.event.before }}

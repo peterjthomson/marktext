@@ -26,7 +26,7 @@ marked one-line hook in the upstream file, a spec in
 
 | Layer | Technology |
 |---|---|
-| Language | TypeScript 5.9 (strict mode) — `packages/muyajs/` retained as JS via ambient shim |
+| Language | TypeScript 5.9 (strict mode) — `packages/muyajs/` is legacy JS, no longer referenced |
 | Desktop shell | Electron 42 |
 | Build system | electron-vite 5 |
 | Packaging | electron-builder 26 |
@@ -68,11 +68,13 @@ root holds only shared tooling and CI-facing scripts.
     desktop/                The Electron app (name: "marktext").
       package.json          Holds all Electron / Vue / build-time deps and
                             the dev/build/test/typecheck scripts. Depends on
-                            @marktext/muyajs via workspace:*.
+                            @muyajs/core via workspace:*.
       electron.vite.config.ts
       electron-builder.yml  directories.output points at ../../dist.
       tsconfig.json / tsconfig.base.json
       vitest.config.ts
+      playwright.config.ts  Must stay here, not in test/e2e/ — Playwright only
+                            auto-loads a config from the directory it runs in.
       patches/              pnpm patches consumed by patch-package.
       build/                electron-builder resources (icons, entitlements,
                             NSIS scripts).
@@ -81,8 +83,7 @@ root holds only shared tooling and CI-facing scripts.
       out/                  electron-vite output (git-ignored).
       test/
         unit/               Vitest specs → pnpm test / pnpm test:unit
-        e2e/                Playwright specs + playwright.config.ts
-                            → pnpm test:e2e
+        e2e/                Playwright specs → pnpm test:e2e
       src/
         common/             Pure Node.js utilities usable from main, preload,
                             and renderer.
@@ -108,12 +109,12 @@ root holds only shared tooling and CI-facing scripts.
                             (name: "@marktext/muyajs"). Primarily JS + DOM,
                             avoids Electron APIs. Exception:
                             packages/muyajs/lib/parser/render/plantuml.js
-                            imports Node's `zlib`. Being retired: the
-                            desktop renderer now consumes @muyajs/core
-                            (packages/muya) as its editor engine; only a
-                            handful of legacy `muya/` alias call sites
-                            remain (see #4244 era sandbox work for the
-                            boundary tightening).
+                            imports Node's `zlib`. Nothing imports it any
+                            more — the desktop renderer consumes
+                            @muyajs/core (packages/muya), and the `muya/*`
+                            alias, the `src/types/muya.d.ts` bridge and the
+                            workspace dep are gone (#4257). The package
+                            itself is deleted post-0.20.0.
       lib/
         contentState/       Block structure and document transformations.
         parser/             Markdown parser.
@@ -127,9 +128,8 @@ root holds only shared tooling and CI-facing scripts.
                             ot-json1 + ot-text-unicode + snabbdom + marked@16
                             + rxjs. Self-contained: own eslint config
                             (antfu), own stylelint, own madge, own vitest
-                            spec suites (CommonMark + GFM). Now the editor
-                            engine the desktop renderer consumes; legacy
-                            packages/muyajs is being retired. See
+                            spec suites (CommonMark + GFM). The editor
+                            engine the desktop renderer consumes. See
                             packages/muya/CLAUDE.md for layout and commands.
       src/                  TS source. Public entrypoint src/index.ts.
       test/spec/            CommonMark 0.31 + GFM 0.29-gfm conformance.
@@ -166,7 +166,7 @@ pnpm install
 # require restarting `pnpm run dev`.
 pnpm run dev
 
-# Preview the last electron-vite build (no rebuild). PERF_TESTING=true is set automatically.
+# Preview the last electron-vite build (no rebuild).
 pnpm run start
 
 # Build without packaging — fast path for verifying the renderer/main compile
@@ -214,7 +214,8 @@ pnpm run typecheck     # vue-tsc --noEmit (CI enforces)
 pnpm -C packages/desktop exec vitest run test/unit/specs/markdown-basic.spec.ts
 pnpm -C packages/desktop exec vitest run -t 'partial test name'
 
-# Single Playwright spec (playwright.config.ts lives in test/e2e/)
+# Single Playwright spec (playwright.config.ts sits at packages/desktop/, so it
+# is picked up automatically — run these from that package, not the repo root)
 pnpm -C packages/desktop exec playwright test test/e2e/launch.spec.ts
 pnpm -C packages/desktop exec playwright test -g 'partial test name'
 ```
@@ -238,8 +239,7 @@ Follow `.github/COMMENTING-GUIDELINES.md` for every comment you write. The core 
 ## Architecture: Three-Process Electron Model
 
 All Electron processes live in `packages/desktop/`. Muya is a separate
-workspace package that the renderer (and tests) consume via the `muya`
-alias / `@marktext/muyajs` workspace dep.
+workspace package that the renderer (and tests) consume as `@muyajs/core`.
 
 ```
 main process  (packages/desktop/src/main/)
@@ -260,13 +260,12 @@ renderer  (packages/desktop/src/renderer/)
   ├── Hosts both Muya (WYSIWYG) and CodeMirror (source-code mode)
   └── Compiled to ES Modules only
 
-Muya  (packages/muyajs/)            ← workspace package @marktext/muyajs
-  ├── Self-contained editor backend
-  ├── Primarily avoids Electron APIs; uses Node's zlib for PlantUML encoding
+Muya  (packages/muya/)              ← workspace package @muyajs/core
+  ├── Self-contained editor backend, TypeScript
+  ├── No Electron APIs
   ├── Handles markdown parsing, block data structure, document export, rendering
-  └── packages/muya/ (@muyajs/core, the TS rewrite from
-      https://github.com/marktext/muya) has landed and is now the engine
-      the desktop renderer consumes; muyajs is being retired.
+  └── packages/muyajs/ (the legacy JS engine) is unreferenced and is
+      deleted post-0.20.0.
 ```
 
 ## IPC Conventions
@@ -299,8 +298,7 @@ See `packages/website/content/docs/dev/IPC.md` for conventions and examples.
   - `@` → `packages/desktop/src/renderer/src`
   - `common` → `packages/desktop/src/common`
   - `@shared` → `packages/desktop/src/shared`
-  - `muya` → `../muyajs` (i.e. `packages/muyajs`). Renderer-side imports therefore look like `muya/lib/...` (the alias) — the workspace dep `@marktext/muyajs` is declared in `packages/desktop/package.json` so module resolution stays inside the workspace.
-- **Workspace deps**: muya's own npm runtime deps (`github-markdown-css`, `katex`, `dompurify`, `snabbdom`, …) are declared in `packages/muyajs/package.json` so Node module resolution from `packages/muyajs/lib/*.js` finds them inside the workspace rather than walking out to a parent directory.
+- **`@muyajs/core` resolution**: not a path alias — electron-vite and Vitest resolve it through the package's `exports` map, which points at `packages/muya/src/index.ts`. TypeScript would then pull the whole muya tree into the desktop's program, so `tsconfig.base.json` redirects the types to `../muya/lib/types/index.d.ts`; `pnpm typecheck` and `postinstall` both run `pnpm --filter @muyajs/core build:types` to emit that (git-ignored) directory.
 - **Patches**: `patch-package` patches live at `packages/desktop/patches/`. The root `postinstall` calls patch-package with `cwd=packages/desktop` so the path resolves correctly.
 
 ## Fork layer (Oh My Marktext)
