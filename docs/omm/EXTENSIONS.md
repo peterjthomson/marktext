@@ -86,6 +86,10 @@ compares this table against the real diff and fails on anything undocumented.
 | `packages/desktop/src/renderer/src/prefComponents/theme/index.vue`  | Tufte theme  | The preview grid hardcodes a CSS block per theme, so a fork theme needs its own swatch     | Stays a patch; additive and low conflict risk |
 | `packages/desktop/static/locales/en.json`                           | All          | Upstream owns the locale files; the fork adds keys                                         | Additive, low conflict risk                   |
 
+### Fork locale fallbacks
+
+| File | Feature | What the delta is | Upstreamable? |
+| --- | --- | --- | --- |
 | `packages/desktop/static/locales/de.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
 | `packages/desktop/static/locales/es.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
 | `packages/desktop/static/locales/fr.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
@@ -120,8 +124,14 @@ fast. Keep this list short, and prefer upstream PRs over carrying a patch.
 
 ### Build, CI and docs
 
+Windows builds detect the installed Visual Studio toolchain; `.npmrc` must not
+force an older version. Linux builds finish AppImage, deb, rpm and tar.gz before
+building Snap in a separate packaging invocation: electron-builder 26.15.3
+removes `chrome-sandbox` from the shared app directory while assembling Snap,
+which otherwise races the other targets.
+
 Fork-owned by definition, not tracked as deltas: `.github/workflows/*`,
-`.env.example`, `.gitignore`, `eslint.config.js`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`, `scripts/omm-upstream.ts`,
+`.env.example`, `.gitignore`, `.npmrc`, `eslint.config.js`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`, `scripts/omm-upstream.ts`,
 `packages/desktop/build/notarize-dmg.cjs`, `packages/desktop/build/refresh-update-info.cjs`,
 `packages/desktop/build/make-mac-icns.sh`, `scripts/release/*`,
 `docs/omm/RELEASE-PROTOCOL.md`,

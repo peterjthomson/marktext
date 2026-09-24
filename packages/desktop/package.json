@@ -48,7 +48,7 @@
     "build:mac": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --publish never && node build/refresh-update-info.cjs",
     "build:mac:x64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --x64 --publish never && node build/refresh-update-info.cjs",
     "build:mac:arm64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --arm64 --publish never && node build/refresh-update-info.cjs",
-    "build:linux": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --linux --publish never",
+    "build:linux": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --linux AppImage deb rpm tar.gz --publish never && electron-builder --linux snap --publish never",
     "perf:inspect": "electron-vite preview -- --inspect=5858",
     "perf:inspect-brk": "electron-vite preview -- --inspect-brk=5858",
     "test": "vitest run",

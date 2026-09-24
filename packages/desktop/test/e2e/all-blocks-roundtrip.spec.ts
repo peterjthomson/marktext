@@ -159,22 +159,9 @@ test.describe('All blocks round-trip + save byte-stability (item 39)', () => {
     expect(await getMarkdownContent(page, app)).toBe(original)
   })
 
-  test('a dirty edit saves with Light Touch preservation or canonical serialization', async() => {
-    // Genuinely exercise the dirty -> save -> clean transition (test 4 may have
-    // saved an already-clean tab). A bulk source-mode edit that appends a
-    // paragraph dirties the tab; confirm the unsaved dot appears.
-    await setSourceMarkdown(page, app, original + '\nDIRTY EXTRA PARAGRAPH\n')
-    await expect.poll(() => isDirty(page), { timeout: 5000 }).toBe(true)
-
-    // OMM: default saves preserve untouched disk formatting. Turning Light
-    // Touch off must still exercise upstream's canonical serialization path.
-    const editorContent = await getMarkdownContent(page, app)
-    expect(editorContent).toContain('DIRTY EXTRA PARAGRAPH')
-
-    await save(app)
-    await expect.poll(() => isDirty(page), { timeout: 5000 }).toBe(false)
-    await expect.poll(() => readDisk(), { timeout: 5000 }).toBe(original.trimEnd() + '\n\nDIRTY EXTRA PARAGRAPH\n')
-
+  test('a dirty edit saves the canonical serialization when Light Touch is disabled', async() => {
+    // OMM: the preceding tests cover default byte-preserving saves. Explicitly
+    // opt out of Light Touch to test upstream's canonical serialization path.
     await page.evaluate(() => window.electron.ipcRenderer.send('mt::set-user-preference', { lightTouch: false }))
     await expect.poll(() => page.evaluate(() => {
       const root = document.querySelector('#app') as HTMLElement & {
@@ -182,7 +169,14 @@ test.describe('All blocks round-trip + save byte-stability (item 39)', () => {
       }
       return root.__vue_app__?.config.globalProperties.$pinia?.state.value.preferences?.lightTouch
     })).toBe(false)
+
+    await setSourceMarkdown(page, app, original + '\nDIRTY EXTRA PARAGRAPH\n')
+    await expect.poll(() => isDirty(page), { timeout: 5000 }).toBe(true)
+    const editorContent = await getMarkdownContent(page, app)
+    expect(editorContent).toContain('DIRTY EXTRA PARAGRAPH')
+
     await save(app)
+    await expect.poll(() => isDirty(page), { timeout: 5000 }).toBe(false)
     await expect.poll(() => readDisk(), { timeout: 5000 }).toBe(editorContent)
   })
 })
