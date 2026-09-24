@@ -177,9 +177,17 @@ fi
 
 # --- zip, if the release ships one ----------------------------------------
 if [ -n "$ZIP" ] && [ -f "$ZIP" ]; then
-  TOP="$(unzip -l "$ZIP" | awk '{print $4}' | grep -E '^[^/]+\.app/' | cut -d/ -f1 | sort -u | wc -l | tr -d ' ')"
-  ZIP_LIST="$(unzip -l "$ZIP" 2>/dev/null || true)"
-  if [ "$TOP" = "1" ] && printf '%s' "$ZIP_LIST" | grep -q '\.app/Contents/'; then
+  # Parse archive names directly: whitespace columns truncate product names
+  # such as "Oh My Marktext.app", and grep -q can trip pipefail on large ZIPs.
+  if python3 - "$ZIP" <<'PY'
+import sys, zipfile
+with zipfile.ZipFile(sys.argv[1]) as archive:
+    names = set(archive.namelist())
+roots = {name.split('/')[0] for name in names if name.split('/')[0].endswith('.app')}
+valid = len(roots) == 1 and f'{next(iter(roots))}/Contents/Info.plist' in names
+sys.exit(0 if valid else 1)
+PY
+  then
     pass "zip contains one well-formed .app at its root"
   else
     fail "zip layout is wrong (expected a single <name>.app/Contents/ at the root)"
