@@ -55,6 +55,7 @@ extraResources:
       - '**/*'
       - '!locales/**/!(*.min).json'
 npmRebuild: false
+afterPack: build/validate-native-modules.cjs
 # Notarizes + staples the DMG itself; mac.notarize only covers the .app.
 afterAllArtifactBuild: build/notarize-dmg.cjs
 electronLanguages: # Avoid packaging all chromium locales since our app has in-built locales

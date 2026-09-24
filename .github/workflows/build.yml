@@ -85,6 +85,13 @@ jobs:
         if: matrix.platform == 'windows'
         run: pnpm run build:win:${{ matrix.arch }}
 
+      # OMM: validate startup from the actual ZIP before sharing artifacts.
+      - name: Test Windows package
+        if: matrix.platform == 'windows'
+        uses: ./.github/actions/test-windows-package
+        with:
+          arch: ${{ matrix.arch }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

@@ -24,7 +24,7 @@
 ### 1.4 Clone and Install
 
 ```bash
-git clone https://github.com/marktext/marktext.git
+git clone https://github.com/peterjthomson/marktext.git
 cd marktext
 pnpm install
 ```
@@ -55,14 +55,40 @@ pnpm run dev
 ### 1.7 Build for Production
 
 ```bash
-# For windows
-$ pnpm run build:win
+# On Windows, matching the target architecture
+$ pnpm run build:win:x64
+# or: pnpm run build:win:arm64
 
-# For macOS
-$ pnpm run build:mac
+# For the macOS Apple Silicon release
+$ pnpm run build:mac:arm64
 
 # For Linux
 $ pnpm run build:linux
+```
+
+`pnpm build` compiles the application into `packages/desktop/out`; it does not
+create installers. The platform commands above produce artifacts in `dist`.
+Do not reuse macOS or Linux `node_modules` for a Windows package. The packager
+checks native-module platform and architecture before creating Windows artifacts.
+
+### 1.8 Test a packaged application
+
+The Windows PR and release builds extract the generated ZIP and run one launch
+check on each Windows architecture before uploading artifacts. This exercises
+the packaged dependencies and renderer, using a temporary document and profile.
+
+To repeat it in PowerShell after extracting a Windows ZIP:
+
+```powershell
+$env:MARKTEXT_SMOKE_EXECUTABLE = (Resolve-Path 'path/to/extracted/oh-my-marktext.exe').Path
+pnpm --filter marktext test:packaged
+```
+
+The same check can run against a packaged macOS app:
+
+```bash
+MARKTEXT_SMOKE_EXECUTABLE="/absolute/path/Oh My Marktext.app/Contents/MacOS/Oh My Marktext" \
+  pnpm --filter marktext test:packaged
 ```
 
 ## 2. Sub-sections

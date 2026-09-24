@@ -31,6 +31,7 @@ packages/desktop/src/main/keyboard/omm/
   keybindingOverrides.ts       accelerator overrides applied to upstream keymaps
 packages/desktop/src/renderer/src/omm/
   lightTouchSave.ts            save-path wiring and merge-baseline bookkeeping
+  saveState.ts                 clean source snapshots and non-text dirty state
   savingSpinner.ts             title-bar in-flight save indicator timing
   trashedTabs.ts               tabs affected by a sidebar "move to trash"
 packages/desktop/test/unit/specs/omm/
@@ -38,6 +39,7 @@ packages/desktop/test/unit/specs/omm/
 packages/desktop/src/renderer/src/assets/themes/
   tufte.theme.css              fork theme (+ prismjs/tufte.theme.css)
 packages/desktop/build/
+  validate-native-modules.cjs  rejects wrong-platform Windows native modules
   make-mac-icns.sh             regenerates the mac icon on Apple's 824/1024 grid
 ```
 
@@ -54,7 +56,7 @@ compares this table against the real diff and fails on anything undocumented.
 
 | File                                                               | Feature                          | What the delta is                                                                                                                                                                       | Upstreamable?                                                                                                   |
 | ------------------------------------------------------------------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `packages/desktop/src/renderer/src/store/editor.ts`                | Light Touch, save spinner, trash | Import block plus one-line calls at each save path, save-confirm and save-failure handler; `isSaving` state field; `CLOSE_TABS_FOR_TRASHED_PATH` action delegating to `omm/trashedTabs` | Trash fix yes ([#4867 candidate](https://github.com/marktext/marktext/issues)); Light Touch after it proves out |
+| `packages/desktop/src/renderer/src/store/editor.ts`                | Light Touch, save state, save spinner, trash | Import block plus save-state hooks for content, file settings, disk changes and save acknowledgements; one-line calls at each save path, save-confirm and save-failure handler; `isSaving` state field; `CLOSE_TABS_FOR_TRASHED_PATH` action delegating to `omm/trashedTabs` | Trash fix yes ([#4867 candidate](https://github.com/marktext/marktext/issues)); Light Touch after it proves out |
 | `packages/desktop/src/renderer/src/store/help.ts`                  | Light Touch                      | Baseline fields on the default document state and `initialBaseline()` in `createDocumentState`                                                                                          | With Light Touch                                                                                                |
 | `packages/desktop/src/renderer/src/store/project.ts`               | Trash                            | `.then()` on the trash IPC to close the doomed tabs                                                                                                                                     | Yes                                                                                                             |
 | `packages/desktop/src/renderer/src/store/preferences.ts`           | Light Touch                      | `lightTouch` field, default true                                                                                                                                                        | With Light Touch                                                                                                |
@@ -95,10 +97,18 @@ fast. Keep this list short, and prefer upstream PRs over carrying a patch.
 | `packages/muya/src/ui/paragraphFrontMenu/config.ts`    | Front-menu order | "New Paragraph" leads instead of "Duplicate"                                                  | Product preference; would need to be configurable to upstream |
 | `packages/muya/src/ui/paragraphFrontMenu/index.ts`     | Front-menu order | Frontmatter filter keys off the item label rather than index 0                                | Robustness fix — send as a PR regardless of the reorder       |
 
+### Tests and developer documentation
+
+| File | Feature | What the delta is | Upstreamable? |
+| --- | --- | --- | --- |
+| `packages/desktop/test/unit/specs/source-mode-dirty.spec.ts` | Save state | Source undo, real save acknowledgement, settings changes and disk reload regressions | Yes, alongside the save-state fix |
+| `packages/website/content/docs/dev/README.md` | Developer setup | Fork clone URL, platform build commands and packaged launch check | Build and test instructions yes; clone URL is fork-specific |
+| `packages/website/content/docs/dev/BUILD.md` | Build instructions | Distinguish compilation from installers; document Windows native dependencies | Yes |
+
 ### Build, CI and docs
 
 Fork-owned by definition, not tracked as deltas: `.github/workflows/*`,
-`.env.example`, `.gitignore`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`,
+`.env.example`, `.gitignore`, `eslint.config.js`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`,
 `packages/desktop/build/notarize-dmg.cjs`, `packages/desktop/build/refresh-update-info.cjs`,
 `packages/desktop/build/make-mac-icns.sh`, `scripts/release/*`,
 `docs/omm/RELEASE-PROTOCOL.md`,

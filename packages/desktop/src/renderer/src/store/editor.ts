@@ -30,6 +30,7 @@ import {
 } from '../omm/lightTouchSave'
 import { beginSaveSpinner, clearSaveSpinner } from '../omm/savingSpinner'
 import { tabsUnderTrashedPath } from '../omm/trashedTabs'
+import { confirmDocumentSaved, markDocumentUnsaved, getContentSaveState } from '../omm/saveState' // OMM
 import type {
   IFileState,
   FileNotification,
@@ -372,6 +373,7 @@ export const useEditorStore = defineStore('editor', {
 
       // Update file content and restore some entries.
       Object.assign(tab, newFileState)
+      confirmDocumentSaved(tab) // OMM: explicitly accepted disk content is clean.
       tab.id = oldId
       tab.notifications = oldNotifications
       tab.scrollTop = oldScrollTop
@@ -609,7 +611,8 @@ export const useEditorStore = defineStore('editor', {
           window.DIRNAME = window.path.dirname(pathname)
         }
         if (tab) {
-          Object.assign(tab, { filename, pathname, isSaved: true })
+          Object.assign(tab, { filename, pathname })
+          confirmDocumentSaved(tab) // OMM
           promoteSaveBaseline(tab, !!pathname) // OMM
           debouncedSendBufferedState()
         }
@@ -630,7 +633,7 @@ export const useEditorStore = defineStore('editor', {
               tab.lastSavedHistoryId = entry.id
             }
           }
-          tab.isSaved = true
+          confirmDocumentSaved(tab) // OMM
           promoteSaveBaseline(tab) // OMM
           debouncedSendBufferedState()
         }
@@ -651,7 +654,7 @@ export const useEditorStore = defineStore('editor', {
           return
         }
 
-        tab.isSaved = false
+        markDocumentUnsaved(tab) // OMM
         discardSaveBaseline(tab) // OMM
         clearSaveSpinner(this) // OMM
         this.pushTabNotification({
@@ -1397,7 +1400,7 @@ export const useEditorStore = defineStore('editor', {
       let didUpdateSaveStatus = false
       this.tabs.forEach((f) => {
         if (f.pathname === pathname) {
-          f.isSaved = false
+          markDocumentUnsaved(f) // OMM
           didUpdateSaveStatus = true
         }
       })
@@ -1484,8 +1487,12 @@ export const useEditorStore = defineStore('editor', {
         (lastEditIndex === -1 &&
           tab.lastSavedHistoryId !== -1 &&
           tab.lastSavedHistoryId !== tab.history.lastInitIndex) // Edge Case: Undo to original content (lastEditIndex === -1) after saving means we cant use the lastEditIndex. Compare it against the lastInitIndex instead.
-      const isDirty = history === undefined ? markdown !== oldMarkdown : historyMarksDirty
-      if (isDirty) {
+      // OMM: source undo and non-text changes share one save-state policy.
+      const saveState = getContentSaveState(
+        tab, adjustTrailingNewlines(oldMarkdown, trimTrailingNewline), markdown,
+        history === undefined ? undefined : historyMarksDirty
+      )
+      if (saveState === 'dirty') {
         tab.isSaved = false
         if (pathname && autoSave) {
           const options = getOptionsFromState(tab)
@@ -1497,7 +1504,7 @@ export const useEditorStore = defineStore('editor', {
             options
           })
         }
-      } else if (history !== undefined && tab.lastSavedHistoryId !== -1) {
+      } else if (saveState === 'clean') {
         // Check here is to prevent it from overriding a restored .isSaved state
         tab.isSaved = true // An undo can trigger this
       }
@@ -1644,7 +1651,7 @@ export const useEditorStore = defineStore('editor', {
       if (lineEnding !== oldLineEnding) {
         this.currentFile.lineEnding = lineEnding
         this.currentFile.adjustLineEndingOnSave = lineEnding !== 'lf'
-        this.currentFile.isSaved = true
+        markDocumentUnsaved(this.currentFile) // OMM
         this.UPDATE_LINE_ENDING_MENU()
         debouncedSendBufferedState()
       }
@@ -1666,7 +1673,7 @@ export const useEditorStore = defineStore('editor', {
         if (encoding !== encodingName) {
           this.currentFile.encoding.encoding = encodingName as string
           this.currentFile.encoding.isBom = false
-          this.currentFile.isSaved = true
+          markDocumentUnsaved(this.currentFile) // OMM
           debouncedSendBufferedState()
         }
       })
@@ -1678,7 +1685,7 @@ export const useEditorStore = defineStore('editor', {
         const { trimTrailingNewline } = this.currentFile
         if (trimTrailingNewline !== value) {
           this.currentFile.trimTrailingNewline = value as number
-          this.currentFile.isSaved = true
+          markDocumentUnsaved(this.currentFile) // OMM
           debouncedSendBufferedState()
         }
       })
@@ -1695,7 +1702,7 @@ export const useEditorStore = defineStore('editor', {
           const { id, isSaved, filename } = tab
           switch (type) {
             case 'unlink': {
-              tab.isSaved = false
+              markDocumentUnsaved(tab) // OMM
               this.pushTabNotification({
                 tabId: id,
                 msg: t('store.editor.fileRemovedOnDisk', { name: filename }),
@@ -1730,7 +1737,7 @@ export const useEditorStore = defineStore('editor', {
                 }
               }
 
-              tab.isSaved = false
+              markDocumentUnsaved(tab) // OMM
               this.pushTabNotification({
                 tabId: id,
                 msg: t('store.editor.fileChangedOnDisk', { name: filename }),

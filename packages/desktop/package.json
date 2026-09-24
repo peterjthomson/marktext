@@ -1,7 +1,7 @@
 {
   "name": "marktext",
   "productName": "Oh My Marktext",
-  "version": "0.20.0-omm.3",
+  "version": "0.20.0-omm.4",
   "description": "Oh My Marktext — a sister fork of MarkText with notarized builds and git-friendly Light Touch save",
   "main": "./out/main/index.js",
   "author": {
@@ -42,9 +42,9 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "build:unpack": "tsx ../../scripts/minify-locales.ts && electron-vite build",
-    "build:win": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --win --x64 --publish never",
-    "build:win:x64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --win --x64 --publish never",
-    "build:win:arm64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --win --arm64 --publish never",
+    "build:win": "pnpm run build:win:x64",
+    "build:win:x64": "tsx ../../scripts/minify-locales.ts && electron-rebuild --force --arch x64 && electron-vite build && electron-builder --win --x64 --publish never",
+    "build:win:arm64": "tsx ../../scripts/minify-locales.ts && electron-rebuild --force --arch arm64 && electron-vite build && electron-builder --win --arm64 --publish never",
     "build:mac": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --publish never && node build/refresh-update-info.cjs",
     "build:mac:x64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --x64 --publish never && node build/refresh-update-info.cjs",
     "build:mac:arm64": "tsx ../../scripts/minify-locales.ts && electron-rebuild && electron-vite build && electron-builder --mac --arm64 --publish never && node build/refresh-update-info.cjs",
@@ -54,6 +54,7 @@
     "test": "vitest run",
     "test:unit": "vitest run test/unit",
     "test:e2e": "playwright test test/e2e",
+    "test:packaged": "playwright test --config test/packaged/playwright.config.ts",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "typecheck:watch": "vue-tsc --noEmit -p tsconfig.json --watch"
   },

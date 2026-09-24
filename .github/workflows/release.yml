@@ -183,6 +183,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # OMM: a valid binary header alone does not prove the app can launch.
+      - name: Test Windows package
+        if: matrix.platform == 'windows'
+        uses: ./.github/actions/test-windows-package
+        with:
+          arch: ${{ matrix.arch }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4.6.2
         with:

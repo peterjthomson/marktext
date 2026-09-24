@@ -84,7 +84,16 @@ All binaries can be downloaded from the [release page](https://github.com/peterj
 
 #### macOS
 
-Requires macOS 11 (Big Sur) or later. Download `oh-my-marktext-mac-(arm64|x64)-%version%.dmg`, open it, and drag the app to Applications. Builds are signed and notarized with a Developer ID certificate, so Gatekeeper lets them run without any Terminal workaround.
+The current release requires macOS 12 (Monterey) or later on Apple Silicon. Download `oh-my-marktext-mac-arm64-%version%.dmg`, open it, and drag the app to Applications. Builds are signed and notarized with a Developer ID certificate, so Gatekeeper lets them run without any Terminal workaround.
+
+On Apple Silicon, you can also install with Homebrew:
+
+```bash
+brew tap peterjthomson/marktext https://github.com/peterjthomson/marktext
+brew install --cask peterjthomson/marktext/oh-my-marktext
+```
+
+The cask uses the signed release DMG. The current release does not include an Intel Mac build.
 
 #### Windows
 

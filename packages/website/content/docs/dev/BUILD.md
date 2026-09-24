@@ -71,8 +71,9 @@ On Arch Linux: `sudo pacman -S libx11 libxkbfile libsecret fontconfig`
 
 1. Go to `marktext` folder
 2. Install dependencies: `pnpm install`
-3. Build MarkText binaries and packages: `pnpm run build`
-4. MarkText binary is located under `dist` folder (electron-builder output)
+3. Compile the application: `pnpm build` (output: `packages/desktop/out`).
+4. Create installers with `pnpm build:mac:arm64`, `pnpm build:win:x64`, `pnpm build:win:arm64`, or `pnpm build:linux`. Windows packages must be built on Windows with dependencies installed for the target architecture.
+5. Installers and packaged application directories are under the repository-root `dist` folder.
 
 Copy the build app to applications folder, or if on Windows run the executable installer.
 
@@ -84,7 +85,8 @@ $ pnpm run <script>
 
 | Script  | Description                                      |
 | ------- | ------------------------------------------------ |
-| `build` | Build MarkText binaries and packages for your OS |
+| `build` | Compile the main, preload and renderer bundles |
+| `build:mac:arm64`, `build:win:x64`, `build:win:arm64`, `build:linux` | Build platform installers in `dist` |
 | `dev`   | Build and run MarkText in developer mode         |
 | `lint`  | Lint code style                                  |
 | `test`  | Run unit tests                                   |
