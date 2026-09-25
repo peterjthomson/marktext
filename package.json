@@ -38,10 +38,7 @@
     "omm:upstream": "tsx scripts/omm-upstream.ts",
     "gen-third-party": "tsx scripts/generateThirdPartyLicense.ts",
     "validate-licenses": "tsx scripts/validateLicenses.ts",
-    "prepare": "husky",
-    "release:prepare": "pnpm build:unpack && scripts/release/electron-mac.sh prepare packages/desktop \"dist/release-$npm_package_version\" \"Oh My Marktext\"",
-    "release:package": "scripts/release/electron-mac.sh package packages/desktop \"dist/release-$npm_package_version\" \"Oh My Marktext\"",
-    "test:release": "python3 -m unittest discover -s scripts/release -p \"test_*.py\""
+    "prepare": "husky"
   },
   "lint-staged": {
     "packages/desktop/src/**/*.{ts,vue}": [

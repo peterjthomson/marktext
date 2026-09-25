@@ -325,9 +325,3 @@ pnpm omm:deltas --check    # fail on undocumented divergence (CI)
 - Run `pnpm run lint` before submitting.
 - All PRs must pass CI before merge.
 - See `.github/CONTRIBUTING.md` for the full contributing guide.
-
-## Release verification
-
-Follow `docs/omm/RELEASE-PROTOCOL.md` and `scripts/release/LOCAL-COMPUTER-USE.md`.
-Use the final extracted signed package for the native walkthrough. Run the
-shared script checks with `python3 -m unittest discover -s scripts/release -p "test_*.py"`.
