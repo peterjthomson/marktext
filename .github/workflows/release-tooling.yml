@@ -1,0 +1,17 @@
+name: Release tooling
+on:
+  pull_request:
+    paths: ['scripts/release/**', '.github/workflows/release-tooling.yml']
+  push:
+    paths: ['scripts/release/**', '.github/workflows/release-tooling.yml']
+permissions:
+  contents: read
+jobs:
+  release-tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s scripts/release -p 'test_*.py'

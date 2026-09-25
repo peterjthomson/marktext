@@ -56,8 +56,6 @@ extraResources:
       - '!locales/**/!(*.min).json'
 npmRebuild: false
 afterPack: build/validate-native-modules.cjs
-# Notarizes + staples the DMG itself; mac.notarize only covers the .app.
-afterAllArtifactBuild: build/notarize-dmg.cjs
 electronLanguages: # Keep Chromium/AppKit locales for the UI languages MarkText supports
   # Values must cover both spellings: "xx-YY" .pak files on Windows/Linux and
   # "xx_YY" .lproj bundles on macOS. Keeping them lets OS-provided strings
@@ -146,12 +144,8 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   icon: static/oh-my-marktext/icon.icns
-  # Notarization is a first-class product feature for Oh My Marktext: colleagues
-  # must be able to open the DMG without `xattr -cr`. Requires APPLE_ID,
-  # APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID in the environment. Local
-  # builds with no Developer ID in the keychain skip signing (and therefore
-  # notarization) with a warning rather than failing.
-  notarize: true
+  # OMM: release notarization is detached; see docs/omm/RELEASE-PROTOCOL.md.
+  notarize: false
   target:
     - dmg
     - zip
@@ -159,8 +153,7 @@ dmg:
   artifactName: 'oh-my-marktext-mac-${arch}-${version}.${ext}'
   # electron-builder leaves DMGs unsigned by default, which makes Gatekeeper
   # reject the downloaded disk image ("no usable signature") even though the
-  # app inside is notarized. Sign it, then afterAllArtifactBuild notarizes and
-  # staples it.
+  # app inside is notarized. The detached release stage notarizes and staples it.
   sign: true
   contents:
     - x: 410

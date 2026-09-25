@@ -55,47 +55,20 @@ jobs:
             exit 1
           fi
 
-  # Windows and Linux need no signing secrets, so they must never be gated on
-  # the macOS Apple credentials. Build the matrix dynamically: mac is included
-  # only when the signing secrets exist, because an unsigned mac build is worse
-  # than no mac build for this fork — the whole point is a Gatekeeper-clean
-  # install. When mac is excluded the release still ships win/linux.
-  #
-  # Intel mac (x64) is intentionally absent: Apple has ended the Intel
-  # transition and arm64 is the only mac target we publish.
+  # macOS is prepared locally with detached notarization, then added to the draft.
   preflight:
     name: Resolve build matrix
     needs: validate
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.resolve.outputs.matrix }}
-      mac_signing: ${{ steps.resolve.outputs.mac_signing }}
     steps:
       - id: resolve
-        env:
-          MAC_CERTS: ${{ secrets.MAC_CERTS }}
-          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           entries='{"name":"linux","os":"ubuntu-22.04","platform":"linux"}'
           entries="$entries"',{"name":"windows-x64","os":"windows-latest","platform":"windows","arch":"x64"}'
           entries="$entries"',{"name":"windows-arm64","os":"windows-11-arm","platform":"windows","arch":"arm64"}'
 
-          mac_signing=false
-          if [[ -n "$MAC_CERTS" && -n "$MAC_CERTS_PASSWORD" && -n "$APPLE_ID" \
-                && -n "$APPLE_APP_SPECIFIC_PASSWORD" && -n "$APPLE_TEAM_ID" ]]; then
-            mac_signing=true
-            entries="$entries"',{"name":"macos-arm64","os":"macos-15","platform":"macos","arch":"arm64"}'
-          else
-            echo "::warning::macOS signing secrets absent — skipping the mac build. \
-          Windows and Linux will still be released. Build and attach the signed mac \
-          artifacts separately, or set MAC_CERTS, MAC_CERTS_PASSWORD, APPLE_ID, \
-          APPLE_APP_SPECIFIC_PASSWORD and APPLE_TEAM_ID."
-          fi
-
-          echo "mac_signing=$mac_signing" >> "$GITHUB_OUTPUT"
           echo "matrix=[$entries]" >> "$GITHUB_OUTPUT"
 
   build:
@@ -149,12 +122,6 @@ jobs:
           restore-keys: |
             electron-${{ matrix.os }}-
 
-      # Must be set before postinstall runs electron-rebuild
-      - name: Set C++20 for MacOS
-        if: matrix.platform == 'macos'
-        run: |
-          echo "CXXFLAGS=-std=gnu++20 -stdlib=libc++" >> $GITHUB_ENV
-
       # Run the full postinstall: Electron binary download, patch-package,
       # electron-rebuild, and minify-locales.
       - name: Run postinstall
@@ -169,34 +136,6 @@ jobs:
         run: pnpm run build:linux
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Mac builds are signed with a Developer ID Application certificate and
-      # notarized by Apple, so Gatekeeper accepts them without any user-side
-      # xattr workaround. Notarization can take up to ~30 minutes.
-      #
-      # The signing identity must be authorised for the appId in
-      # electron-builder.yml (com.peterjthomson.ohmy-marktext).
-      #
-      # Per-arch script: electron-builder's --arm64/--x64 flags are additive
-      # over the config's arch list, so electron-builder.yml must not pin
-      # mac.target arches for the flag to actually restrict the build to a
-      # single arch.
-      # The `preflight` job owns the signing-secret check: mac is only in the
-      # matrix when all five secrets exist, so reaching this step means signing
-      # is configured.
-      - name: build-mac
-        if: matrix.platform == 'macos'
-        run: pnpm run build:mac:${{ matrix.arch }}
-        timeout-minutes: 60
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Code signing: MAC_CERTS is the base64-encoded Developer ID .p12
-          CSC_LINK: ${{ secrets.MAC_CERTS }}
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
-          # Notarization (electron-builder reads these for mac.notarize: true)
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
       - name: build-win
         if: matrix.platform == 'windows'

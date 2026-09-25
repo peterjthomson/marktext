@@ -24,21 +24,21 @@ marked one-line hook in the upstream file, a spec in
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Language | TypeScript 5.9 (strict mode) — `packages/muyajs/` is legacy JS, no longer referenced |
-| Desktop shell | Electron 42 |
-| Build system | electron-vite 5 |
-| Packaging | electron-builder 26 |
-| Frontend framework | Vue 3 |
-| State management | Pinia 3 |
-| Routing | Vue Router 4 |
-| UI library | Element Plus |
-| Unit tests | Vitest 4 |
-| E2E tests | Playwright |
-| Package manager | pnpm >=10 workspace (`packageManager: pnpm@10.33.4`) |
-| Repo layout | pnpm monorepo — see Directory Structure |
-| Node.js minimum | >=20.19.0 (PR CI: Node 22.21.1 · release CI: Node 24.14.1) |
+| Layer              | Technology                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| Language           | TypeScript 5.9 (strict mode) — `packages/muyajs/` is legacy JS, no longer referenced |
+| Desktop shell      | Electron 42                                                                          |
+| Build system       | electron-vite 5                                                                      |
+| Packaging          | electron-builder 26                                                                  |
+| Frontend framework | Vue 3                                                                                |
+| State management   | Pinia 3                                                                              |
+| Routing            | Vue Router 4                                                                         |
+| UI library         | Element Plus                                                                         |
+| Unit tests         | Vitest 4                                                                             |
+| E2E tests          | Playwright                                                                           |
+| Package manager    | pnpm >=10 workspace (`packageManager: pnpm@10.33.4`)                                 |
+| Repo layout        | pnpm monorepo — see Directory Structure                                              |
+| Node.js minimum    | >=20.19.0 (PR CI: Node 22.21.1 · release CI: Node 24.14.1)                           |
 
 ## Directory Structure
 
@@ -305,13 +305,13 @@ See `packages/website/content/docs/dev/IPC.md` for conventions and examples.
 
 `docs/omm/EXTENSIONS.md` is the source of truth. In short:
 
-| Path | Contents |
-|---|---|
-| `packages/desktop/src/common/omm/` | `brand.ts` (product identity), `lightTouch.ts` (pure save merge) |
-| `packages/desktop/src/main/keyboard/omm/` | keybinding overrides applied to upstream keymaps on export |
-| `packages/desktop/src/renderer/src/omm/` | Light Touch save wiring, save spinner, trashed-tab closing |
-| `packages/desktop/test/unit/specs/omm/` | fork specs and drift guards |
-| `docs/omm/` | extension-layer conventions, ledger, signing/release |
+| Path                                      | Contents                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------- |
+| `packages/desktop/src/common/omm/`        | `brand.ts` (product identity), `lightTouch.ts` (pure save merge) |
+| `packages/desktop/src/main/keyboard/omm/` | keybinding overrides applied to upstream keymaps on export       |
+| `packages/desktop/src/renderer/src/omm/`  | Light Touch save wiring, save spinner, trashed-tab closing       |
+| `packages/desktop/test/unit/specs/omm/`   | fork specs and drift guards                                      |
+| `docs/omm/`                               | extension-layer conventions, ledger, signing/release             |
 
 ```bash
 pnpm omm:deltas            # report fork deltas against the upstream base
@@ -325,3 +325,9 @@ pnpm omm:deltas --check    # fail on undocumented divergence (CI)
 - Run `pnpm run lint` before submitting.
 - All PRs must pass CI before merge.
 - See `.github/CONTRIBUTING.md` for the full contributing guide.
+
+## Release verification
+
+Follow `docs/omm/RELEASE-PROTOCOL.md` and `scripts/release/LOCAL-COMPUTER-USE.md`.
+Use the final extracted signed package for the native walkthrough. Run the
+shared script checks with `python3 -m unittest discover -s scripts/release -p "test_*.py"`.
