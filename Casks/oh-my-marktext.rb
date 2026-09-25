@@ -1,6 +1,6 @@
 cask "oh-my-marktext" do
-  version "0.20.0-omm.3"
-  sha256 "bea5e0db900e49e3f55f8034e1011351b7559ab3e63e1ae70d0650cf163270fd"
+  version "0.20.0-omm.4"
+  sha256 "337dbf94b137c2a857b67d6fb91e7e5553c1ce0d5aade89922c747b733f4a953"
 
   url "https://github.com/peterjthomson/marktext/releases/download/v#{version}/oh-my-marktext-mac-arm64-#{version}.dmg"
   name "Oh My Marktext"
