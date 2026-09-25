@@ -20,7 +20,7 @@ workaround, not the tooling, broke the release.
 
 So: never block on Apple, and never hand-assemble an artifact.
 
-## The five stages
+## The six stages
 
 Each stage is idempotent and independently re-runnable. State lives on disk, so
 a stage can be resumed tomorrow without redoing the one before it.
@@ -106,6 +106,19 @@ stages 2–5 remove.
 
 | Repo      | Build                                   | Notarizes                                                                                       | Publishes                                          |
 | --------- | --------------------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| marktext  | `pnpm build:mac:arm64`                  | electron-builder (`notarize: true`) + `build/notarize-dmg.cjs` for the DMG                      | CI publishes win/linux; mac uploaded after stage 5 |
+| marktext  | `pnpm build:mac:arm64`                  | electron-builder (`notarize: true`) + `build/notarize-dmg.cjs` for the DMG                      | CI stages win/linux in a draft; add verified mac assets, then publish |
 | ledger    | `npm run build:mac:arm64`               | **should** use stages 2–4; `scripts/notarize.js` is currently dead code (no `afterSign` wiring) | manual upload                                      |
 | year-view | `xcodebuild archive` + `-exportArchive` | stages 2–4 on the exported zip                                                                  | manual upload                                      |
+
+## Completing a Marktext release
+
+Tag the merged release commit. The tag workflow builds and tests Windows/Linux
+packages and leaves a draft GitHub release. Add the locally signed macOS DMG,
+ZIP, blockmaps and `latest-mac.yml` after stage 5 passes. Regenerate
+`SHA256SUMS.txt` from **all** staged release assets, including updater feeds.
+Download the draft assets again, compare every checksum and run stage 5 on the
+downloaded Mac artifacts before publishing the draft. Never publish a partial
+release and rely on adding Mac assets afterwards; immutable releases forbid it.
+
+After publication, update the Homebrew cask version and DMG SHA-256 to the
+published download. Existing release tags and assets must not be replaced.

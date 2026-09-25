@@ -230,7 +230,7 @@ jobs:
             dist/*.tar.gz
 
   release:
-    name: Publish GitHub Release
+    name: Stage GitHub Release
     needs: build
     # Only a tag push publishes. A workflow_dispatch run is for producing
     # artifacts against an existing tag (e.g. adding win/linux to a release
@@ -310,8 +310,8 @@ jobs:
 
       # Immutable-release repos forbid adding assets to an already-published
       # release, and action-gh-release publishes before uploading the assets.
-      # Create the release as a draft (assets allowed), then promote it to a
-      # published release in the next step.
+      # Keep the release draft until locally signed macOS assets and the final
+      # complete checksum manifest have been uploaded and verified.
       - name: Create draft release with assets
         uses: softprops/action-gh-release@v2.6.2
         with:
@@ -331,7 +331,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Promote draft to published release
-        run: gh release edit "${GITHUB_REF_NAME}" --draft=false --repo "${GITHUB_REPOSITORY}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Report draft readiness
+        run: echo "Release staged. Add verified signed macOS assets, regenerate SHA256SUMS.txt for every asset, then publish the draft."
