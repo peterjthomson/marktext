@@ -62,9 +62,13 @@ jobs:
       - name: OpenNext Cloudflare build
         run: pnpm --filter marktext-website run cf:build
 
+      - name: Note deployment is not configured
+        if: env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == ''
+        run: echo "::notice::Website validation completed; deployment skipped because Cloudflare credentials are not configured."
+
       # ---- Production deploy: develop push ----
       - name: Deploy (production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
         run: pnpm --filter marktext-website exec wrangler deploy
 
       # ---- Preview deploy: pull_request ----
@@ -78,7 +82,7 @@ jobs:
       # notice on the PR rather than failing the build.
       - name: Deploy preview
         id: preview
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
         working-directory: packages/website
         run: |
           set +e
@@ -122,6 +126,13 @@ jobs:
             echo "Could not parse a preview URL or version ID from wrangler output" >&2
             exit 1
           fi
+
+      # Fork PRs cannot access repository secrets, so the wrangler upload above
+      # is skipped for them. Report why via a notice (which needs no PR-write
+      # token) instead of leaving the run looking silently incomplete.
+      - name: Note preview skipped for forks
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: echo "::notice::Website preview deploy skipped for fork PRs — Cloudflare deploy secrets are not exposed to pull requests from forks. The build, lint, and type-check steps above still validate this change."
 
       - name: Comment preview URL on PR
         if: github.event_name == 'pull_request' && steps.preview.outputs.result == 'ok'

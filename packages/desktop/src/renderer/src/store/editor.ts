@@ -30,9 +30,11 @@ import {
 } from '../omm/lightTouchSave'
 import { beginSaveSpinner, clearSaveSpinner } from '../omm/savingSpinner'
 import { tabsUnderTrashedPath } from '../omm/trashedTabs'
+import { confirmDocumentSaved, markDocumentUnsaved, getContentSaveState } from '../omm/saveState' // OMM
 import type {
   IFileState,
   FileNotification,
+  FileWordCount,
   LineEnding,
   MarkdownDocument,
   PageOptions,
@@ -152,6 +154,9 @@ export interface EditorState {
   toc: TocTreeNode[]
   // OMM: true while a manual save is in flight, so the title bar can show a spinner.
   isSaving: boolean
+  // Heading the cursor is inside, for the TOC highlight; null above the first.
+  activeHeadingSlug: string | null
+  selectionWordCount: FileWordCount | null
 }
 
 const autoSaveTimers = new Map<string, ReturnType<typeof setTimeout>>()
@@ -163,10 +168,35 @@ export const useEditorStore = defineStore('editor', {
     tabIdToIndex: {},
     listToc: [], // Used for equal check and for searching for the correct github-slug to jump to
     toc: [],
-    isSaving: false
+    isSaving: false,
+    activeHeadingSlug: null,
+    selectionWordCount: null
   }),
 
+  getters: {
+    /** Title for an exported file: the shallowest of the first few headings. */
+    documentTitle(state): string {
+      const { listToc } = state
+      if (!listToc || listToc.length === 0) return ''
+
+      let headerRef: TocItem | undefined = listToc[0]
+      const len = Math.min(listToc.length, 6)
+      for (let i = 1; i < len; ++i) {
+        if (headerRef?.lvl === 1) break
+        const header = listToc[i]
+        if (header && headerRef && (headerRef.lvl ?? 0) > (header.lvl ?? 0)) {
+          headerRef = header
+        }
+      }
+      return headerRef?.content ?? ''
+    }
+  },
+
   actions: {
+    SET_SELECTION_WORD_COUNT(wordCount: FileWordCount | null): void {
+      this.selectionWordCount = wordCount
+    },
+
     updateTabIdToIndex(): void {
       this.tabIdToIndex = this.tabs.reduce<Record<string, number>>((map, tab, index) => {
         map[tab.id] = index
@@ -210,6 +240,7 @@ export const useEditorStore = defineStore('editor', {
         s.tabIdToIndex = {}
         s.listToc = []
         s.toc = []
+        s.selectionWordCount = null
       })
 
       this.updateTabIdToIndex()
@@ -372,6 +403,7 @@ export const useEditorStore = defineStore('editor', {
 
       // Update file content and restore some entries.
       Object.assign(tab, newFileState)
+      confirmDocumentSaved(tab) // OMM: explicitly accepted disk content is clean.
       tab.id = oldId
       tab.notifications = oldNotifications
       tab.scrollTop = oldScrollTop
@@ -417,29 +449,34 @@ export const useEditorStore = defineStore('editor', {
     FORMAT_LINK_CLICK({ data, dirname }: FormatLinkClickPayload): void {
       // Check if the link starts with a #, that is a local anchor link.
       if (data.href && data.href[0] === '#') {
-        const anchorSlug = data.href.substring(1)
-        if (!anchorSlug) return
-
-        // Find the block with the anchor slug from the TOC
-        for (const item of this.listToc) {
-          if (item.githubSlug === anchorSlug) {
-            // Scroll to the corresponding element that matches this github-slug
-            bus.emit('scroll-to-header', item.slug)
-            return
-          }
-        }
-
-        // Fall back to a non-heading target: a custom `<a id="...">` (or any
-        // element with a matching id) rendered in the document.
-        const anchorElement = document.getElementById(anchorSlug)
-        if (anchorElement) {
-          bus.emit('scroll-to-anchor-element', anchorElement)
-        }
-
+        this.SCROLL_TO_ANCHOR(data.href.substring(1))
         return
       }
 
       window.electron.ipcRenderer.send('mt::format-link-click', { data, dirname })
+    },
+
+    SCROLL_TO_ANCHOR(anchor: string): void {
+      let anchorSlug = anchor
+      try {
+        anchorSlug = decodeURIComponent(anchor)
+      } catch {
+        // Not valid percent-encoding (e.g. `#100%`): match it as written.
+      }
+      if (!anchorSlug) return
+
+      const heading = this.listToc.find((item) => item.githubSlug === anchorSlug)
+      if (heading) {
+        bus.emit('scroll-to-header', heading.slug)
+        return
+      }
+
+      // Fall back to a non-heading target: a custom `<a id="...">` (or any
+      // element with a matching id) rendered in the document.
+      const anchorElement = document.getElementById(anchorSlug)
+      if (anchorElement) {
+        bus.emit('scroll-to-anchor-element', anchorElement)
+      }
     },
 
     LISTEN_SCREEN_SHOT(): void {
@@ -609,7 +646,8 @@ export const useEditorStore = defineStore('editor', {
           window.DIRNAME = window.path.dirname(pathname)
         }
         if (tab) {
-          Object.assign(tab, { filename, pathname, isSaved: true })
+          Object.assign(tab, { filename, pathname })
+          confirmDocumentSaved(tab) // OMM
           promoteSaveBaseline(tab, !!pathname) // OMM
           debouncedSendBufferedState()
         }
@@ -630,7 +668,7 @@ export const useEditorStore = defineStore('editor', {
               tab.lastSavedHistoryId = entry.id
             }
           }
-          tab.isSaved = true
+          confirmDocumentSaved(tab) // OMM
           promoteSaveBaseline(tab) // OMM
           debouncedSendBufferedState()
         }
@@ -651,7 +689,7 @@ export const useEditorStore = defineStore('editor', {
           return
         }
 
-        tab.isSaved = false
+        markDocumentUnsaved(tab) // OMM
         discardSaveBaseline(tab) // OMM
         clearSaveSpinner(this) // OMM
         this.pushTabNotification({
@@ -850,7 +888,10 @@ export const useEditorStore = defineStore('editor', {
         }
         window.DIRNAME = pathname ? window.path.dirname(pathname) : ''
         this.currentFile = currentFile
+        this.selectionWordCount = null
         didUpdateCurrentFile = true
+        // Slugs belong to the old document; the next selection-change re-seeds.
+        this.activeHeadingSlug = null
 
         if (!this.tabs.some((file) => file.id === currentFile.id)) {
           this.tabs.push(currentFile)
@@ -1015,8 +1056,8 @@ export const useEditorStore = defineStore('editor', {
       window.electron.ipcRenderer.on('mt::switch-tab-by-index', (_, index) => {
         this.SWITCH_TAB_BY_INDEX(index)
       })
-      window.electron.ipcRenderer.on('mt::switch-tab-by-file_path', (_, filePath) => {
-        this.SWITCH_TAB_BY_FILEPATH(filePath)
+      window.electron.ipcRenderer.on('mt::switch-tab-by-file_path', (_, filePath, options) => {
+        this.SWITCH_TAB_BY_FILEPATH(filePath, options)
       })
     },
 
@@ -1040,6 +1081,7 @@ export const useEditorStore = defineStore('editor', {
         const fileState: IFileState | null =
           this.tabs[index] ?? this.tabs[index - 1] ?? this.tabs[0] ?? null
         this.currentFile = fileState
+        this.selectionWordCount = null
         if (fileState && typeof fileState.markdown === 'string') {
           const { id, markdown, cursor, history, pathname, scrollTop, blocks, muyaIndexCursor } =
             fileState
@@ -1135,6 +1177,7 @@ export const useEditorStore = defineStore('editor', {
         this.tabs.splice(index, 1)
         if (this.currentFile?.id === id) {
           this.currentFile = null
+          this.selectionWordCount = null
           window.DIRNAME = ''
           if (tabIdList.length === 1) {
             tabIndex = index
@@ -1147,6 +1190,7 @@ export const useEditorStore = defineStore('editor', {
       if (this.currentFile == null && this.tabs.length > 0) {
         this.currentFile =
           this.tabs[tabIndex] ?? this.tabs[tabIndex - 1] ?? this.tabs[0] ?? null
+        this.selectionWordCount = null
         if (this.currentFile && typeof this.currentFile.markdown === 'string') {
           const { id, markdown, cursor, history, pathname, scrollTop, blocks, muyaIndexCursor } =
             this.currentFile
@@ -1235,7 +1279,7 @@ export const useEditorStore = defineStore('editor', {
       this.UPDATE_CURRENT_FILE(nextTab)
     },
 
-    SWITCH_TAB_BY_FILEPATH(filePath: string): void {
+    SWITCH_TAB_BY_FILEPATH(filePath: string, options: TabOptions = {}): void {
       const { tabs } = this
 
       if (!filePath) {
@@ -1249,7 +1293,9 @@ export const useEditorStore = defineStore('editor', {
         return
       }
       const next = tabs[nextTabIndex]
-      if (next) this.UPDATE_CURRENT_FILE(next)
+      if (!next) return
+      this.UPDATE_CURRENT_FILE(next)
+      if (options.anchor) this.SCROLL_TO_ANCHOR(options.anchor)
     },
 
     SWITCH_TAB_BY_INDEX(nextTabIndex: number): void {
@@ -1335,6 +1381,7 @@ export const useEditorStore = defineStore('editor', {
       )
       if (existingTab) {
         this.UPDATE_CURRENT_FILE(existingTab)
+        if (options.anchor) this.SCROLL_TO_ANCHOR(options.anchor)
         return
       }
 
@@ -1364,6 +1411,7 @@ export const useEditorStore = defineStore('editor', {
       if (selected) {
         this.UPDATE_CURRENT_FILE(docState)
         bus.emit('file-loaded', { id, markdown, cursor })
+        if (options.anchor) this.SCROLL_TO_ANCHOR(options.anchor)
       } else {
         this.tabs.push(docState)
         this.updateTabIdToIndex()
@@ -1397,7 +1445,7 @@ export const useEditorStore = defineStore('editor', {
       let didUpdateSaveStatus = false
       this.tabs.forEach((f) => {
         if (f.pathname === pathname) {
-          f.isSaved = false
+          markDocumentUnsaved(f) // OMM
           didUpdateSaveStatus = true
         }
       })
@@ -1420,6 +1468,14 @@ export const useEditorStore = defineStore('editor', {
     UPDATE_TOC(toc: TocItem[]): void {
       this.listToc = toc ?? []
       this.toc = listToTree<TocItem>(toc ?? [])
+      // Every caller replaces the whole document, so the old slug is gone.
+      this.activeHeadingSlug = null
+    },
+
+    SET_ACTIVE_HEADING(slug: string | null): void {
+      if (this.activeHeadingSlug !== slug) {
+        this.activeHeadingSlug = slug
+      }
     },
 
     // Content change from realtime preview editor and source code editor
@@ -1484,8 +1540,12 @@ export const useEditorStore = defineStore('editor', {
         (lastEditIndex === -1 &&
           tab.lastSavedHistoryId !== -1 &&
           tab.lastSavedHistoryId !== tab.history.lastInitIndex) // Edge Case: Undo to original content (lastEditIndex === -1) after saving means we cant use the lastEditIndex. Compare it against the lastInitIndex instead.
-      const isDirty = history === undefined ? markdown !== oldMarkdown : historyMarksDirty
-      if (isDirty) {
+      // OMM: source undo and non-text changes share one save-state policy.
+      const saveState = getContentSaveState(
+        tab, adjustTrailingNewlines(oldMarkdown, trimTrailingNewline), markdown,
+        history === undefined ? undefined : historyMarksDirty
+      )
+      if (saveState === 'dirty') {
         tab.isSaved = false
         if (pathname && autoSave) {
           const options = getOptionsFromState(tab)
@@ -1497,7 +1557,7 @@ export const useEditorStore = defineStore('editor', {
             options
           })
         }
-      } else if (history !== undefined && tab.lastSavedHistoryId !== -1) {
+      } else if (saveState === 'clean') {
         // Check here is to prevent it from overriding a restored .isSaved state
         tab.isSaved = true // An undo can trigger this
       }
@@ -1585,25 +1645,10 @@ export const useEditorStore = defineStore('editor', {
     EXPORT({ type, content, pageOptions }: ExportPayload): void {
       if (this.currentFile === null) return
 
-      let title = ''
-      const { listToc } = this
-      if (listToc && listToc.length > 0) {
-        let headerRef: TocItem | undefined = listToc[0]
-        const len = Math.min(listToc.length, 6)
-        for (let i = 1; i < len; ++i) {
-          if (headerRef?.lvl === 1) break
-          const header = listToc[i]
-          if (header && headerRef && (headerRef.lvl ?? 0) > (header.lvl ?? 0)) {
-            headerRef = header
-          }
-        }
-        title = headerRef?.content ?? ''
-      }
-
       const { filename, pathname } = this.currentFile
       window.electron.ipcRenderer.send('mt::response-export', {
         type: type as ExportPayload['type'] as never,
-        title,
+        title: this.documentTitle,
         content: content ?? '',
         filename,
         pathname,
@@ -1611,15 +1656,35 @@ export const useEditorStore = defineStore('editor', {
       })
     },
 
+    // Reads `currentFile.markdown` after a flush, the way `FILE_SAVE` does: in source-code
+    // mode CodeMirror writes straight to it, so `engine.getMarkdown()` would be stale (#5379).
+    EXPORT_PANDOC(target: string): void {
+      if (this.currentFile === null) return
+
+      this.flushActiveEditor()
+      const { pathname, markdown } = this.currentFile
+      const preferencesStore = usePreferencesStore()
+      window.electron.ipcRenderer.send('mt::response-pandoc-export', {
+        target,
+        markdown,
+        superSubScript: preferencesStore.superSubScript === true,
+        footnote: preferencesStore.footnote === true,
+        title: this.documentTitle,
+        pathname
+      })
+    },
+
     LISTEN_FOR_EXPORT_SUCCESS(): void {
       window.electron.ipcRenderer.on('mt::export-success', (_, payload) => {
         const filePath = payload?.filePath ?? ''
+        const name = window.path.basename(filePath)
         notice
           .notify({
             title: t('store.editor.exportSuccessTitle'),
-            message: t('store.editor.exportSuccessMessage', {
-              name: window.path.basename(filePath)
-            }),
+            // The plain-text formats leave images as links, which look broken once shared.
+            message: payload?.linksMedia
+              ? t('store.editor.exportLinkedMediaMessage', { name })
+              : t('store.editor.exportSuccessMessage', { name }),
             showConfirm: true
           })
           .then(() => {
@@ -1644,7 +1709,7 @@ export const useEditorStore = defineStore('editor', {
       if (lineEnding !== oldLineEnding) {
         this.currentFile.lineEnding = lineEnding
         this.currentFile.adjustLineEndingOnSave = lineEnding !== 'lf'
-        this.currentFile.isSaved = true
+        markDocumentUnsaved(this.currentFile) // OMM
         this.UPDATE_LINE_ENDING_MENU()
         debouncedSendBufferedState()
       }
@@ -1666,7 +1731,7 @@ export const useEditorStore = defineStore('editor', {
         if (encoding !== encodingName) {
           this.currentFile.encoding.encoding = encodingName as string
           this.currentFile.encoding.isBom = false
-          this.currentFile.isSaved = true
+          markDocumentUnsaved(this.currentFile) // OMM
           debouncedSendBufferedState()
         }
       })
@@ -1678,14 +1743,13 @@ export const useEditorStore = defineStore('editor', {
         const { trimTrailingNewline } = this.currentFile
         if (trimTrailingNewline !== value) {
           this.currentFile.trimTrailingNewline = value as number
-          this.currentFile.isSaved = true
+          markDocumentUnsaved(this.currentFile) // OMM
           debouncedSendBufferedState()
         }
       })
     },
 
     LISTEN_FOR_FILE_CHANGE(): void {
-      const preferencesStore = usePreferencesStore()
       window.electron.ipcRenderer.on('mt::update-file', (_, payload) => {
         const { type, change } = payload
         const { tabs } = this
@@ -1695,7 +1759,7 @@ export const useEditorStore = defineStore('editor', {
           const { id, isSaved, filename } = tab
           switch (type) {
             case 'unlink': {
-              tab.isSaved = false
+              markDocumentUnsaved(tab) // OMM
               this.pushTabNotification({
                 tabId: id,
                 msg: t('store.editor.fileRemovedOnDisk', { name: filename }),
@@ -1716,21 +1780,22 @@ export const useEditorStore = defineStore('editor', {
                 break
               }
 
-              const { autoSave } = preferencesStore
-              if (autoSave) {
+              // The tab holds no local edits, so reloading discards nothing and
+              // needs no confirmation (#3652). Deliberately independent of
+              // autoSave: that writes our buffer back to disk and would
+              // overwrite whichever editor produced this change.
+              if (isSaved) {
                 if (autoSaveTimers.has(id)) {
                   const timer = autoSaveTimers.get(id)
                   if (timer) clearTimeout(timer)
                   autoSaveTimers.delete(id)
                 }
 
-                if (isSaved) {
-                  this.loadChange(change as unknown as FileChangePayload)
-                  return
-                }
+                this.loadChange(change as unknown as FileChangePayload)
+                return
               }
 
-              tab.isSaved = false
+              markDocumentUnsaved(tab) // OMM
               this.pushTabNotification({
                 tabId: id,
                 msg: t('store.editor.fileChangedOnDisk', { name: filename }),

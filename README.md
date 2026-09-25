@@ -36,7 +36,7 @@ Oh My Marktext (OMM) is a **long-running sister fork** of [MarkText](https://git
 
 It is **not** a replacement for MarkText and **not** a claim that upstream is unmaintained. Upstream does the engine work; this fork carries a small set of packaging and workflow changes that upstream has not adopted. Where a change is generally useful, the goal is to send it upstream as a community PR rather than hold it here.
 
-**Current base:** [MarkText `v0.20.0-rc.1`](https://github.com/marktext/marktext/releases/tag/v0.20.0-rc.1)
+**Current base:** [MarkText `v0.20.0-rc.6`](https://github.com/marktext/marktext/releases/tag/v0.20.0-rc.6)
 
 ### Why it exists
 
@@ -84,7 +84,16 @@ All binaries can be downloaded from the [release page](https://github.com/peterj
 
 #### macOS
 
-Requires macOS 11 (Big Sur) or later. Download `oh-my-marktext-mac-(arm64|x64)-%version%.dmg`, open it, and drag the app to Applications. Builds are signed and notarized with a Developer ID certificate, so Gatekeeper lets them run without any Terminal workaround.
+The current release requires macOS 12 (Monterey) or later on Apple Silicon. Download `oh-my-marktext-mac-arm64-%version%.dmg`, open it, and drag the app to Applications. Builds are signed and notarized with a Developer ID certificate, so Gatekeeper lets them run without any Terminal workaround.
+
+On Apple Silicon, you can also install with Homebrew:
+
+```bash
+brew tap peterjthomson/marktext https://github.com/peterjthomson/marktext
+brew install --cask peterjthomson/marktext/oh-my-marktext
+```
+
+The cask uses the signed release DMG. The current release does not include an Intel Mac build.
 
 #### Windows
 

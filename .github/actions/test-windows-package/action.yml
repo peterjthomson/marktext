@@ -1,0 +1,22 @@
+name: Test Windows release ZIP
+description: Extract the release ZIP and launch its packaged executable
+inputs:
+  arch:
+    description: Windows architecture (x64 or arm64)
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Extract and launch Windows ZIP
+      shell: pwsh
+      env:
+        MARKTEXT_PACKAGE_ARCH: ${{ inputs.arch }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $version = (Get-Content packages/desktop/package.json | ConvertFrom-Json).version
+        $zip = "dist/oh-my-marktext-win-$env:MARKTEXT_PACKAGE_ARCH-$version.zip"
+        $destination = Join-Path $env:RUNNER_TEMP "marktext-package-$env:MARKTEXT_PACKAGE_ARCH"
+        Expand-Archive -LiteralPath $zip -DestinationPath $destination -Force
+        $env:MARKTEXT_SMOKE_EXECUTABLE = Join-Path $destination 'oh-my-marktext.exe'
+        pnpm --filter marktext test:packaged
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

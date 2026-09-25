@@ -46,39 +46,42 @@ test.describe('External disk reload — undo restores the pre-change document', 
   // first Ctrl+Z after an external reload restored it. The @muyajs/core reload
   // path must record the same single invertible undo boundary (via
   // `Muya.replaceContent`) instead of `setContent` (which clears history).
-  test('first undo after an external reload restores the old content', async() => {
-    const { app, page, filePath } = await launchWithMarkdown('old content here\n')
-    await waitForMenuReady(app)
+  // OMM: raw disk formatting can differ from the engine's serialization.
+  for (const newMarkdown of ['new content here\n', 'Reloaded title\n==============\n\n\nnew content here\n']) {
+    test(`external reload stays clean and undo restores content: ${newMarkdown.split('\n')[0]}`, async() => {
+      const { app, page, filePath } = await launchWithMarkdown('old content here\n')
+      await waitForMenuReady(app)
 
-    // Auto-reload only applies silently when autoSave is on AND the tab is
-    // unmodified (a freshly-loaded tab is saved). Enable autoSave so the change
-    // applies without the manual "Reload" confirmation prompt.
-    await sendIpcToRenderer(app, 'mt::user-preference', { autoSave: true })
-    await page.waitForTimeout(100)
+      // Auto-reload only applies silently when autoSave is on AND the tab is
+      // unmodified (a freshly-loaded tab is saved). Enable autoSave so the change
+      // applies without the manual "Reload" confirmation prompt.
+      await sendIpcToRenderer(app, 'mt::user-preference', { autoSave: true })
+      await page.waitForTimeout(100)
 
-    await reportExternalChange(app, filePath, 'new content here\n')
-    await page.waitForTimeout(600)
+      await reportExternalChange(app, filePath, newMarkdown)
+      await page.waitForTimeout(600)
 
-    // The tab now reflects the new on-disk content...
-    expect((await getMarkdownContent(page, app)).trim()).toBe('new content here')
-    // ...and stays clean: the reloaded content matches the file on disk, so the
-    // tab must NOT be flagged unsaved (replaceContent fires a json-change that
-    // would otherwise mark it dirty against the stale baseline).
-    expect(await page.evaluate(() => !!document.querySelector('.editor-tabs li.unsaved'))).toBe(
-      false
-    )
+      // The tab now reflects the new on-disk content...
+      expect((await getMarkdownContent(page, app)).trim()).toContain('new content here')
+      // ...and stays clean: the reloaded content matches the file on disk, so the
+      // tab must NOT be flagged unsaved (replaceContent fires a json-change that
+      // would otherwise mark it dirty against the stale baseline).
+      expect(await page.evaluate(() => !!document.querySelector('.editor-tabs li.unsaved'))).toBe(
+        false
+      )
 
-    // The first undo reverts the external change in one step, back to the
-    // document as it was before the reload.
-    await undo(app)
-    await page.waitForTimeout(600)
-    expect((await getMarkdownContent(page, app)).trim()).toBe('old content here')
-    // The undone document now diverges from on-disk content, so the tab is dirty.
-    await expect
-      .poll(() => page.evaluate(() => !!document.querySelector('.editor-tabs li.unsaved')))
-      .toBe(true)
-    await app.close()
-  })
+      // The first undo reverts the external change in one step, back to the
+      // document as it was before the reload.
+      await undo(app)
+      await page.waitForTimeout(600)
+      expect((await getMarkdownContent(page, app)).trim()).toBe('old content here')
+      // The undone document now diverges from on-disk content, so the tab is dirty.
+      await expect
+        .poll(() => page.evaluate(() => !!document.querySelector('.editor-tabs li.unsaved')))
+        .toBe(true)
+      await app.close()
+    })
+  }
 })
 
 test.describe('External disk reload — source-mode scroll position survives a same-tab reload', () => {

@@ -89,6 +89,7 @@ const keybindings: Map<string, string> = new Map([
   ['window.minimize', 'Command+M'],
   ['window.toggle-always-on-top', ''],
   ['window.zoomIn', ''],
+  ['window.resetZoom', ''],
   ['window.zoomOut', ''],
   ['window.toggle-full-screen', 'Ctrl+Command+F'],
 

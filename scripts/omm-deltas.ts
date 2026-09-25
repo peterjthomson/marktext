@@ -10,17 +10,18 @@
  * Usage:
  *   pnpm omm:deltas            report
  *   pnpm omm:deltas --check    report and exit 1 on drift
- *   OMM_UPSTREAM_REF=v0.20.0 pnpm omm:deltas
+ * The upstream base is pinned in docs/omm/upstream.json, never a moving branch.
  */
 import { execFileSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { BASELINE_PATH, verifyUpstream, type UpstreamBaseline } from './omm-upstream'
 
 const __filename = fileURLToPath(import.meta.url)
 const repoRoot = path.resolve(path.dirname(__filename), '..')
 const LEDGER = 'docs/omm/EXTENSIONS.md'
-const UPSTREAM_REF = process.env.OMM_UPSTREAM_REF ?? 'upstream/develop'
+const baseline: UpstreamBaseline = JSON.parse(fs.readFileSync(path.join(repoRoot, BASELINE_PATH), 'utf8'))
 
 // Only source files carry inline markers; JSON and locale files have no comment
 // syntax to put one in.
@@ -37,13 +38,10 @@ const fail = (message: string): never => {
 
 const resolveBase = (): string => {
   try {
-    return git('merge-base', 'HEAD', UPSTREAM_REF)
-  } catch {
-    return fail(
-      `Cannot resolve "${UPSTREAM_REF}". Add the upstream remote and fetch it:\n` +
-        '  git remote add upstream https://github.com/marktext/marktext.git\n' +
-        '  git fetch upstream --tags'
-    )
+    verifyUpstream(repoRoot, baseline, process.env.OMM_PREVIOUS_REF)
+    return baseline.upstreamCommit
+  } catch (error) {
+    return fail(`${error instanceof Error ? error.message : error}. Fetch the recorded release tags and merge the pinned upstream release.`)
   }
 }
 
@@ -153,7 +151,7 @@ const main = (): void => {
   const ommModules = added.filter((f) => f.includes('/omm/')).sort()
   const otherAdded = added.filter((f) => !f.includes('/omm/')).sort()
 
-  console.log(`Upstream base: ${base.slice(0, 8)} (${UPSTREAM_REF})`)
+  console.log(`Upstream base: ${base.slice(0, 8)} (${baseline.upstreamTag})`)
   console.log(
     `\n${ommModules.length} module files · ${modified.length} modified upstream files · ` +
       `${otherAdded.length} other fork-owned files`

@@ -31,6 +31,7 @@ packages/desktop/src/main/keyboard/omm/
   keybindingOverrides.ts       accelerator overrides applied to upstream keymaps
 packages/desktop/src/renderer/src/omm/
   lightTouchSave.ts            save-path wiring and merge-baseline bookkeeping
+  saveState.ts                 clean source snapshots and non-text dirty state
   savingSpinner.ts             title-bar in-flight save indicator timing
   trashedTabs.ts               tabs affected by a sidebar "move to trash"
 packages/desktop/test/unit/specs/omm/
@@ -38,6 +39,7 @@ packages/desktop/test/unit/specs/omm/
 packages/desktop/src/renderer/src/assets/themes/
   tufte.theme.css              fork theme (+ prismjs/tufte.theme.css)
 packages/desktop/build/
+  validate-native-modules.cjs  rejects wrong-platform Windows native modules
   make-mac-icns.sh             regenerates the mac icon on Apple's 824/1024 grid
 ```
 
@@ -54,7 +56,7 @@ compares this table against the real diff and fails on anything undocumented.
 
 | File                                                               | Feature                          | What the delta is                                                                                                                                                                       | Upstreamable?                                                                                                   |
 | ------------------------------------------------------------------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `packages/desktop/src/renderer/src/store/editor.ts`                | Light Touch, save spinner, trash | Import block plus one-line calls at each save path, save-confirm and save-failure handler; `isSaving` state field; `CLOSE_TABS_FOR_TRASHED_PATH` action delegating to `omm/trashedTabs` | Trash fix yes ([#4867 candidate](https://github.com/marktext/marktext/issues)); Light Touch after it proves out |
+| `packages/desktop/src/renderer/src/store/editor.ts`                | Light Touch, save state, save spinner, trash | Import block plus save-state hooks for content, file settings, disk changes and save acknowledgements; one-line calls at each save path, save-confirm and save-failure handler; `isSaving` state field; `CLOSE_TABS_FOR_TRASHED_PATH` action delegating to `omm/trashedTabs` | Trash fix yes ([#4867 candidate](https://github.com/marktext/marktext/issues)); Light Touch after it proves out |
 | `packages/desktop/src/renderer/src/store/help.ts`                  | Light Touch                      | Baseline fields on the default document state and `initialBaseline()` in `createDocumentState`                                                                                          | With Light Touch                                                                                                |
 | `packages/desktop/src/renderer/src/store/project.ts`               | Trash                            | `.then()` on the trash IPC to close the doomed tabs                                                                                                                                     | Yes                                                                                                             |
 | `packages/desktop/src/renderer/src/store/preferences.ts`           | Light Touch                      | `lightTouch` field, default true                                                                                                                                                        | With Light Touch                                                                                                |
@@ -84,6 +86,22 @@ compares this table against the real diff and fails on anything undocumented.
 | `packages/desktop/src/renderer/src/prefComponents/theme/index.vue`  | Tufte theme  | The preview grid hardcodes a CSS block per theme, so a fork theme needs its own swatch     | Stays a patch; additive and low conflict risk |
 | `packages/desktop/static/locales/en.json`                           | All          | Upstream owns the locale files; the fork adds keys                                         | Additive, low conflict risk                   |
 
+### Fork locale fallbacks
+
+| File | Feature | What the delta is | Upstreamable? |
+| --- | --- | --- | --- |
+| `packages/desktop/static/locales/de.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/es.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/fr.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/ja.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/ko.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/nl.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/pt.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/ru.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/tr.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/zh-CN.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+| `packages/desktop/static/locales/zh-TW.json` | Fork strings | English fallbacks for the seven fork-specific labels; retain upstream locale parity | Fork-specific |
+
 ### Muya engine — patches
 
 Highest-risk category: `packages/muya` is upstream's engine rewrite and moves
@@ -95,10 +113,27 @@ fast. Keep this list short, and prefer upstream PRs over carrying a patch.
 | `packages/muya/src/ui/paragraphFrontMenu/config.ts`    | Front-menu order | "New Paragraph" leads instead of "Duplicate"                                                  | Product preference; would need to be configurable to upstream |
 | `packages/muya/src/ui/paragraphFrontMenu/index.ts`     | Front-menu order | Frontmatter filter keys off the item label rather than index 0                                | Robustness fix — send as a PR regardless of the reorder       |
 
+### Tests and developer documentation
+
+| File | Feature | What the delta is | Upstreamable? |
+| --- | --- | --- | --- |
+| `packages/desktop/src/renderer/src/components/editorWithTabs/editor.vue` | External reload | Seed clean save history from engine serialization, so disk formatting does not trigger an unsaved prompt | Yes |
+| `packages/desktop/test/e2e/external-reload-undo.spec.ts` | External reload | Verify noncanonical disk formatting stays clean and undo remains dirty | Yes |
+| `packages/desktop/test/e2e/all-blocks-roundtrip.spec.ts` | Light Touch save | Check both preserved disk formatting and the opt-out canonical serialization path | Fork-specific |
+| `packages/desktop/test/unit/specs/source-mode-dirty.spec.ts` | Save state | Source undo, real save acknowledgement, settings changes and disk reload regressions | Yes, alongside the save-state fix |
+| `packages/website/content/docs/dev/README.md` | Developer setup | Fork clone URL, platform build commands and packaged launch check | Build and test instructions yes; clone URL is fork-specific |
+| `packages/website/content/docs/dev/BUILD.md` | Build instructions | Distinguish compilation from installers; document Windows native dependencies | Yes |
+
 ### Build, CI and docs
 
+Windows builds detect the installed Visual Studio toolchain; `.npmrc` must not
+force an older version. Linux builds finish AppImage, deb, rpm and tar.gz before
+building Snap in a separate packaging invocation: electron-builder 26.15.3
+removes `chrome-sandbox` from the shared app directory while assembling Snap,
+which otherwise races the other targets.
+
 Fork-owned by definition, not tracked as deltas: `.github/workflows/*`,
-`.env.example`, `.gitignore`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`,
+`.env.example`, `.gitignore`, `.npmrc`, `eslint.config.js`, `README.md`, `CLAUDE.md`, `docs/*`, `scripts/omm-deltas.ts`, `scripts/omm-upstream.ts`,
 `packages/desktop/build/notarize-dmg.cjs`, `packages/desktop/build/refresh-update-info.cjs`,
 `packages/desktop/build/make-mac-icns.sh`, `scripts/release/*`,
 `docs/omm/RELEASE-PROTOCOL.md`,
@@ -111,20 +146,42 @@ directory or `test/unit/specs/omm/`.
 
 ## Merging an upstream release
 
+Track published upstream releases, including explicitly chosen release candidates,
+as complete baselines. Individual backports are reserved for urgent security or
+data-loss fixes. The current baseline is pinned by tag **and commit** in
+[`upstream.json`](upstream.json); `develop` is never the audit baseline.
+
 ```bash
-git fetch upstream --tags
-git checkout -b merge/upstream-<tag> main
-git merge <tag>
+git fetch upstream tag <upstream-tag>
+git switch -c codex/upstream-<version> main
+git merge --no-ff --no-commit <upstream-tag>
 ```
 
-Then, in order:
+1. Resolve conflicts, preserving the fork modules and their hooks. Remove patches
+   adopted upstream. Review clean merges too, especially save state and preferences.
+2. Update `upstream.json`: the new upstream tag and peeled commit, the previous
+   upstream commit, and the latest published fork release tag and commit. On this
+   first recorded upgrade, `previousUpstreamCommit` is the actual inherited
+   commit (`c907b29c`), which was newer than our old README's rc.1 label.
+3. Run `pnpm omm:upstream` and `pnpm omm:deltas --check`. The ratchet accepts a
+   pending merge locally; CI requires the committed branch to contain the pinned
+   release and the previous fork release. It also compares against the PR base
+   (or previous main commit), so changing the manifest cannot hide a regression.
+4. Run desktop and Muya tests, lint, typecheck, and desktop E2E. Exercise unchanged
+   and edited Light Touch saves, source undo, external reload, zoom, and trash.
+5. Keep the fork version in both package manifests synchronized and increasing
+   (`0.20.0-omm.4` for this integration). The exact upstream RC is provenance in
+   `upstream.json`, separate from the fork's update-feed version.
+6. Commit the merge and open/update the PR. **Merge the PR with a merge commit**:
+   squash/rebase merging would discard the upstream ancestry the ratchet checks.
+7. Build and verify signed installers from the approved integration. Tag the
+   approved commit, publish immutable release assets, then update the Homebrew
+   checksum to the published DMG.
 
-1. **Resolve conflicts using the markers.** Every conflicting hunk in an upstream file should contain an `OMM` marker; if one doesn't, the fork's delta was undocumented — fix that before continuing.
-2. `pnpm omm:deltas --check` — fails if a file is modified without a ledger entry, or a ledger entry no longer matches a real change (an upstream release that adopted one of our fixes shows up here).
-3. `pnpm test:unit` — the `omm/` specs are the behavioural guard; `keybinding-overrides.spec.ts` throws outright if upstream renamed a command we override.
-4. `pnpm lint && pnpm typecheck`.
-5. Smoke: open a file, save with no edits (`git status` clean), edit one paragraph (one-hunk diff), Cmd/Ctrl +/- zoom, trash a file from the sidebar and confirm the tab closes.
-6. Bump to `<upstream version>-omm.N` and update the ledger if the merge changed anything above.
+Never rebase published fork history, move release tags, or reset onto upstream.
+If an integration fails, fix it on the integration branch; keep the last working
+release available. Ancestry checks preserve history, while the fork regression
+suite preserves behavior. Both are release gates.
 
 ## Adding a new fork feature
 

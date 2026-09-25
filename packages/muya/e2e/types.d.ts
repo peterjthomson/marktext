@@ -13,6 +13,20 @@ declare global {
         // exercise the static markdown → HTML pipeline.
         MarkdownToHtml?: typeof MarkdownToHtml;
 
+        // Installed per-spec by `page.exposeFunction` when a test needs to
+        // count DOM events the page fires on its own.
+        __onCompositionStart?: () => void;
+
+        // Installed by tests/typing/codeblock-node-identity.spec.ts, which tags the
+        // nodes a block's DOM holds so a rebuild is visible as a fresh id
+        // rather than as an equal-looking node.
+        __nodeTrace?: () => {
+            /** Distinct node ids that have ever been the element's first child. */
+            firstChildIds: number[];
+            /** childList mutations observed on the element. */
+            rebuilds: number;
+        };
+
         // Test-only globals exposed by host/main.ts. Aggregated under a single
         // namespace so the real Window surface stays clean.
         __e2e?: {

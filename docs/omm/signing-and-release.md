@@ -97,6 +97,40 @@ sort -k2 /tmp/SHA256SUMS.txt -o /tmp/SHA256SUMS.txt
 gh release upload v0.20.0-omm.N /tmp/SHA256SUMS.txt --clobber
 ```
 
+### Update the Homebrew cask
+
+After publishing the verified macOS DMG, update `Casks/oh-my-marktext.rb` on
+`main` with the release version and the SHA-256 of the **final stapled DMG**.
+The cask must reference an asset that is already available to download.
+
+```bash
+shasum -a 256 dist/oh-my-marktext-mac-arm64-*.dmg
+brew style Casks/oh-my-marktext.rb
+```
+
+For a local check before merging, use a temporary tap, copy the cask into its
+`Casks` directory, then run `brew audit --cask <tap>/oh-my-marktext` and
+`brew install --cask --appdir=<temporary directory> <tap>/oh-my-marktext`.
+Remove the test installation and tap afterward. Avoid replacing an existing
+Homebrew installation during this check.
+
+The repository itself is the tap, using the custom-remote command in the root
+README. Keep the cask's architecture and minimum macOS requirement aligned with
+the shipped app's `Info.plist`; do not add an Intel download until one is shipped.
+
+### Windows package verification
+
+Both PR and release builds run the shared `test-windows-package` action after
+packaging, before uploading artifacts. It extracts the actual release ZIP and
+launches its executable on the matching Windows runner. The application must
+open a Markdown document using a fresh profile. A failed launch blocks artifact
+upload and release publication.
+
+This complements the `afterPack` check of native-module headers: the launch
+check also exercises Electron's ABI, packaged dependencies and renderer assets.
+See the [developer guide](../../packages/website/content/docs/dev/README.md#18-test-a-packaged-application)
+for local commands.
+
 ### Releases are not marked "pre-release"
 
 `-omm.N` records which upstream version this fork tracks. It is not a warning
@@ -120,7 +154,7 @@ release ever ships without them, `gh release view <tag>` showing no
 
 - `packages/desktop/electron-builder.yml` sets `mac.notarize: true`. electron-builder reads `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID` from the environment.
 - Entitlements live at `packages/desktop/build/mac/entitlements.mac.plist` (inherited from upstream — JIT, unsigned executable memory, dyld environment variables, and library validation disabled; all required by Electron).
-- `.github/workflows/release.yml` builds signed+notarized macOS artifacts on `v*` tags.
+- `.github/workflows/release.yml` builds signed+notarized macOS artifacts on `v*` tags only when signing secrets are configured; otherwise macOS is built locally as described above.
 - `.github/workflows/build.yml` is the unsigned CI smoke build; it sets `CSC_IDENTITY_AUTO_DISCOVERY: false` so it does not attempt notarization without release secrets.
 
 ## appId is load-bearing

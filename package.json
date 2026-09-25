@@ -1,6 +1,6 @@
 {
   "name": "marktext-monorepo",
-  "version": "0.20.0-omm.3",
+  "version": "0.20.0-omm.4",
   "description": "Oh My Marktext monorepo root — sister fork of MarkText",
   "private": true,
   "homepage": "https://github.com/peterjthomson/marktext",
@@ -35,14 +35,21 @@
     "typecheck:watch": "pnpm --filter marktext typecheck:watch",
     "check": "pnpm lint && pnpm typecheck",
     "omm:deltas": "tsx scripts/omm-deltas.ts",
+    "omm:upstream": "tsx scripts/omm-upstream.ts",
     "gen-third-party": "tsx scripts/generateThirdPartyLicense.ts",
-    "validate-licenses": "tsx scripts/validateLicenses.ts"
+    "validate-licenses": "tsx scripts/validateLicenses.ts",
+    "prepare": "husky"
   },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.15",
-      "esbuild@>=0.27.0 <0.28.1": "0.28.1"
-    }
+  "lint-staged": {
+    "packages/desktop/src/**/*.{ts,vue}": [
+      "eslint --fix"
+    ],
+    "packages/desktop/test/**/*.ts": [
+      "eslint --fix"
+    ],
+    "*.{json,md,yaml}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.29.7",
@@ -52,7 +59,9 @@
     "eslint-plugin-i18n-json": "^4.0.1",
     "eslint-plugin-jsonc": "^3.2.0",
     "eslint-plugin-vue": "^10.9.2",
+    "husky": "^9.1.7",
     "license-checker": "^25.0.1",
+    "lint-staged": "^17.2.0",
     "neostandard": "^0.13.0",
     "prettier": "^3.8.4",
     "tsx": "^4.22.4",
