@@ -2,8 +2,6 @@
 # ============================================================================
 # verify-mac-artifact.sh — acceptance gate for a macOS release artifact
 # ============================================================================
-# Canonical source: peterjthomson/marktext scripts/release/verify-mac-artifact.sh
-# Shared verbatim with peterjthomson/ledger and peterjthomson/year-view.
 #
 # Run this on the artifact you are about to publish — and ideally again on the
 # copy you download back from the release. Every check here exists because
